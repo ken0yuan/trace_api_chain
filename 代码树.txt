@@ -1,0 +1,26 @@
+trace-api-chain/
+├── .git/  本地 Git 仓库
+├── .gitignore  排除 data、缓存、构建产物
+├── pyproject.toml  src 映射到 trace_api_chain 包，注册 pytest11
+├── README.md
+├── docs/  对象范围、源码证据和 SQL 结构
+├── tests/  回归测试
+├── examples/  使用示例
+├── data/  原 trace-api-chain-validation，Git 忽略
+├── dist/  安装包，Git 忽略
+└── src/
+    pytest_plugin.py  pytest 采集入口，只写原始证据
+    object_capture.py  Python 调用/对象/引用观测
+    catalog.py  运行时 API 身份和 compile 排除
+    native.py  原生采集窗口、原始事件解码
+    hooks.c  C++ 编译钩子缓冲
+    pipeline.py  离线校验和重放准备
+    replay.py  确定性事件栈重建
+    source_entities.py  运行时观测映射到源码实体
+    database.py  SQL 事务刷新、API 查询和 SQL 页面导出
+    dwarf_lookup.py  离线 libdw 进程与缓存
+    dwarf_lookup.c  PC 到 DWARF 源码声明
+    symbols.py  离线符号及源码片段解析
+    presentation.py  C03 渲染，不运行测试
+    cli.py  独立 replay/apis/query/html 命令
+    contract.json  事件约束

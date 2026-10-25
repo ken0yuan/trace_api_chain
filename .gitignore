@@ -1,0 +1,25 @@
+# Local captures, SQL databases, replay caches, and generated HTML
+/data/
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging and compiled products
+/build/
+/dist/
+*.egg-info/
+*.so
+*.o
+
+# Local environments and editors
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

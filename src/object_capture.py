@@ -1,0 +1,363 @@
+"""Collect runtime references and call ownership, without source parsing or GDB.
+
+Reference snapshots are observations, not a census of the Python heap. In
+particular, addresses of non-weak-referenceable objects may be reused.
+"""
+import collections
+import dis
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import threading
+import time
+import types
+import inspect
+
+
+def test_body_code(item):
+    """Resolve the actual selected test through wrappers; never arm a policy wrapper."""
+    target=os.path.realpath(str(item.path))
+    function=inspect.unwrap(item.obj)
+    if type(function) is types.MethodType:function=function.__func__
+    if type(function) is types.FunctionType and os.path.realpath(function.__code__.co_filename)==target:
+        return function.__code__
+    # Some parametrization adapters use closures without __wrapped__. Accept
+    # only a unique source-test code object, not a name/line heuristic.
+    queue=[function];seen=set();codes=set()
+    while queue:
+        function=queue.pop()
+        if type(function) is types.MethodType:function=function.__func__
+        if type(function) is not types.FunctionType or id(function) in seen:continue
+        seen.add(id(function))
+        if os.path.realpath(function.__code__.co_filename)==target:codes.add(function.__code__)
+        wrapped=vars(function).get('__wrapped__')
+        if wrapped is not None:queue.append(wrapped)
+        for cell in function.__closure__ or ():
+            try:queue.append(cell.cell_contents)
+            except ValueError:pass
+    if len(codes)!=1:raise RuntimeError('selected test body is not uniquely resolvable; refusing wrapper-wide capture')
+    return codes.pop()
+
+
+def class_label(cls):
+    # Use type's own descriptors, not user-defined attribute access.
+    def field(name):
+        try:
+            return type.__dict__[name].__get__(cls, type(cls))
+        except Exception:
+            return None
+    return {'module': field('__module__'), 'qualname': field('__qualname__')}
+
+
+def class_namespace(cls):
+    return type.__dict__['__dict__'].__get__(cls, type(cls))
+
+
+def instance_fields(value, plans=None):
+    """Only builtin storage descriptors; never invoke a property or repr."""
+    result=[]; notes=[]
+    cls=type(value)
+    try:
+        plan=plans.get(cls) if plans is not None else None
+        if plan is None:
+            mro=type.__dict__['__mro__'].__get__(cls, type(cls))
+            seen=set();plan=[]
+            for base in mro:
+                for name,descriptor in class_namespace(base).items():
+                    if name in seen:continue
+                    seen.add(name)
+                    if (name=='__dict__' and type(descriptor) is types.GetSetDescriptorType) or type(descriptor) in (types.MemberDescriptorType,property):
+                        plan.append((name,descriptor))
+            if plans is not None:plans[cls]=plan
+        for name, descriptor in plan:
+                if name == '__dict__' and type(descriptor) is types.GetSetDescriptorType:
+                    try:
+                        fields=descriptor.__get__(value,cls)
+                        if type(fields) is dict:
+                            result.extend(('attribute:'+str(k),v) for k,v in fields.copy().items() if type(k) is str)
+                    except Exception as exc: notes.append(type(exc).__name__+':__dict__')
+                elif type(descriptor) is types.MemberDescriptorType:
+                    try: result.append(('slot:'+name,descriptor.__get__(value,cls)))
+                    except AttributeError: pass
+                    except Exception as exc: notes.append(type(exc).__name__+':'+name)
+                elif type(descriptor) is property:
+                    notes.append('property_not_evaluated:'+name)
+    except Exception as exc: notes.append('storage_unavailable:'+type(exc).__name__)
+    return result,notes
+
+
+class Recorder:
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None):
+        if registry is None:
+            from .catalog import Registry
+            registry=Registry(namespaces)
+        self.file=open(path,'w',encoding='utf-8',buffering=1024*1024)
+        self.nodeid=nodeid; self.test_file=os.path.realpath(test_file)
+        self.namespaces=tuple(namespaces); self.max_references=max_references
+        self.thread=threading.get_ident(); self.stack=[]; self.next_uid=0
+        self.code_ids={}; self.object_metadata={}; self.views={}; self.busy=False
+        self.class_sources={};self.object_semantics={};self.global_loads={}
+        self.started=False; self.closed=False; self.gaps=set(); self.calls=0; self.roots=0
+        self.body_code=None;self.body_depth=0;self.body_entries=0
+        self.native=native; self.registry=registry; self.suppressed=0
+        self.emit('start',schema='object_callchain/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
+                  python=sys.version,scope_policy='callchain-contract/1',
+                   api_catalog=sorted(registry.catalog) if registry else [],scope='API subtrees on the selected test thread',
+                  boundaries=['native function bodies require native instrumentation',
+                              'other threads/processes are not attributed by this collector',
+                              'unbound temporaries and opaque extension storage are not enumerated',
+                              'address identity is local to observations; reuse is not lifetime proof'])
+
+    def emit(self, event_kind, **data):
+        self.file.write(json.dumps({'event':event_kind,**data},ensure_ascii=False,separators=(',',':'))+'\n')
+
+    def framework(self, module):
+        return (type(module) is str and not module.startswith('torch.testing._internal') and
+                any(module==n or module.startswith(n+'.') for n in self.namespaces))
+
+    def code(self, code, module):
+        key=id(code)
+        if key not in self.code_ids:
+            token='code:'+str(len(self.code_ids)+1)
+            self.code_ids[key]=(code,token)  # Code objects only, not test instances.
+            filename=code.co_filename
+            try:
+                stat=os.stat(filename); stamp=[stat.st_size,stat.st_mtime_ns]
+            except OSError: stamp=None
+            self.emit('definition',id=token,kind='function',module=module,
+                      qualname=getattr(code,'co_qualname',code.co_name),file=filename,
+                      first_line=code.co_firstlineno,source_stamp=stamp)
+        return self.code_ids[key][1]
+
+    def metadata(self, value, labels=None):
+        cls=type(value)
+        if labels is None:label=class_label(cls)
+        else:
+            if cls not in labels:labels[cls]=class_label(cls)
+            label=labels[cls]
+        token='object:'+str(id(value))+':'+str(id(cls))
+        result={'id':token,'address':id(value),'type':label,'identity':'observation_address'}
+        if type(value) is types.FunctionType:
+            result.update(kind='function',definition=self.code(value.__code__,value.__module__))
+        elif type(value) is types.MethodType:
+            result.update(kind='bound_method',definition=self.code(value.__func__.__code__,value.__func__.__module__))
+        elif issubclass(type(value),type):
+            result.update(kind='class',static_owner=class_label(value))
+        elif type(value) is types.ModuleType:
+            result.update(kind='module',static_owner={'module':vars(value).get('__name__'),'qualname':None})
+        elif type(value) in (types.BuiltinFunctionType,types.BuiltinMethodType):
+            result.update(kind='native_callable',name=value.__name__,module=value.__module__)
+        else:
+            result.update(kind='instance',static_owner=label)
+        owner=result.get('static_owner') or {}
+        module=sys.modules.get(owner.get('module'))
+        if type(module) is types.ModuleType:
+            result['owner_file']=vars(module).get('__file__')
+        # Exported classes can have __module__ rewritten (e.g. torch.Tensor).
+        # Their own Python methods retain the actual defining source path.
+        owner_class=value if result['kind']=='class' else cls if result['kind']=='instance' else None
+        class_key=(id(owner_class),owner.get('module'),owner.get('qualname')) if owner_class is not None else None
+        if class_key in self.class_sources:
+            result.update(self.class_sources[class_key])
+        elif owner_class is not None and owner.get('module')!='builtins':
+            candidates=set()
+            hints=[]
+            for member in class_namespace(owner_class).values():
+                if type(member) in (staticmethod,classmethod):member=member.__func__
+                if type(member) is types.FunctionType:
+                    candidates.add(member.__code__.co_filename)
+                    try:
+                        stat=os.stat(member.__code__.co_filename)
+                        stamp=[stat.st_size,stat.st_mtime_ns]
+                    except OSError:stamp=None
+                    hints.append({'file':member.__code__.co_filename,'first_line':member.__code__.co_firstlineno,
+                                  'source_stamp':stamp,'evidence':'class_own_method_code_location'})
+            if hints:result['class_source_hints']=hints
+            if len(candidates)==1:result['owner_file']=next(iter(candidates))
+            elif len(candidates)>1:result['owner_candidates']=sorted(candidates)
+            self.class_sources[class_key]={k:result[k] for k in ('owner_file','owner_candidates','class_source_hints') if k in result}
+        # CPython reuses short-lived builtin-method addresses. Never overwrite
+        # a previous fill_ object with append merely because the address matches.
+        semantic={k:v for k,v in result.items() if k not in ('id','address','identity')}
+        previous=self.object_semantics.get(token)
+        if previous and previous[0]==semantic:
+            result['id']=previous[1]
+        else:
+            result['id']=token+':'+hashlib.sha256(json.dumps(semantic,sort_keys=True).encode()).hexdigest()[:16]
+            self.object_semantics[token]=(semantic,result['id'])
+        token=result['id']
+        return token,result
+
+    def snapshot(self, frame, phase, values=None):
+        if not self.stack: return
+        if values is None:
+            if os.path.realpath(frame.f_code.co_filename)==self.test_file: return
+            values=frame.f_locals.copy()
+        uid=self.stack[-1]['uid']
+        # No fixed nesting depth or 32-element container cutoff. An explicit
+        # work budget stops pathological graphs and is emitted as a gap.
+        queue=collections.deque((None,'root:'+name,value) for name,value in values.items())
+        refs=[]; seen=set(); notes=set(); count=0; metadata={};labels={};plans={}
+        while queue:
+            parent,name,value=queue.popleft();count+=1
+            if count>self.max_references:
+                notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
+            # A shared object can be reached through many aliases in a single
+            # snapshot. No user code runs here, so resolve its metadata once.
+            identity=(id(value),id(type(value)))
+            if identity not in metadata:metadata[identity]=self.metadata(value,labels)
+            token,meta=metadata[identity]
+            refs.append((parent,name,token))
+            if self.object_metadata.get(token)!=meta:
+                self.object_metadata[token]=meta;self.emit('object',**meta)
+            if token in seen:continue
+            seen.add(token);typ=type(value);children=[]
+            if typ in (list,tuple): children=[('item:'+str(i),v) for i,v in enumerate(value)]
+            elif typ is dict:
+                for i,(k,v) in enumerate(value.copy().items()):
+                    children.extend((('key:'+str(i),k),('value:'+str(i),v)))
+            elif typ in (set,frozenset): children=[('member:'+str(id(v)),v) for v in value.copy()]
+            elif typ is types.MethodType: children=[('receiver',value.__self__),('function',value.__func__)]
+            elif typ is types.FunctionType:
+                children=[('default:'+str(i),v) for i,v in enumerate(value.__defaults__ or ())]
+                children.extend(('keyword_default:'+k,v) for k,v in (value.__kwdefaults__ or {}).items())
+                for name,cell in zip(value.__code__.co_freevars,value.__closure__ or ()):
+                    try: children.append(('closure:'+name,cell.cell_contents))
+                    except ValueError: pass
+            elif typ in (types.BuiltinFunctionType,types.BuiltinMethodType):
+                if value.__self__ is not None:children=[('receiver',value.__self__)]
+            elif typ not in (str,bytes,int,float,complex,bool,type(None),types.ModuleType,types.CodeType) and not issubclass(type(value),type):
+                children,unread=instance_fields(value,plans);notes.update(unread)
+                if not children and label_is_extension(meta): notes.add('opaque_storage:'+meta['type'].get('qualname','unknown'))
+            queue.extend((token,name,v) for name,v in children)
+        scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
+        key=(uid,scope);current=set(refs);previous=self.views.get(key,set())
+        added=current-previous;removed=previous-current
+        if added or removed or notes:
+            self.emit('references',uid=uid,phase=phase,scope=scope,
+                      added=sorted(added,key=lambda r:(r[0] or '',r[1],r[2])),
+                      removed=sorted(removed,key=lambda r:(r[0] or '',r[1],r[2])),notes=sorted(notes))
+        self.views[key]=current
+
+    def profile(self, frame, event, arg, external_uid=None):
+        if self.busy or threading.get_ident()!=self.thread:return
+        if self.body_code is not None:
+            if frame.f_code is self.body_code and event in ('call','return'):
+                self.body_depth+=1 if event=='call' else -1
+                if event=='call':self.body_entries+=1
+                return
+            if not self.body_depth and not self.stack:return
+        if self.suppressed:
+            if event=='call':self.suppressed+=1
+            elif event=='return':
+                self.suppressed-=1
+                if not self.suppressed:
+                    if self.registry:self.registry.exclude_returned(arg)
+                    if self.native:self.native.resume_current()
+            return
+        if event=='call' and self.registry:
+            excluded=self.registry.excluded(frame)
+            if excluded:
+                if self.native:self.native.pause()
+                self.suppressed=1
+                self.emit('excluded_call',api_id=excluded,tid=threading.get_native_id(),
+                          parent=self.stack[-1]['uid'] if self.stack else None,
+                          time_ns=time.monotonic_ns(),reason='excluded_runtime_body')
+                return
+        self.busy=True
+        try:
+            if event not in ('call','return','c_call','c_return','c_exception'):return
+            if event in ('call','c_call'):
+                module=frame.f_globals.get('__name__') if event=='call' else getattr(arg,'__module__',None)
+                if event=='c_call' and not self.framework(module):
+                    module=class_label(type(getattr(arg,'__self__',None))).get('module')
+                aliases=self.registry.match(frame,event,arg) if self.registry else []
+                if external_uid is None and not self.stack and not aliases:return
+                self.next_uid+=1;uid=external_uid if external_uid is not None else self.next_uid
+                parent=self.stack[-1]['uid'] if self.stack else None
+                definition=self.code(frame.f_code,module) if event=='call' else None
+                name=getattr(frame.f_code,'co_qualname',frame.f_code.co_name) if event=='call' else getattr(arg,'__qualname__',getattr(arg,'__name__','native'))
+                row={'uid':uid,'parent':parent,'kind':'python' if event=='call' else 'native_boundary',
+                     'tid':threading.get_native_id(),'time_ns':time.monotonic_ns(),
+                     'definition':definition,'name':name,'module':module,
+                     'api_id':aliases[0] if aliases else None,'api_aliases':aliases,
+                     'caller_file':frame.f_back.f_code.co_filename if event=='call' and frame.f_back else frame.f_code.co_filename,
+                     'caller_line':frame.f_back.f_lineno if event=='call' and frame.f_back else frame.f_lineno}
+                if event=='c_call':row['native_identity']=native_identity(arg)
+                self.emit('call',**row)
+                self.stack.append({**row,'frame':id(frame),'callable':id(arg) if event=='c_call' else None})
+                self.calls+=1;self.roots+=int(parent is None)
+                self.snapshot(frame,'entry' if event=='call' else 'native_entry',
+                              None if event=='call' else {'callable':arg,'receiver':getattr(arg,'__self__',None)})
+                if event=='c_call' and self.native:self.native.begin(uid,row['native_identity'])
+            elif self.stack:
+                top=self.stack[-1]
+                matches=(top['kind']=='python' and event=='return' and top['frame']==id(frame)) or (
+                    top['kind']=='native_boundary' and event in ('c_return','c_exception') and top['callable']==id(arg))
+                if not matches:
+                    self.gaps.add('call_return_mismatch');self.emit('gap',reason='call_return_mismatch',uid=top['uid']);return
+                if event=='return':
+                    self.snapshot(frame,'exit');self.snapshot(frame,'return',{'return':arg})
+                elif self.native:self.native.end(top['uid'])
+                self.emit('return',uid=top['uid'],kind=event,time_ns=time.monotonic_ns())
+                self.stack.pop()
+                for key in [k for k in self.views if k[0]==top['uid']]:self.views.pop(key)
+                if not self.stack:self.file.flush()  # Preserve each completed API window, not each object event.
+        except Exception as exc:
+            self.gaps.add('collector_error:'+type(exc).__name__)
+        finally:self.busy=False
+
+    def trace(self, frame, event, arg):
+        if self.suppressed or threading.get_ident()!=self.thread:return None
+        if self.body_code is not None and not self.body_depth and not self.stack:return None
+        if event=='call' and not self.stack and not self.framework(frame.f_globals.get('__name__')):return None
+        if event=='call' and (self.stack or self.framework(frame.f_globals.get('__name__'))):
+            key=id(frame.f_code)
+            if key not in self.global_loads:
+                self.global_loads[key]={i.offset:(i.opname,i.argval) for i in dis.get_instructions(frame.f_code) if i.opname in ('LOAD_GLOBAL','LOAD_NAME')}
+            frame.f_trace_opcodes=bool(self.global_loads[key])
+        if event=='opcode' and self.stack and not self.busy and self.stack[-1]['kind']=='python' and self.stack[-1]['frame']==id(frame):
+            instruction=self.global_loads.get(id(frame.f_code),{}).get(frame.f_lasti)
+            if instruction:
+                opname,name=instruction
+                scopes=([frame.f_locals] if opname=='LOAD_NAME' else [])+[frame.f_globals,frame.f_builtins]
+                for scope in scopes:
+                    if name in scope:
+                        self.busy=True
+                        try:self.snapshot(frame,'global_read',{'global:'+name:scope[name]})
+                        except Exception as exc:self.gaps.add('global_observation_error:'+type(exc).__name__)
+                        finally:self.busy=False
+                        break
+        if event=='line' and self.stack and not self.busy and self.stack[-1]['kind']=='python' and self.stack[-1]['frame']==id(frame):
+            self.busy=True
+            try:self.snapshot(frame,'locals')
+            except Exception as exc:self.gaps.add('object_observation_error:'+type(exc).__name__)
+            finally:self.busy=False
+        return self.trace
+
+    def begin(self):
+        self.old_profile=sys.getprofile();self.old_trace=sys.gettrace()
+        if self.old_profile or self.old_trace:raise RuntimeError('existing Python profiling/tracing hook; cannot silently replace it')
+        self.started=True
+        sys.setprofile(self.profile);sys.settrace(self.trace)
+
+    def end(self, external_hooks=False):
+        if not external_hooks:
+            if sys.getprofile()!=self.profile or sys.gettrace()!=self.trace:self.gaps.add('hook_replaced')
+            sys.setprofile(self.old_profile);sys.settrace(self.old_trace)
+        if self.stack:self.gaps.add('unclosed_calls')
+        if self.body_code is not None and not self.body_entries:self.gaps.add('test_body_not_entered')
+        self.closed=True
+        self.emit('end',calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
+                  gaps=sorted(self.gaps),all_objects_complete=False)
+        self.file.close()
+
+
+def label_is_extension(meta):
+    module=meta['type'].get('module') or ''
+    return module.startswith(('torch','numpy'))
+
+
+from .native import native_identity

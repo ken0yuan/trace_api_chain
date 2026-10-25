@@ -1,0 +1,162 @@
+"""Deterministic evidence -> observed topology. No name-based topology inference."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+class EvidenceError(ValueError):
+    pass
+
+
+def require(condition, code):
+    if not condition:
+        raise EvidenceError(code)
+
+
+def canonical(value):
+    return (json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))+'\n').encode()
+
+
+def rebuild(events, native, contract):
+    nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
+    observations = []; references = []; gaps = set(); exclusions = []
+    start = None; finished = False; live_views = {}; end_summary = None
+    python_times = {}
+    excluded = set(contract['api_scope']['excluded_api_ids'])
+    for seq, e in enumerate(events):
+        kind = e['event']
+        require(not finished, 'event_after_capture_end')
+        require(start is not None or kind == 'start', 'event_before_capture_start')
+        if kind == 'start':
+            require(start is None, 'multiple_capture_starts'); start = e
+            if e.get('scope_policy') != contract['version']:
+                gaps.add('collector_scope_policy_unverified')
+        elif kind == 'definition':
+            definitions[e['id']] = e
+        elif kind == 'object':
+            # Observation identities are preserved; addresses are not promoted
+            # into claims about lifetime. Later observations do not erase earlier ones.
+            objects[e['id']] = e
+            observations.append({'sequence': seq, 'object': e})
+        elif kind == 'call':
+            require(start is not None, 'call_before_start')
+            require(e.get('api_id') not in excluded, 'excluded_api_was_captured')
+            uid = 'p:'+str(e['uid']); stack = stacks.setdefault(e['tid'], [])
+            require(e['time_ns'] >= python_times.get(e['tid'], 0), 'python_time_order')
+            python_times[e['tid']] = e['time_ns']
+            parent = 'p:'+str(e['parent']) if e['parent'] is not None else None
+            require(uid not in nodes, 'duplicate_python_uid')
+            require(parent == (stack[-1] if stack else None), 'python_parent_stack_mismatch')
+            if parent is None and not e.get('api_id'):
+                gaps.add('api_root_identity_missing:'+uid)
+            if parent is None and e.get('api_id'):
+                require(e['api_id'] in start.get('api_catalog', []), 'root_api_not_in_catalog')
+            nodes[uid] = {'id': uid, 'kind': e['kind'], 'thread': e['tid'],
+                          'parent': parent, 'entered': e['time_ns'], 'returned': None,
+                          'definition': e.get('definition'), 'api_id': e.get('api_id'),
+                          'label': e.get('name'), 'input_sequence': seq}
+            if parent is not None:
+                edges.append({'from': parent, 'to': uid, 'kind': 'observed_python_nesting'})
+            stack.append(uid)
+        elif kind == 'return':
+            uid = 'p:'+str(e['uid']); require(uid in nodes, 'return_without_enter')
+            node = nodes[uid]; stack = stacks[node['thread']]
+            require(e['time_ns'] >= python_times.get(node['thread'], 0), 'python_time_order')
+            python_times[node['thread']] = e['time_ns']
+            require(stack and stack[-1] == uid, 'python_return_stack_mismatch')
+            require(e['time_ns'] >= node['entered'], 'python_negative_duration')
+            require(node['returned'] is None, 'duplicate_python_return')
+            node['returned'] = e['time_ns']; stack.pop()
+        elif kind == 'references':
+            uid = 'p:'+str(e['uid']); require(uid in nodes, 'references_without_call')
+            require(nodes[uid]['returned'] is None, 'references_after_call_return')
+            view = live_views.setdefault((uid, e['scope']), set())
+            for parent, role, target in e['added'] + e['removed']:
+                require(target in objects and (parent is None or parent in objects), 'unknown_object_reference')
+            removed = {tuple(r) for r in e['removed']}
+            require(removed <= view, 'reference_remove_without_add')
+            view.difference_update(removed); view.update(tuple(r) for r in e['added'])
+            references.append({'sequence': seq, 'observation': e})
+        elif kind == 'excluded_call':
+            require(e['api_id'] in excluded, 'undeclared_exclusion')
+            exclusions.append(e)
+        elif kind == 'gap':
+            gaps.add(e.get('reason', 'capture_gap'))
+        elif kind == 'end':
+            require(not finished, 'multiple_capture_ends'); finished = True; end_summary = e
+            gaps.update(e.get('gaps', []))
+        else:
+            raise EvidenceError('unknown_python_event:'+kind)
+    require(start is not None and finished, 'capture_incomplete')
+    require(all(not s for s in stacks.values()), 'python_unclosed_stack')
+    if 'calls' in end_summary:
+        require(end_summary['calls'] == len(nodes), 'python_call_count_mismatch')
+    if 'roots' in end_summary:
+        require(end_summary['roots'] == sum(n['parent'] is None for n in nodes.values()), 'python_root_count_mismatch')
+    require(all(n['definition'] is None or n['definition'] in definitions for n in nodes.values()),
+            'missing_python_definition')
+
+    nstacks = {}; previous = {}; native_count = 0
+    for seq, e in enumerate(native):
+        window = 'p:'+str(e['py_uid']); require(window in nodes, 'native_window_missing')
+        owner = nodes[window]
+        require(owner['kind']=='native_boundary', 'native_window_not_c_boundary')
+        require(e['pid']==start['pid'], 'native_pid_mismatch')
+        require(e['tid']==owner['thread'], 'native_thread_mismatch')
+        require(owner['entered'] <= e['time'] <= owner['returned'], 'native_event_outside_window')
+        thread = (e['pid'],e['tid'])
+        require(e['time'] >= previous.get(thread,0), 'native_time_order')
+        previous[thread] = e['time']; stack = nstacks.setdefault(thread, [])
+        # Raw absolute addresses are invocation identities inside this run.
+        # ELF/source annotations are deliberately not used to choose parents.
+        address = e['absolute_function']
+        if e['event']=='enter':
+            uid = 'n:'+str(seq); parent = stack[-1] if stack and nodes[stack[-1]]['window']==window else window
+            relation = 'instrumented_nesting' if parent.startswith('n:') else 'window_contains'
+            nodes[uid] = {'id':uid,'kind':'native_activation','thread':e['tid'],
+                          'parent':parent,'window':window,'address':address,
+                          'caller_address':e['absolute_caller'],'entered':e['time'],
+                          'returned':None,'input_sequence':seq,
+                          'module':e['path'],'offset':e['offset']}
+            edges.append({'from':parent,'to':uid,'kind':relation})
+            stack.append(uid); native_count+=1
+        elif e['event']=='exit':
+            require(bool(stack), 'native_exit_without_enter')
+            node = nodes[stack[-1]]
+            require(node['address']==address, 'native_return_stack_mismatch')
+            require(node['window']==window, 'native_return_window_mismatch')
+            require(node['caller_address']==e['absolute_caller'], 'native_return_caller_mismatch')
+            node['returned']=e['time']; stack.pop()
+        else:
+            raise EvidenceError('unknown_native_event')
+    require(all(not s for s in nstacks.values()), 'native_unclosed_stack')
+    return {'schema':'deterministic-callchain/1','contract_version':contract['version'],
+            'run_id':start.get('run_id'),'test':start.get('nodeid'),
+            'status':'evidence_scope_incomplete' if gaps else 'observed_scope_validated',
+            'gaps':sorted(gaps),'nodes':nodes,'edges':edges,'definitions':definitions,
+            'object_observations':observations,'reference_observations':references,
+            'exclusions':exclusions,'native_activations':native_count,
+            'direct_machine_call_edges_proved':False,
+            'all_python_objects_claimed':False,
+            'declared_boundaries':start.get('boundaries',[])}
+
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument('--evidence',type=Path,required=True)
+    p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    contract=json.loads(Path(__file__).with_name('contract.json').read_text())
+    manifest=json.loads((a.evidence/'manifest.json').read_text())
+    for name,expected in manifest['sha256'].items():
+        data=(a.evidence/name).read_bytes()
+        require(hashlib.sha256(data).hexdigest()==expected,'evidence_hash_mismatch:'+name)
+    require({'python.jsonl','native.jsonl'} <= set(manifest['sha256']), 'unhashed_evidence_input')
+    events=[json.loads(x) for x in (a.evidence/'python.jsonl').read_text().splitlines()]
+    native=[json.loads(x) for x in (a.evidence/'native.jsonl').read_text().splitlines()]
+    graph=rebuild(events,native,contract)
+    a.out.parent.mkdir(parents=True,exist_ok=True);a.out.write_bytes(canonical(graph))
+    print(json.dumps({'status':graph['status'],'nodes':len(graph['nodes']),
+                     'native_activations':graph['native_activations'],'gaps':graph['gaps'],
+                     'sha256':hashlib.sha256(a.out.read_bytes()).hexdigest()}))
+
+if __name__=='__main__':main()

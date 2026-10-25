@@ -1,0 +1,87 @@
+{
+  "version": "callchain-contract/1",
+  "topology_inputs": [
+    "call",
+    "return",
+    "native_enter",
+    "native_exit",
+    "window_uid",
+    "pid",
+    "tid",
+    "timestamp"
+  ],
+  "topology_forbidden_inputs": [
+    "function_name",
+    "source_text",
+    "AI_judgment",
+    "object_importance",
+    "object_lifetime_guess"
+  ],
+  "api_scope": {
+    "root_requires_runtime_catalog_identity": true,
+    "namespace_match_is_sufficient": false,
+    "excluded_api_ids": [
+      "python:torch.compile",
+      "python:torch.compile_runtime"
+    ],
+    "exclusion_scope": "the observed invocation and its descendants",
+    "missing_identity": "emit api_root_identity_missing; do not claim scope_complete",
+    "already_captured_excluded_invocation": "reject input; do not silently erase historical evidence"
+  },
+  "object_observations": {
+    "sampling_events": [
+      "python_entry",
+      "python_line",
+      "python_return",
+      "runtime_global_read",
+      "native_callable_and_receiver"
+    ],
+    "roots": [
+      "observed_parameters_and_locals",
+      "observed_return",
+      "loaded_global",
+      "native_callable",
+      "native_receiver"
+    ],
+    "traversal": {
+      "exact_list_tuple": "all indexed references",
+      "exact_dict": "all key and value references",
+      "exact_set_frozenset": "all member references",
+      "python_function": "definition, defaults, keyword defaults, closure references",
+      "bound_method": "function and receiver references",
+      "ordinary_instance": "builtin __dict__ and slot storage descriptors only",
+      "property_custom_getattribute_repr": "never execute for observation; record boundary",
+      "scalar_payload": "not required",
+      "native_extension_internal_storage": "opaque boundary",
+      "cycles": "visit identity once per snapshot; retain every observed alias edge",
+      "budget_exhaustion": "emit reference_budget_exceeded; never claim observation_complete"
+    },
+    "unobserved_ephemeral_values": "outside snapshot contract; no synthetic object node",
+    "missing_call_target_parent_or_return": "invalid callchain evidence, independent of object snapshots",
+    "storage": "preserve each observed object identity and reference delta; no importance classifier",
+    "native_argument_and_return_values": "not available from CPython profile events in the current collector"
+  },
+  "edges": {
+    "python_parent": "must equal active stack top on the same thread",
+    "native_parent": "same-thread matched enter/exit stack; same Python window => instrumented_nesting",
+    "python_to_native": "validated same-thread, same-pid, time-contained window => window_contains",
+    "direct_machine_call": "never infer from nesting; requires separate transfer evidence",
+    "unmatched_exit_or_window": "reject reconstruction, preserve inputs"
+  },
+  "source_mapping": "annotation only; cannot add, remove or reparent invocations",
+  "replay": "canonical JSON, stable IDs from input sequence, no clock/randomness/network/LLM",
+  "limits": [
+    "balanced omissions cannot be detected from nesting alone; collector sequence and loss receipts are required",
+    "old evidence without API identity or exclusion policy stays scope_incomplete",
+    "replayer validates emitted observations; it does not prove every runtime event was observed"
+  ],
+  "acceptance": [
+    "byte-identical repeated replay",
+    "labels cannot change topology",
+    "unbalanced event loss rejected",
+    "declared call/root counters checked",
+    "wrong thread/window rejected",
+    "excluded API evidence rejected",
+    "observed object/reference records preserved"
+  ]
+}

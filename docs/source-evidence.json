@@ -1,0 +1,76 @@
+[
+  {
+    "path": "object_capture.py",
+    "symbol": "Recorder.snapshot",
+    "start": 193,
+    "end": 242,
+    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+  },
+  {
+    "path": "object_capture.py",
+    "symbol": "instance_fields",
+    "start": 58,
+    "end": 88,
+    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+  },
+  {
+    "path": "object_capture.py",
+    "symbol": "Recorder.metadata",
+    "start": 134,
+    "end": 191,
+    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+  },
+  {
+    "path": "object_capture.py",
+    "symbol": "Recorder.trace",
+    "start": 312,
+    "end": 338,
+    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+  },
+  {
+    "path": "object_capture.py",
+    "symbol": "Recorder.profile",
+    "start": 244,
+    "end": 310,
+    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+  },
+  {
+    "path": "catalog.py",
+    "symbol": "Registry.match",
+    "start": 47,
+    "end": 58,
+    "sha256": "2eafdc126e6e5653e1f84602266a03a8486dfc18c9778dc9cb950cad8e41cd6d"
+  },
+  {
+    "path": "catalog.py",
+    "symbol": "Registry.excluded",
+    "start": 60,
+    "end": 68,
+    "sha256": "2eafdc126e6e5653e1f84602266a03a8486dfc18c9778dc9cb950cad8e41cd6d"
+  },
+  {
+    "path": "source_entities.py",
+    "symbol": "SourceEntities.python",
+    "start": 44,
+    "end": 51,
+    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+  },
+  {
+    "path": "source_entities.py",
+    "symbol": "SourceEntities.instance",
+    "start": 53,
+    "end": 64,
+    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+  },
+  {
+    "path": "source_entities.py",
+    "symbol": "SourceEntities.cpp",
+    "start": 81,
+    "end": 99,
+    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+  },
+  {
+    "path": "hooks.c",
+    "sha256": "de1f1a7aa6b0a4bc534019277f2f953a08156fe84b81ab11b5b617730e59c471"
+  }
+]
