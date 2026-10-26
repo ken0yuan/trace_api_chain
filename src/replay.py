@@ -20,7 +20,7 @@ def canonical(value):
 
 def rebuild(events, native, contract):
     nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
-    observations = []; references = []; gaps = set(); exclusions = []
+    observations = []; references = []; source_reads = []; gaps = set(); exclusions = []
     start = None; finished = False; live_views = {}; end_summary = None
     python_times = {}
     excluded = set(contract['api_scope']['excluded_api_ids'])
@@ -78,6 +78,17 @@ def rebuild(events, native, contract):
             require(removed <= view, 'reference_remove_without_add')
             view.difference_update(removed); view.update(tuple(r) for r in e['added'])
             references.append({'sequence': seq, 'observation': e})
+        elif kind == 'source_read':
+            uid='p:'+str(e['uid']);require(uid in nodes,'source_read_without_call')
+            node=nodes[uid]
+            require(node['returned'] is None,'source_read_after_return')
+            require(node['kind']=='python' and stacks[node['thread']][-1]==uid,'source_read_outside_active_python_call')
+            require(e.get('scope') in ('global','module_attribute'),'unknown_source_read_scope')
+            require(isinstance(e.get('name'),str) and bool(e['name']),'invalid_source_read_name')
+            require(isinstance(e.get('namespace'),dict) and bool(e['namespace'].get('file')),'missing_source_read_namespace')
+            definition=definitions.get(node['definition'],{})
+            require(e.get('file')==definition.get('file'),'source_read_code_file_mismatch')
+            source_reads.append(e)
         elif kind == 'excluded_call':
             require(e['api_id'] in excluded, 'undeclared_exclusion')
             exclusions.append(e)
@@ -136,6 +147,8 @@ def rebuild(events, native, contract):
             'status':'evidence_scope_incomplete' if gaps else 'observed_scope_validated',
             'gaps':sorted(gaps),'nodes':nodes,'edges':edges,'definitions':definitions,
             'object_observations':observations,'reference_observations':references,
+            'source_reads':source_reads,'module_sources':end_summary.get('module_sources',{}),
+            'source_read_policy':end_summary.get('source_read_policy'),
             'exclusions':exclusions,'native_activations':native_count,
             'direct_machine_call_edges_proved':False,
             'all_python_objects_claimed':False,

@@ -1,0 +1,239 @@
+diff --git a/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py b/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py
+index 1aaf4d9..05077eb 100644
+--- a/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py
++++ b/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py
+@@ -6,6 +6,8 @@ import unittest
+ 
+ import torch
+ from torch.nn.attention import SDPBackend
++from torch.nn.attention.flex_attention import create_block_mask, flex_attention
++from torch.testing._internal.common_device_type import instantiate_device_type_tests
+ from torch.testing._internal.common_nn import NNTestCase
+ from torch.testing._internal.common_utils import run_tests, skipIfTorchDynamo, TestCase
+ 
+@@ -298,6 +300,51 @@ class TestSDPA(NNTestCase):
+         )
+ 
+ 
++class TestFlexAttention(TestCase):
++    def test_flex_attention_forward_backward(self, device):
++        def causal(b, h, q_idx, kv_idx):
++            return q_idx >= kv_idx
++
++        def rel_bias(score, b, h, q_idx, kv_idx):
++            return score + 0.01 * (q_idx - kv_idx)
++
++        seq_len = 128
++        shape = (2, 2, seq_len, 16)
++        q_ref, k_ref, v_ref = (torch.randn(shape, requires_grad=True) for _ in range(3))
++        q, k, v = (
++            t.detach().to(device).requires_grad_() for t in (q_ref, k_ref, v_ref)
++        )
++        grad_out = torch.randn(shape)
++
++        block_mask = create_block_mask(causal, 1, 1, seq_len, seq_len, device=device)
++        out = flex_attention(q, k, v, score_mod=rel_bias, block_mask=block_mask)
++        out.backward(grad_out.to(device))
++
++        pos = torch.arange(seq_len)
++        scores = q_ref @ k_ref.transpose(-2, -1) * shape[-1] ** -0.5
++        scores = scores + 0.01 * (pos[:, None] - pos[None, :])
++        scores = scores.masked_fill(pos[:, None] < pos[None, :], float("-inf"))
++        out_ref = scores.softmax(dim=-1) @ v_ref
++        out_ref.backward(grad_out)
++
++        self.assertEqual(out.device, torch.device(device))
++        self.assertEqual(out.cpu(), out_ref, atol=1e-4, rtol=1e-4)
++        for t, t_ref in zip((q, k, v), (q_ref, k_ref, v_ref)):
++            self.assertEqual(t.grad.cpu(), t_ref.grad, atol=1e-4, rtol=1e-4)
++
++    def test_flex_attention_autocast(self, device):
++        q, k, v = (
++            torch.randn(1, 2, 128, 16, device=device, requires_grad=True)
++            for _ in range(3)
++        )
++        with torch.autocast(torch.device(device).type, dtype=torch.float16):
++            out = flex_attention(q, k, v)
++            out.sum().backward()
++        self.assertEqual(out.dtype, torch.float16)
++        self.assertEqual(q.grad.dtype, torch.float32)
++        self.assertEqual(out.cpu(), flex_attention(q.half(), k.half(), v.half()).cpu())
++
++
+ class TestFactoryExtended(TestCase):
+     def test_empty_with_memory_format(self):
+         """Test empty tensor creation with memory format"""
+@@ -634,5 +681,8 @@ class TestCustomAutogradFunctions(TestCase):
+         self.assertFalse(y.requires_grad)
+ 
+ 
++instantiate_device_type_tests(TestFlexAttention, globals(), only_for="openreg")
++
++
+ if __name__ == "__main__":
+     run_tests()
+diff --git a/test/inductor/test_triton_extension_backend.py b/test/inductor/test_triton_extension_backend.py
+index 734df5d..06010bf 100644
+--- a/test/inductor/test_triton_extension_backend.py
++++ b/test/inductor/test_triton_extension_backend.py
+@@ -50,6 +50,7 @@ from torch._inductor.codegen.common import (
+ )
+ from torch._inductor.codegen.wrapper import PythonWrapperCodegen
+ from torch._inductor.utils import get_triton_code, run_and_get_triton_code
++from torch.nn.attention.flex_attention import create_block_mask, flex_attention
+ from torch.testing._internal.common_utils import IS_FBCODE, IS_MACOS
+ from torch.testing._internal.inductor_utils import (
+     GPU_TYPE,
+@@ -57,6 +58,7 @@ from torch.testing._internal.inductor_utils import (
+     HAS_GPU_AND_TRITON,
+     TRITON_HAS_CPU,
+ )
++from torch.utils._triton import has_triton_package
+ 
+ 
+ try:
+@@ -151,6 +153,36 @@ class TritonExtensionBackendTests(BaseExtensionBackendTests):
+             "tl_math.sin"
+         ).check("device_str='privateuseone'").run(code)
+ 
++    @unittest.skipUnless(has_triton_package(), "Requires the triton package")
++    def test_flex_attention_open_device_registration(self):
++        torch._register_device_module("privateuseone", self.module)
++        # ExtensionScheduling.codegen_template is a no-op, so the flex template
++        # kernel needs the real TritonScheduling.
++        register_backend_for_device(
++            "privateuseone", codegen.triton.TritonScheduling, PythonWrapperCodegen
++        )
++        register_device_op_overrides("privateuseone", CPUDeviceOpOverrides())
++        device_interface.register_interface_for_device("privateuseone", DeviceInterface)
++
++        device = torch.device("privateuseone")
++        q, k, v = (torch.ones(1, 2, 128, 16).to(device) for _ in range(3))
++        # The extension device lacks the kernels create_block_mask needs.
++        block_mask = create_block_mask(
++            lambda b, h, q_idx, kv_idx: q_idx >= kv_idx, 1, 1, 128, 128, device="cpu"
++        ).to(device)
++
++        with unittest.mock.patch(
++            "torch.utils._triton.triton_hash_with_backend",
++            new=mock_triton_hash_with_backend,
++        ):
++            code = get_triton_code(
++                torch.compile(flex_attention), q, k, v, block_mask=block_mask
++            )
++
++        FileCheck().check("@triton.jit").check(
++            "def triton_tem_fused_flex_attention"
++        ).check("device_str='privateuseone'").run(code)
++
+     def _register_custom_backend_with_heuristics(self, device):
+         path_to_ext_heuristics = str(
+             Path(__file__).parent / "extension_backends" / "triton"
+diff --git a/torch/_higher_order_ops/flex_attention.py b/torch/_higher_order_ops/flex_attention.py
+index 3d03c43..908f72b 100644
+--- a/torch/_higher_order_ops/flex_attention.py
++++ b/torch/_higher_order_ops/flex_attention.py
+@@ -172,6 +172,8 @@ class FlexAttentionBackwardHOP(HigherOrderOperator):
+ 
+ 
+ flex_attention_backward = FlexAttentionBackwardHOP()
++# Match the default HOP fallthrough that AutocastCPU/CUDA/XPU get in torch/_ops.py.
++flex_attention_backward.fallthrough(DispatchKey.AutocastPrivateUse1)
+ 
+ 
+ def _math_attention_inner(
+@@ -311,9 +313,11 @@ def _flex_attention_autocast_impl(
+     key = _autocast_cast(key, device_type, autocast_dtype)
+     value = _autocast_cast(value, device_type, autocast_dtype)
+ 
+-    autocast_keyset = torch._C.DispatchKeySet(
+-        DispatchKey.AutocastCPU
+-    ) | torch._C.DispatchKeySet(DispatchKey.AutocastCUDA)
++    autocast_keyset = (
++        torch._C.DispatchKeySet(DispatchKey.AutocastCPU)
++        | torch._C.DispatchKeySet(DispatchKey.AutocastCUDA)
++        | torch._C.DispatchKeySet(DispatchKey.AutocastPrivateUse1)
++    )
+     with torch._C._ExcludeDispatchKeyGuard(autocast_keyset):
+         return flex_attention(
+             query,
+@@ -353,6 +357,31 @@ def flex_attention_autocast_cuda(
+     )
+ 
+ 
++@flex_attention.py_impl(DispatchKey.AutocastPrivateUse1)
++def flex_attention_autocast_privateuse1(
++    query: torch.Tensor,
++    key: torch.Tensor,
++    value: torch.Tensor,
++    score_mod: Callable,
++    block_mask: tuple,
++    scale: float,
++    kernel_options: dict[str, Any],
++    score_mod_other_buffers: tuple = (),
++    mask_mod_other_buffers: tuple = (),
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
++    return _flex_attention_autocast_impl(
++        query,
++        key,
++        value,
++        score_mod,
++        block_mask,
++        scale,
++        kernel_options,
++        score_mod_other_buffers,
++        mask_mod_other_buffers,
++    )
++
++
+ @flex_attention.py_impl(DispatchKey.AutocastCPU)
+ def flex_attention_autocast_cpu(
+     query: torch.Tensor,
+diff --git a/torch/nn/attention/flex_attention.py b/torch/nn/attention/flex_attention.py
+index f1e5b23..99557f8 100644
+--- a/torch/nn/attention/flex_attention.py
++++ b/torch/nn/attention/flex_attention.py
+@@ -2251,10 +2251,19 @@ def _validate_device(query: Tensor, key: Tensor, value: Tensor) -> None:
+         raise NotImplementedError(
+             "FlexAttention does not support backward on MPS. Please set the input requires_grad to False or use another device."
+         )
+-    supported_devices = {"cuda", "cpu", "xpu", "hpu", "mps"}
++    # Read the PrivateUse1 name per call: backends rename it after torch import.
++    supported_devices = {
++        "cuda",
++        "cpu",
++        "xpu",
++        "hpu",
++        "mps",
++        torch._C._get_privateuse1_backend_name(),
++    }
+     if query.device.type not in supported_devices:
+         raise ValueError(
+-            "FlexAttention is only supported on CUDA, CPU, XPU, HPU, or MPS devices. "
++            "FlexAttention is only supported on CUDA, CPU, XPU, HPU, MPS, or "
++            "PrivateUse1 devices. "
+             f"Found input tensors on {query.device.type} device."
+         )
+ 
+@@ -2304,7 +2313,8 @@ def _enforce_mem_layouts(
+     gemm_precision = query.dtype
+ 
+     should_enforce_mem_layout = (
+-        gemm_precision in fp8_dtypes
++        query.device.type == "cuda"
++        and gemm_precision in fp8_dtypes
+         and torch.version.cuda is not None
+         and torch.cuda.get_device_capability("cuda") >= (8, 9)
+         and torch.cuda.get_device_capability("cuda") < (10, 0)
+diff --git a/torchgen/model.py b/torchgen/model.py
+index 7c2d3d1..05d54a9 100644
+--- a/torchgen/model.py
++++ b/torchgen/model.py
+@@ -134,6 +134,7 @@ class DispatchKey(Enum):
+     AutocastCPU = auto()
+     AutocastCUDA = auto()
+     AutocastXPU = auto()
++    AutocastPrivateUse1 = auto()
+     Batched = auto()
+     VmapMode = auto()
+     FuncTorchGradWrapper = auto()

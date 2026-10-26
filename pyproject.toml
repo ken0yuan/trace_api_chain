@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trace-api-chain"
-version = "0.2.0"
+version = "0.3.0"
 description = "Pytest API call chains from Python observations and compiler instrumentation"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
@@ -15,6 +15,7 @@ dependencies = ["pytest>=7,<10"]
 
 [project.scripts]
 trace-api-chain = "trace_api_chain.cli:main"
+trace-changed-objects = "trace_api_chain.changed_objects:main"
 
 [tool.setuptools]
 packages = ["trace_api_chain"]

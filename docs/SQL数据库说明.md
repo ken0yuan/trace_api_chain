@@ -12,6 +12,7 @@
 | paths | API 内的源码实体祖先路径；同一实体可出现在不同上下文 |
 | path_support | 哪份最新采集支持哪条路径；刷新只替换该贡献 |
 | observed_objects 和 object_references | 路径关联的已观测源码对象及引用角色，非业务实例生命周期 |
+| source_dependencies | 路径与源码名字读取、静态导入来源、词法包含的关联；relation 明确证据类型，不当作调用边 |
 | pending | 无法唯一确定的对象源码归属，不猜测合并 |
 | canonical_relations 视图 | 全局去重的已观测边集合；不能当作一个 API 的完整运行路径 |
 
@@ -20,6 +21,8 @@
 API 查询必须保留 paths 的祖先上下文；直接在 canonical_relations 上做图遍历可能串接来自不同 API 的分支。数据库不保存每次调用的完整流水；原始 JSONL/二进制证据以及离线 graph.json 保留精确调用记录。
 
 SQL schema 源码如下。
+
+schema v1 增量加入 source_dependencies。重新 replay 才会刷新旧库；旧采集没有 source_read 时不会补造全局读取，capture_slots.summary.source_read_policy 为 null。diff 查询只读库，并返回每条贡献的源文件 SHA256 与 diff 旧/新侧是否匹配。
 
 ```sql
 
@@ -47,6 +50,10 @@ CREATE TABLE IF NOT EXISTS observed_objects(slot_id TEXT REFERENCES capture_slot
 CREATE TABLE IF NOT EXISTS object_references(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
  owner_path TEXT REFERENCES paths(id), source_entity TEXT REFERENCES entities(id),
  target_entity TEXT REFERENCES entities(id), role TEXT, PRIMARY KEY(slot_id,owner_path,source_entity,target_entity,role));
+CREATE TABLE IF NOT EXISTS source_dependencies(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
+ path_id TEXT REFERENCES paths(id), entity_id TEXT REFERENCES entities(id), relation TEXT, evidence TEXT,
+ PRIMARY KEY(slot_id,path_id,entity_id,relation));
+CREATE INDEX IF NOT EXISTS dependency_entity ON source_dependencies(entity_id);
 CREATE TABLE IF NOT EXISTS pending(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
  observation TEXT, reason TEXT, detail TEXT, PRIMARY KEY(slot_id,observation,reason));
 CREATE INDEX IF NOT EXISTS paths_api ON paths(api_id,parent_id);

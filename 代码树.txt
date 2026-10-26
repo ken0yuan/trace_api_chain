@@ -24,3 +24,4 @@ trace-api-chain/
     presentation.py  C03 渲染，不运行测试
     cli.py  独立 replay/apis/query/html 命令
     contract.json  事件约束
+    changed_objects.py  单文件 diff → 源码对象、统一身份、只读反查 SQL 调用链

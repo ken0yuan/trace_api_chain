@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS observed_objects(slot_id TEXT REFERENCES capture_slot
 CREATE TABLE IF NOT EXISTS object_references(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
  owner_path TEXT REFERENCES paths(id), source_entity TEXT REFERENCES entities(id),
  target_entity TEXT REFERENCES entities(id), role TEXT, PRIMARY KEY(slot_id,owner_path,source_entity,target_entity,role));
+CREATE TABLE IF NOT EXISTS source_dependencies(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
+ path_id TEXT REFERENCES paths(id), entity_id TEXT REFERENCES entities(id), relation TEXT, evidence TEXT,
+ PRIMARY KEY(slot_id,path_id,entity_id,relation));
+CREATE INDEX IF NOT EXISTS dependency_entity ON source_dependencies(entity_id);
 CREATE TABLE IF NOT EXISTS pending(slot_id TEXT REFERENCES capture_slots(id) ON DELETE CASCADE,
  observation TEXT, reason TEXT, detail TEXT, PRIMARY KEY(slot_id,observation,reason));
 CREATE INDEX IF NOT EXISTS paths_api ON paths(api_id,parent_id);
@@ -114,6 +118,7 @@ def normalize(prepared,roots=None,definitions=None):
     for oid,obj in objects.items():
         if obj.get('definition') in defmap:eid,reason=source.python(defmap[obj['definition']])
         elif obj.get('kind') in ('instance','class'):eid,reason=source.instance(obj)
+        elif obj.get('kind')=='module':eid,reason=source.named(graph.get('module_sources',{}).get((obj.get('static_owner') or {}).get('module'),{}))
         else:eid,reason=None,'no_source_definition_anchor'
         if eid:
             object_map[oid]=eid
@@ -158,11 +163,33 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
                 object_links.add((pid,target_entity))
                 parent_entity=object_map.get(parent) if parent else mapping[uid]
                 if parent_entity:reference_links.add((pid,parent_entity,target_entity,role))
+    dependencies={}
+    def dependency(uid,eid,relation,evidence):
+        for api,pid,depth in contexts[uid]:
+            dependencies.setdefault((pid,eid,relation),set()).add(json.dumps(evidence,sort_keys=True,ensure_ascii=False))
+    for uid,eid in mapping.items():
+        for owner in source.containers(eid):dependency(uid,owner,'defined_in',{'member':eid})
+    for pid,eid in object_links:
+        for owner in source.containers(eid):
+            dependencies.setdefault((pid,owner,'defined_in'),set()).add(json.dumps({'member':eid},sort_keys=True))
+    for index,read in enumerate(graph.get('source_reads',[])):
+        uid='p:'+str(read['uid']);record=read['namespace'];name=read['name']
+        eid,reason=source.named(record,name)
+        if not eid:
+            pending.append(('source_read:'+str(index),reason,json.dumps(read,ensure_ascii=False)));continue
+        evidence={k:read[k] for k in ('file','line','offset','scope','name')}
+        dependency(uid,eid,'observed_binding_read',evidence)
+        for owner in source.containers(eid):dependency(uid,owner,'read_from_container',{'binding':eid})
+        for origin in source.import_origins(record,name,graph.get('module_sources',{})):
+            dependency(uid,origin,'static_import_origin',{'via_binding':eid,**evidence})
+            for owner in source.containers(origin):dependency(uid,owner,'static_import_container',{'via_binding':eid,'origin':origin})
+    dependency_rows=[(*k,json.dumps([json.loads(v) for v in sorted(values)],ensure_ascii=False)) for k,values in sorted(dependencies.items())]
     input_digest=key(prepared['manifest']['sha256'])
-    policy=[digest(Path(__file__)),digest(Path(__file__).with_name('source_entities.py'))]
-    import_digest=key([input_digest,policy,source.entities,mapping,sorted(paths),sorted(object_links)])
+    policy=[digest(Path(__file__)),digest(Path(__file__).with_name('source_entities.py')),digest(Path(__file__).with_name('changed_objects.py'))]
+    import_digest=key([input_digest,policy,source.entities,mapping,sorted(paths),sorted(object_links),dependency_rows])
     summary={'test':graph['test'],'captured_calls':len(graph['nodes']),'canonical_entities':len(source.entities),
              'api_definitions':len(api_entities),'normalized_paths':len(paths),'pending_objects':len(pending),
+             'source_dependencies':len(dependency_rows),'source_read_policy':graph.get('source_read_policy'),
              'gaps':graph['gaps'],'raw_evidence':str(prepared['output']),'graph_digest':digest(prepared['output']/'graph.json')}
     db=connect(db_path)
     try:
@@ -191,6 +218,7 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
         db.executemany('INSERT INTO path_support VALUES(?,?)',[(slot,p) for p in sorted(supports)])
         db.executemany('INSERT INTO observed_objects VALUES(?,?,?)',[(slot,*x) for x in sorted(object_links)])
         db.executemany('INSERT INTO object_references VALUES(?,?,?,?,?)',[(slot,*x) for x in sorted(reference_links)])
+        db.executemany('INSERT INTO source_dependencies VALUES(?,?,?,?,?)',[(slot,*x) for x in dependency_rows])
         db.executemany('INSERT INTO pending VALUES(?,?,?,?)',[(slot,*x) for x in pending])
         db.execute('DELETE FROM paths WHERE NOT EXISTS (SELECT 1 FROM path_support s WHERE s.path_id=paths.id)')
         if db.execute('PRAGMA foreign_key_check').fetchall():raise ValueError('database_foreign_key_check_failed')
@@ -227,16 +255,22 @@ def query(db_path,api):
         references=[dict(r) for r in db.execute(f'''SELECT DISTINCT o.owner_path,o.source_entity,o.target_entity,o.role
              FROM object_references o JOIN capture_slots c ON c.id=o.slot_id JOIN paths p ON p.id=o.owner_path
              WHERE c.status IN ('current','partial') AND p.api_id IN ({placeholders})''',apis)]
+        tables={r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        dependencies=[dict(r) for r in db.execute(f'''SELECT o.path_id,o.entity_id,o.relation,o.evidence,o.slot_id
+             FROM source_dependencies o JOIN capture_slots c ON c.id=o.slot_id JOIN paths p ON p.id=o.path_id
+             WHERE c.status IN ('current','partial') AND p.api_id IN ({placeholders}) ORDER BY o.path_id,o.entity_id,o.relation,o.slot_id''',apis)] if 'source_dependencies' in tables else []
+        for row in dependencies:row['evidence']=json.loads(row['evidence'])
         evidence=[dict(r) for r in db.execute(f'''SELECT DISTINCT c.id,c.test,c.status,c.evidence_directory,c.summary FROM capture_slots c
             JOIN path_support s ON s.slot_id=c.id JOIN paths p ON p.id=s.path_id
             WHERE p.api_id IN ({placeholders}) AND c.status IN ('current','partial')''',apis)]
-        used={n['entity_id'] for n in nodes}|{r['entity_id'] for r in refs}|{r[k] for r in references for k in ('source_entity','target_entity')}
+        used={n['entity_id'] for n in nodes}|{r['entity_id'] for r in refs}|{r[k] for r in references for k in ('source_entity','target_entity')}|{r['entity_id'] for r in dependencies}
         entities={}
         ordered=sorted(used)
         for index in range(0,len(ordered),500):
             batch=ordered[index:index+500];marks=','.join('?' for _ in batch)
             entities.update((r['id'],json.loads(r['detail'])) for r in db.execute(f'SELECT id,detail FROM entities WHERE id IN ({marks})',batch))
         return {'api':api,'nodes':nodes,'entities':entities,'observed_objects':refs,'object_references':references,
+                'source_dependencies':dependencies,
                 'evidence':evidence,'semantics':'observed canonical paths, not a synthetic single execution',
                 'runtime_event_history_in_database':False}
     finally:db.close()

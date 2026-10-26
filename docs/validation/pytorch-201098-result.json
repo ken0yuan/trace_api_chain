@@ -1,0 +1,1944 @@
+{
+  "schema": "real-pytorch-diff-validation/1",
+  "base": "72e7a5c2d71f8f121f2de0e221caca789843a1d0",
+  "head": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+  "commit_url": "https://github.com/pytorch/pytorch/commit/1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+  "pr_url": "https://github.com/pytorch/pytorch/pull/201098",
+  "diff_sha256": "3bbc0dffeed0a21f4834a4f700f63daf277fd6d7e05253a66befb9ab672f357b",
+  "source_mode": "unmodified real PyTorch, CPU and CUDA tensors, no mocks",
+  "boundary": "Public API pre-validation; expected rank error before compile. Not an attention-kernel or PrivateUse1 test.",
+  "captures": [
+    {
+      "device": "cpu",
+      "run_id": "pytest:examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+      "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+      "source_commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "summary": {
+        "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+        "captured_calls": 15,
+        "canonical_entities": 26,
+        "api_definitions": 9,
+        "normalized_paths": 21,
+        "pending_objects": 32,
+        "source_dependencies": 45,
+        "source_read_policy": "namespace-load/1",
+        "gaps": [],
+        "raw_evidence": "/mnt/c/Users/ken0yuan/Documents/Codex/2026-10-25/new-chat/outputs/trace-api-chain/data/pytorch-201098/cpu",
+        "graph_digest": "cd26ac314ea593b04ee4bf3d86f11e7bf55eacc540535527bfdde74c6c725fb2",
+        "status": "refreshed",
+        "slot": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211"
+      },
+      "manifest": {
+        "sha256": {
+          "python.jsonl": "dd4a35facd024d6ba34fa79f59012141e85330f2be124b3fe2e59c645b956df7",
+          "native.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "raw_sha256": {
+          "events.jsonl": "dd4a35facd024d6ba34fa79f59012141e85330f2be124b3fe2e59c645b956df7",
+          "api-catalog.json": "8777135c572a7fe4ef753a0099bb3c0ac089008f592edaf3f13bccaf0d157539",
+          "pytest-receipt.json": "a8408bdabfbbe4761ffdfd90f67209a1efdd93d80e8a3e2e4df09a21a124f15b"
+        },
+        "capture_gaps": [],
+        "mode": "objects"
+      },
+      "selected_calls": [
+        {
+          "uid": 2,
+          "parent": null,
+          "name": "flex_attention",
+          "definition": "code:1",
+          "api_id": "runtime:torch.nn.attention.flex_attention.flex_attention",
+          "caller_file": "/mnt/c/Users/ken0yuan/Documents/Codex/2026-10-25/new-chat/outputs/trace-api-chain/examples/test_pytorch_diff.py",
+          "caller_line": 22
+        },
+        {
+          "uid": 11,
+          "parent": 2,
+          "name": "_validate_device",
+          "definition": "code:5",
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2491
+        },
+        {
+          "uid": 12,
+          "parent": 11,
+          "name": "_get_privateuse1_backend_name",
+          "definition": null,
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2261
+        },
+        {
+          "uid": 13,
+          "parent": 2,
+          "name": "_enforce_mem_layouts",
+          "definition": "code:6",
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2492
+        }
+      ],
+      "definitions": {
+        "code:1": {
+          "event": "definition",
+          "id": "code:1",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "flex_attention",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2409,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        },
+        "code:5": {
+          "event": "definition",
+          "id": "code:5",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "_validate_device",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2238,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        },
+        "code:6": {
+          "event": "definition",
+          "id": "code:6",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "_enforce_mem_layouts",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2280,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        }
+      },
+      "exclusions": [],
+      "capture_result": {
+        "status": "captured",
+        "stage": "capture_only",
+        "mode": "objects",
+        "gaps": [],
+        "pytest_exit_code": 0,
+        "elapsed_seconds": 3.8808404640003573,
+        "replay_performed": false,
+        "database_written": false,
+        "html_generated": false
+      }
+    },
+    {
+      "device": "cuda",
+      "run_id": "pytest:examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+      "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+      "source_commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "summary": {
+        "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+        "captured_calls": 15,
+        "canonical_entities": 26,
+        "api_definitions": 9,
+        "normalized_paths": 21,
+        "pending_objects": 32,
+        "source_dependencies": 45,
+        "source_read_policy": "namespace-load/1",
+        "gaps": [],
+        "raw_evidence": "/mnt/c/Users/ken0yuan/Documents/Codex/2026-10-25/new-chat/outputs/trace-api-chain/data/pytorch-201098/cuda",
+        "graph_digest": "eab4a30dc1fd0dd0095d04e7c5c97900097261a67ae65523a770a5ebb4b62983",
+        "status": "refreshed",
+        "slot": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d"
+      },
+      "manifest": {
+        "sha256": {
+          "python.jsonl": "87eb850c9e2a4585a7b9e02ad20100396d6a4cab1622f9141532dbec00121c03",
+          "native.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "raw_sha256": {
+          "events.jsonl": "87eb850c9e2a4585a7b9e02ad20100396d6a4cab1622f9141532dbec00121c03",
+          "api-catalog.json": "8777135c572a7fe4ef753a0099bb3c0ac089008f592edaf3f13bccaf0d157539",
+          "pytest-receipt.json": "6a8197ebeaa88b58c969bf44139807b22c7a3d389dabe0eb831b1e12e1eef49a"
+        },
+        "capture_gaps": [],
+        "mode": "objects"
+      },
+      "selected_calls": [
+        {
+          "uid": 2,
+          "parent": null,
+          "name": "flex_attention",
+          "definition": "code:1",
+          "api_id": "runtime:torch.nn.attention.flex_attention.flex_attention",
+          "caller_file": "/mnt/c/Users/ken0yuan/Documents/Codex/2026-10-25/new-chat/outputs/trace-api-chain/examples/test_pytorch_diff.py",
+          "caller_line": 22
+        },
+        {
+          "uid": 11,
+          "parent": 2,
+          "name": "_validate_device",
+          "definition": "code:5",
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2491
+        },
+        {
+          "uid": 12,
+          "parent": 11,
+          "name": "_get_privateuse1_backend_name",
+          "definition": null,
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2261
+        },
+        {
+          "uid": 13,
+          "parent": 2,
+          "name": "_enforce_mem_layouts",
+          "definition": "code:6",
+          "api_id": null,
+          "caller_file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "caller_line": 2492
+        }
+      ],
+      "definitions": {
+        "code:1": {
+          "event": "definition",
+          "id": "code:1",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "flex_attention",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2409,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        },
+        "code:5": {
+          "event": "definition",
+          "id": "code:5",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "_validate_device",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2238,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        },
+        "code:6": {
+          "event": "definition",
+          "id": "code:6",
+          "kind": "function",
+          "module": "torch.nn.attention.flex_attention",
+          "qualname": "_enforce_mem_layouts",
+          "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+          "first_line": 2280,
+          "source_stamp": [
+            105559,
+            1792753219508870509
+          ]
+        }
+      },
+      "exclusions": [],
+      "capture_result": {
+        "status": "captured",
+        "stage": "capture_only",
+        "mode": "objects",
+        "gaps": [],
+        "pytest_exit_code": 0,
+        "elapsed_seconds": 4.785517554999387,
+        "replay_performed": false,
+        "database_written": false,
+        "html_generated": false
+      }
+    }
+  ],
+  "changes": {
+    "schema": "changed-source-objects/1",
+    "identity": "canonical source path + kind + lexical qualified name",
+    "objects": [
+      {
+        "source_id": "dc292a727f608058057d25d2dd958b7f178762c3b9d0dc6b2a2252616de3adfc",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "module",
+        "qualname": "<module>",
+        "object_type": "module",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 1,
+            "end_line": 688,
+            "changed_lines": [
+              346,
+              347,
+              684,
+              685,
+              686
+            ]
+          },
+          "old": {
+            "source_sha256": "6496d5c90a1e2816c3200ddcd16a880ce0eaa85c9dff2effee95233e300a04bd",
+            "definition_line": 1,
+            "end_line": 638,
+            "changed_lines": []
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "c9b478b245914470c36d76069d4eeb0632703b7f2714ea0d6bfb190fb6187084",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "type",
+        "qualname": "TestFlexAttention",
+        "object_type": "class",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 303,
+            "end_line": 345,
+            "changed_lines": [
+              303,
+              334
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "7a32a1a88fd9cc772c4d8d70ca5a49191f8ae9e72fe886cffee6e52937e2354e",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "function",
+        "qualname": "TestFlexAttention.test_flex_attention_autocast",
+        "object_type": "method",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 335,
+            "end_line": 345,
+            "changed_lines": [
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "75e5360e932bdf839ea5a716269958c57437391663db8f56b9abf28599a8b370",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "function",
+        "qualname": "TestFlexAttention.test_flex_attention_forward_backward",
+        "object_type": "method",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 304,
+            "end_line": 333,
+            "changed_lines": [
+              304,
+              307,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "a7c138170825469ee1680f0699cb403dc093ffd1fdc4f237024ebe2a1cf59844",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "function",
+        "qualname": "TestFlexAttention.test_flex_attention_forward_backward.causal",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 305,
+            "end_line": 306,
+            "changed_lines": [
+              305,
+              306
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "ea6c6d7002aad4a056d9f3c6d5537ed3094d8739c5861f270c5aad79342cf6b8",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "function",
+        "qualname": "TestFlexAttention.test_flex_attention_forward_backward.rel_bias",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 308,
+            "end_line": 309,
+            "changed_lines": [
+              308,
+              309
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "c0911b24a60907a4dc7509675c916334066bc44368e2609f06c9c99f92caeede",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "binding",
+        "qualname": "create_block_mask",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 9,
+            "end_line": 9,
+            "changed_lines": [
+              9
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "45df0e2fcd7f1a4f3ae2c49422aada6bf93939f95ab503b71d25c92c4793804e",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "binding",
+        "qualname": "flex_attention",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 9,
+            "end_line": 9,
+            "changed_lines": [
+              9
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "d9ddc1d128a337b90d938d933694bcc981014b4a9736ce2b6126a132ceaf601c",
+        "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+        "kind": "binding",
+        "qualname": "instantiate_device_type_tests",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+            "definition_line": 10,
+            "end_line": 10,
+            "changed_lines": [
+              10
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "cac5cdb9e1c00fe1ae2d2921dc9d4be001c9ac4cd768f2e10e1cad4fa4a4dc4c",
+        "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+        "kind": "type",
+        "qualname": "TritonExtensionBackendTests",
+        "object_type": "class",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+            "definition_line": 89,
+            "end_line": 298,
+            "changed_lines": [
+              185
+            ]
+          },
+          "old": {
+            "source_sha256": "71b8306957643f17f1415e904afae9955bab6773112925bd858035e667bd9cd2",
+            "definition_line": 87,
+            "end_line": 266,
+            "changed_lines": []
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "a6b8c5b6563cc4a88521a839a7c8adb8401d16e7cdd26bc7af55931b1c81655c",
+        "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+        "kind": "function",
+        "qualname": "TritonExtensionBackendTests.test_flex_attention_open_device_registration",
+        "object_type": "method",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+            "definition_line": 156,
+            "end_line": 184,
+            "changed_lines": [
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "0fe3a9ddd34bdeb1e432a8928989aed9e5c1e553bd94493ac8eccae6547af2a8",
+        "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+        "kind": "binding",
+        "qualname": "create_block_mask",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+            "definition_line": 53,
+            "end_line": 53,
+            "changed_lines": [
+              53
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "acdcc219ed6a5b37b669927d92a717a3bb032e522d750774730e5fb973d6b906",
+        "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+        "kind": "binding",
+        "qualname": "flex_attention",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+            "definition_line": 53,
+            "end_line": 53,
+            "changed_lines": [
+              53
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "6b94d898bca1812b09aa3c8c970b1f855ef7b047c840aa1f15cabce9b5db3a69",
+        "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+        "kind": "binding",
+        "qualname": "has_triton_package",
+        "object_type": "global",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+            "definition_line": 61,
+            "end_line": 61,
+            "changed_lines": [
+              61
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "6e0a83e40996dcc781eeb19a4b9b25f2f9fbf0a5f65c9ab9a2031ec4f7c0f80a",
+        "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+        "kind": "module",
+        "qualname": "<module>",
+        "object_type": "module",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "old": {
+            "source_sha256": "8fe3f61ac7ec6e62c050de122d815aeef6c203393eebd1ab48992d74b07ff2c4",
+            "definition_line": 1,
+            "end_line": 1543,
+            "changed_lines": []
+          },
+          "new": {
+            "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+            "definition_line": 1,
+            "end_line": 1572,
+            "changed_lines": [
+              175,
+              176,
+              383,
+              384
+            ]
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "f4a87b4c5b06ea11d92788b195566691615475bacf0de362b29438f7629dc782",
+        "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+        "kind": "function",
+        "qualname": "_flex_attention_autocast_impl",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "old": {
+            "source_sha256": "8fe3f61ac7ec6e62c050de122d815aeef6c203393eebd1ab48992d74b07ff2c4",
+            "definition_line": 292,
+            "end_line": 328,
+            "changed_lines": [
+              314,
+              315,
+              316
+            ]
+          },
+          "new": {
+            "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+            "definition_line": 294,
+            "end_line": 332,
+            "changed_lines": [
+              316,
+              317,
+              318,
+              319,
+              320
+            ]
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "dd7bb5352e75a3b4554966aeffadfb88118198891da0cbdee5c4548ef0b3a123",
+        "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+        "kind": "function",
+        "qualname": "flex_attention_autocast_privateuse1",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+            "definition_line": 360,
+            "end_line": 382,
+            "changed_lines": [
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368,
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382
+            ]
+          }
+        },
+        "change": "added"
+      },
+      {
+        "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+        "path": "pytorch/torch/nn/attention/flex_attention.py",
+        "kind": "function",
+        "qualname": "_enforce_mem_layouts",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "old": {
+            "source_sha256": "feac5a78e5cbf64df4523eaa66f637d225a0af1d4e59f7cb4440ecc9560fb61e",
+            "definition_line": 2271,
+            "end_line": 2327,
+            "changed_lines": [
+              2307
+            ]
+          },
+          "new": {
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "definition_line": 2280,
+            "end_line": 2337,
+            "changed_lines": [
+              2316,
+              2317
+            ]
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "2b3c22541deed29d3e3516a8eb5f6053ff1fc44fedfd04882b104f8d73856fe4",
+        "path": "pytorch/torch/nn/attention/flex_attention.py",
+        "kind": "function",
+        "qualname": "_validate_device",
+        "object_type": "function",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "old": {
+            "source_sha256": "feac5a78e5cbf64df4523eaa66f637d225a0af1d4e59f7cb4440ecc9560fb61e",
+            "definition_line": 2238,
+            "end_line": 2259,
+            "changed_lines": [
+              2254,
+              2257
+            ]
+          },
+          "new": {
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "definition_line": 2238,
+            "end_line": 2268,
+            "changed_lines": [
+              2254,
+              2255,
+              2256,
+              2257,
+              2258,
+              2259,
+              2260,
+              2261,
+              2262,
+              2265,
+              2266
+            ]
+          }
+        },
+        "change": "modified"
+      },
+      {
+        "source_id": "3a3c2a0749c5dfaa2fb9e6c023767e96cb4146ff3aa87f82745f36a17c9da947",
+        "path": "pytorch/torchgen/model.py",
+        "kind": "binding",
+        "qualname": "DispatchKey.AutocastPrivateUse1",
+        "object_type": "class_attribute",
+        "language": "python",
+        "status": "resolved",
+        "sides": {
+          "new": {
+            "source_sha256": "8ef75fddeba810dc73e5a6ddd7d4b99ba4cb26e0a98b67146e29afbe97d097f7",
+            "definition_line": 137,
+            "end_line": 137,
+            "changed_lines": [
+              137
+            ]
+          }
+        },
+        "change": "added"
+      }
+    ],
+    "unresolved": []
+  },
+  "callchains": {
+    "schema": "source-object-callchains/1",
+    "results": [
+      {
+        "object": {
+          "source_id": "dc292a727f608058057d25d2dd958b7f178762c3b9d0dc6b2a2252616de3adfc",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "module",
+          "qualname": "<module>",
+          "object_type": "module",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 1,
+              "end_line": 688,
+              "changed_lines": [
+                346,
+                347,
+                684,
+                685,
+                686
+              ]
+            },
+            "old": {
+              "source_sha256": "6496d5c90a1e2816c3200ddcd16a880ce0eaa85c9dff2effee95233e300a04bd",
+              "definition_line": 1,
+              "end_line": 638,
+              "changed_lines": []
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "c9b478b245914470c36d76069d4eeb0632703b7f2714ea0d6bfb190fb6187084",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "type",
+          "qualname": "TestFlexAttention",
+          "object_type": "class",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 303,
+              "end_line": 345,
+              "changed_lines": [
+                303,
+                334
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "7a32a1a88fd9cc772c4d8d70ca5a49191f8ae9e72fe886cffee6e52937e2354e",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "function",
+          "qualname": "TestFlexAttention.test_flex_attention_autocast",
+          "object_type": "method",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 335,
+              "end_line": 345,
+              "changed_lines": [
+                335,
+                336,
+                337,
+                338,
+                339,
+                340,
+                341,
+                342,
+                343,
+                344,
+                345
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "75e5360e932bdf839ea5a716269958c57437391663db8f56b9abf28599a8b370",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "function",
+          "qualname": "TestFlexAttention.test_flex_attention_forward_backward",
+          "object_type": "method",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 304,
+              "end_line": 333,
+              "changed_lines": [
+                304,
+                307,
+                310,
+                311,
+                312,
+                313,
+                314,
+                315,
+                316,
+                317,
+                318,
+                319,
+                320,
+                321,
+                322,
+                323,
+                324,
+                325,
+                326,
+                327,
+                328,
+                329,
+                330,
+                331,
+                332,
+                333
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "a7c138170825469ee1680f0699cb403dc093ffd1fdc4f237024ebe2a1cf59844",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "function",
+          "qualname": "TestFlexAttention.test_flex_attention_forward_backward.causal",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 305,
+              "end_line": 306,
+              "changed_lines": [
+                305,
+                306
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "ea6c6d7002aad4a056d9f3c6d5537ed3094d8739c5861f270c5aad79342cf6b8",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "function",
+          "qualname": "TestFlexAttention.test_flex_attention_forward_backward.rel_bias",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 308,
+              "end_line": 309,
+              "changed_lines": [
+                308,
+                309
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "c0911b24a60907a4dc7509675c916334066bc44368e2609f06c9c99f92caeede",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "binding",
+          "qualname": "create_block_mask",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 9,
+              "end_line": 9,
+              "changed_lines": [
+                9
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "45df0e2fcd7f1a4f3ae2c49422aada6bf93939f95ab503b71d25c92c4793804e",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "binding",
+          "qualname": "flex_attention",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 9,
+              "end_line": 9,
+              "changed_lines": [
+                9
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "d9ddc1d128a337b90d938d933694bcc981014b4a9736ce2b6126a132ceaf601c",
+          "path": "pytorch/test/cpp_extensions/open_registration_extension/torch_openreg/tests/test_ops.py",
+          "kind": "binding",
+          "qualname": "instantiate_device_type_tests",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8b42ebb9c1c6cc8f191d991fb638b7ecb8033513232c7b2047d03abb1507ebd2",
+              "definition_line": 10,
+              "end_line": 10,
+              "changed_lines": [
+                10
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "cac5cdb9e1c00fe1ae2d2921dc9d4be001c9ac4cd768f2e10e1cad4fa4a4dc4c",
+          "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+          "kind": "type",
+          "qualname": "TritonExtensionBackendTests",
+          "object_type": "class",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+              "definition_line": 89,
+              "end_line": 298,
+              "changed_lines": [
+                185
+              ]
+            },
+            "old": {
+              "source_sha256": "71b8306957643f17f1415e904afae9955bab6773112925bd858035e667bd9cd2",
+              "definition_line": 87,
+              "end_line": 266,
+              "changed_lines": []
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "a6b8c5b6563cc4a88521a839a7c8adb8401d16e7cdd26bc7af55931b1c81655c",
+          "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+          "kind": "function",
+          "qualname": "TritonExtensionBackendTests.test_flex_attention_open_device_registration",
+          "object_type": "method",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+              "definition_line": 156,
+              "end_line": 184,
+              "changed_lines": [
+                156,
+                157,
+                158,
+                159,
+                160,
+                161,
+                162,
+                163,
+                164,
+                165,
+                166,
+                167,
+                168,
+                169,
+                170,
+                171,
+                172,
+                173,
+                174,
+                175,
+                176,
+                177,
+                178,
+                179,
+                180,
+                181,
+                182,
+                183,
+                184
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "0fe3a9ddd34bdeb1e432a8928989aed9e5c1e553bd94493ac8eccae6547af2a8",
+          "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+          "kind": "binding",
+          "qualname": "create_block_mask",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+              "definition_line": 53,
+              "end_line": 53,
+              "changed_lines": [
+                53
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "acdcc219ed6a5b37b669927d92a717a3bb032e522d750774730e5fb973d6b906",
+          "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+          "kind": "binding",
+          "qualname": "flex_attention",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+              "definition_line": 53,
+              "end_line": 53,
+              "changed_lines": [
+                53
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "6b94d898bca1812b09aa3c8c970b1f855ef7b047c840aa1f15cabce9b5db3a69",
+          "path": "pytorch/test/inductor/test_triton_extension_backend.py",
+          "kind": "binding",
+          "qualname": "has_triton_package",
+          "object_type": "global",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "0a054e45ab6cc2488c909894100d6b15092bdfe7823d96f618609223862085ee",
+              "definition_line": 61,
+              "end_line": 61,
+              "changed_lines": [
+                61
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "6e0a83e40996dcc781eeb19a4b9b25f2f9fbf0a5f65c9ab9a2031ec4f7c0f80a",
+          "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+          "kind": "module",
+          "qualname": "<module>",
+          "object_type": "module",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "old": {
+              "source_sha256": "8fe3f61ac7ec6e62c050de122d815aeef6c203393eebd1ab48992d74b07ff2c4",
+              "definition_line": 1,
+              "end_line": 1543,
+              "changed_lines": []
+            },
+            "new": {
+              "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+              "definition_line": 1,
+              "end_line": 1572,
+              "changed_lines": [
+                175,
+                176,
+                383,
+                384
+              ]
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "f4a87b4c5b06ea11d92788b195566691615475bacf0de362b29438f7629dc782",
+          "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+          "kind": "function",
+          "qualname": "_flex_attention_autocast_impl",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "old": {
+              "source_sha256": "8fe3f61ac7ec6e62c050de122d815aeef6c203393eebd1ab48992d74b07ff2c4",
+              "definition_line": 292,
+              "end_line": 328,
+              "changed_lines": [
+                314,
+                315,
+                316
+              ]
+            },
+            "new": {
+              "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+              "definition_line": 294,
+              "end_line": 332,
+              "changed_lines": [
+                316,
+                317,
+                318,
+                319,
+                320
+              ]
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "dd7bb5352e75a3b4554966aeffadfb88118198891da0cbdee5c4548ef0b3a123",
+          "path": "pytorch/torch/_higher_order_ops/flex_attention.py",
+          "kind": "function",
+          "qualname": "flex_attention_autocast_privateuse1",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "298afa1ad29c11ebc523ffe5fa19b7ee66449a460b3d5add1d73803e441c7829",
+              "definition_line": 360,
+              "end_line": 382,
+              "changed_lines": [
+                360,
+                361,
+                362,
+                363,
+                364,
+                365,
+                366,
+                367,
+                368,
+                369,
+                370,
+                371,
+                372,
+                373,
+                374,
+                375,
+                376,
+                377,
+                378,
+                379,
+                380,
+                381,
+                382
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      },
+      {
+        "object": {
+          "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+          "path": "pytorch/torch/nn/attention/flex_attention.py",
+          "kind": "function",
+          "qualname": "_enforce_mem_layouts",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "old": {
+              "source_sha256": "feac5a78e5cbf64df4523eaa66f637d225a0af1d4e59f7cb4440ecc9560fb61e",
+              "definition_line": 2271,
+              "end_line": 2327,
+              "changed_lines": [
+                2307
+              ]
+            },
+            "new": {
+              "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+              "definition_line": 2280,
+              "end_line": 2337,
+              "changed_lines": [
+                2316,
+                2317
+              ]
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "observed_binding_read",
+            "evidence": [
+              {
+                "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+                "line": 2492,
+                "name": "_enforce_mem_layouts",
+                "offset": 142,
+                "scope": "global"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "observed_binding_read",
+            "evidence": [
+              {
+                "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+                "line": 2492,
+                "name": "_enforce_mem_layouts",
+                "offset": 142,
+                "scope": "global"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "observed_object",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "observed_object",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "called_definition",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_enforce_mem_layouts",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "called_definition",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_enforce_mem_layouts",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "defined_in",
+            "evidence": [
+              {
+                "member": "2431df9b5f117c8bfa4fecb3303102d4ef4d49f50d799069938ac347bb1aa187"
+              },
+              {
+                "member": "89ed8758e1f201dc69cf404ff242ee6311d7a42640fce4fb3fcf9a420053ad4d"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_enforce_mem_layouts",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "defined_in",
+            "evidence": [
+              {
+                "member": "2431df9b5f117c8bfa4fecb3303102d4ef4d49f50d799069938ac347bb1aa187"
+              },
+              {
+                "member": "89ed8758e1f201dc69cf404ff242ee6311d7a42640fce4fb3fcf9a420053ad4d"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "3d5dd724e3e6520673f0bc2ec7d12ba9dd7d0329bbcf6ad145229b7d9d37d3c4",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "b819989270836625f2614689e609445a98bd53276384158b02405c1ddb6ee2ff",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_enforce_mem_layouts",
+                "kind": "function"
+              }
+            ]
+          }
+        ],
+        "status": "matched"
+      },
+      {
+        "object": {
+          "source_id": "2b3c22541deed29d3e3516a8eb5f6053ff1fc44fedfd04882b104f8d73856fe4",
+          "path": "pytorch/torch/nn/attention/flex_attention.py",
+          "kind": "function",
+          "qualname": "_validate_device",
+          "object_type": "function",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "old": {
+              "source_sha256": "feac5a78e5cbf64df4523eaa66f637d225a0af1d4e59f7cb4440ecc9560fb61e",
+              "definition_line": 2238,
+              "end_line": 2259,
+              "changed_lines": [
+                2254,
+                2257
+              ]
+            },
+            "new": {
+              "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+              "definition_line": 2238,
+              "end_line": 2268,
+              "changed_lines": [
+                2254,
+                2255,
+                2256,
+                2257,
+                2258,
+                2259,
+                2260,
+                2261,
+                2262,
+                2265,
+                2266
+              ]
+            }
+          },
+          "change": "modified"
+        },
+        "matches": [
+          {
+            "path_id": "087032e85dd3e16fdbf654c052ad34ab6ad83ec5fe656735d6bf30b7631dcfae",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "called_definition",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "087032e85dd3e16fdbf654c052ad34ab6ad83ec5fe656735d6bf30b7631dcfae",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "2b3c22541deed29d3e3516a8eb5f6053ff1fc44fedfd04882b104f8d73856fe4",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_validate_device",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "087032e85dd3e16fdbf654c052ad34ab6ad83ec5fe656735d6bf30b7631dcfae",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "called_definition",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              },
+              {
+                "id": "087032e85dd3e16fdbf654c052ad34ab6ad83ec5fe656735d6bf30b7631dcfae",
+                "parent_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "source_id": "2b3c22541deed29d3e3516a8eb5f6053ff1fc44fedfd04882b104f8d73856fe4",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "_validate_device",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "observed_binding_read",
+            "evidence": [
+              {
+                "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+                "line": 2491,
+                "name": "_validate_device",
+                "offset": 108,
+                "scope": "global"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "observed_binding_read",
+            "evidence": [
+              {
+                "file": "/home/ken0yuan/src/pytorch-instrumented/torch/nn/attention/flex_attention.py",
+                "line": 2491,
+                "name": "_validate_device",
+                "offset": 108,
+                "scope": "global"
+              }
+            ],
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+            "relation": "observed_object",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cpu]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          },
+          {
+            "path_id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+            "slot_id": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+            "relation": "observed_object",
+            "evidence": {},
+            "api_id": "e52d47be093e290801ee8f094ea3d7b59bd0816f8377047fa1aa677f9853c1b5",
+            "test": "examples/test_pytorch_diff.py::test_flex_attention_validation[cuda]",
+            "source_sha256": "eeb1d7994cc9b8b122a9fd0c1d8de09f7143169b19187eaa6d3bd7582d94184b",
+            "matching_diff_sides": [
+              "new"
+            ],
+            "version_status": "matched",
+            "api_aliases": [
+              "torch.nn.attention.flex_attention.flex_attention"
+            ],
+            "call_path": [
+              {
+                "id": "2f13e1975c85497a60dc0033a5a3dcea6600f1ebb7a621688d728d2ce2fcf676",
+                "parent_id": null,
+                "source_id": "fcc739ac33bed7c30a32eff27be5f1553814bfdbca98cbf90b285c4fb1c7f869",
+                "path": "pytorch/torch/nn/attention/flex_attention.py",
+                "name": "flex_attention",
+                "kind": "function"
+              }
+            ]
+          }
+        ],
+        "status": "matched"
+      },
+      {
+        "object": {
+          "source_id": "3a3c2a0749c5dfaa2fb9e6c023767e96cb4146ff3aa87f82745f36a17c9da947",
+          "path": "pytorch/torchgen/model.py",
+          "kind": "binding",
+          "qualname": "DispatchKey.AutocastPrivateUse1",
+          "object_type": "class_attribute",
+          "language": "python",
+          "status": "resolved",
+          "sides": {
+            "new": {
+              "source_sha256": "8ef75fddeba810dc73e5a6ddd7d4b99ba4cb26e0a98b67146e29afbe97d097f7",
+              "definition_line": 137,
+              "end_line": 137,
+              "changed_lines": [
+                137
+              ]
+            }
+          },
+          "change": "added"
+        },
+        "matches": [],
+        "status": "not_observed_in_current_database"
+      }
+    ],
+    "dependency_table_present": true,
+    "active_capture_coverage": [
+      {
+        "slot": "8e4c4c498e4c8b7825e14e8584b065919d8b4ec61317db62d88e2bd152bbd66a",
+        "source_read_policy": null
+      },
+      {
+        "slot": "d45faa95cb0acd0e5cd798113f4950d6c8a3e515962bdb316b2f1c4a21148211",
+        "source_read_policy": "namespace-load/1"
+      },
+      {
+        "slot": "da37fd09369ee01e7bf1be697d5ded7dad99898ba1239435656516582a6bbd33",
+        "source_read_policy": null
+      },
+      {
+        "slot": "fa06d3d0dda0eb5716fc180f9c9d757bd40cd44de9e55a6bb69df8d66d88383d",
+        "source_read_policy": "namespace-load/1"
+      }
+    ],
+    "semantics": "Observed paths and labelled source dependencies; not proof that behavior changes."
+  }
+}

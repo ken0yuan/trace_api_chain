@@ -2,37 +2,37 @@
   {
     "path": "object_capture.py",
     "symbol": "Recorder.snapshot",
-    "start": 193,
-    "end": 242,
-    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+    "start": 218,
+    "end": 267,
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
   },
   {
     "path": "object_capture.py",
     "symbol": "instance_fields",
     "start": 58,
     "end": 88,
-    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
   },
   {
     "path": "object_capture.py",
     "symbol": "Recorder.metadata",
-    "start": 134,
-    "end": 191,
-    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+    "start": 159,
+    "end": 216,
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
   },
   {
     "path": "object_capture.py",
     "symbol": "Recorder.trace",
-    "start": 312,
-    "end": 338,
-    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+    "start": 339,
+    "end": 382,
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
   },
   {
     "path": "object_capture.py",
     "symbol": "Recorder.profile",
-    "start": 244,
-    "end": 310,
-    "sha256": "2726d75a7e08a9d2736c352f2c0e2183081167b60c182f9f48d3c3406f362e01"
+    "start": 269,
+    "end": 337,
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
   },
   {
     "path": "catalog.py",
@@ -51,23 +51,65 @@
   {
     "path": "source_entities.py",
     "symbol": "SourceEntities.python",
-    "start": 44,
-    "end": 51,
-    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+    "start": 24,
+    "end": 31,
+    "sha256": "f954f4a91dd45b7caa17d1c057f3940bd3c48e57e94d70f2c167c64fd09797f5"
   },
   {
     "path": "source_entities.py",
     "symbol": "SourceEntities.instance",
-    "start": 53,
-    "end": 64,
-    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+    "start": 33,
+    "end": 44,
+    "sha256": "f954f4a91dd45b7caa17d1c057f3940bd3c48e57e94d70f2c167c64fd09797f5"
   },
   {
     "path": "source_entities.py",
     "symbol": "SourceEntities.cpp",
-    "start": 81,
-    "end": 99,
-    "sha256": "557156edbad89104d7a6ba30f76cd000ce5ca9c53c9e3a25e77b62ba510fa0c1"
+    "start": 106,
+    "end": 124,
+    "sha256": "f954f4a91dd45b7caa17d1c057f3940bd3c48e57e94d70f2c167c64fd09797f5"
+  },
+  {
+    "path": "object_capture.py",
+    "symbol": "Recorder.source_read",
+    "start": 131,
+    "end": 139,
+    "sha256": "7855609e7d0ad46b598028ebb6d609ec661f9d3ed6b4c1c64c30d690284d4134"
+  },
+  {
+    "path": "source_entities.py",
+    "symbol": "SourceEntities.named",
+    "start": 54,
+    "end": 64,
+    "sha256": "f954f4a91dd45b7caa17d1c057f3940bd3c48e57e94d70f2c167c64fd09797f5"
+  },
+  {
+    "path": "source_entities.py",
+    "symbol": "SourceEntities.import_origins",
+    "start": 75,
+    "end": 97,
+    "sha256": "f954f4a91dd45b7caa17d1c057f3940bd3c48e57e94d70f2c167c64fd09797f5"
+  },
+  {
+    "path": "changed_objects.py",
+    "symbol": "source_identity",
+    "start": 22,
+    "end": 28,
+    "sha256": "efbc88e1d897d45858e4798f2a1a72d76c177eb0ee61c62e0a544e13a5cf0b37"
+  },
+  {
+    "path": "changed_objects.py",
+    "symbol": "index_python",
+    "start": 48,
+    "end": 131,
+    "sha256": "efbc88e1d897d45858e4798f2a1a72d76c177eb0ee61c62e0a544e13a5cf0b37"
+  },
+  {
+    "path": "changed_objects.py",
+    "symbol": "identify_changes",
+    "start": 235,
+    "end": 301,
+    "sha256": "efbc88e1d897d45858e4798f2a1a72d76c177eb0ee61c62e0a544e13a5cf0b37"
   },
   {
     "path": "hooks.c",

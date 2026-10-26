@@ -99,6 +99,9 @@ class Recorder:
         self.thread=threading.get_ident(); self.stack=[]; self.next_uid=0
         self.code_ids={}; self.object_metadata={}; self.views={}; self.busy=False
         self.class_sources={};self.object_semantics={};self.global_loads={}
+        self.module_sources={};self.read_sites={};self.module_operands={}
+        for name,module in list(sys.modules.items()):
+            if type(module) is types.ModuleType:self.module_source(vars(module))
         self.started=False; self.closed=False; self.gaps=set(); self.calls=0; self.roots=0
         self.body_code=None;self.body_depth=0;self.body_entries=0
         self.native=native; self.registry=registry; self.suppressed=0
@@ -112,6 +115,28 @@ class Recorder:
 
     def emit(self, event_kind, **data):
         self.file.write(json.dumps({'event':event_kind,**data},ensure_ascii=False,separators=(',',':'))+'\n')
+
+    def module_source(self,namespace):
+        name=namespace.get('__name__');filename=namespace.get('__file__')
+        if type(name) is not str or type(filename) is not str:return {}
+        if name not in self.module_sources or self.module_sources[name]['file']!=filename:
+            try:
+                stat=os.stat(filename);stamp=[stat.st_size,stat.st_mtime_ns]
+            except OSError:stamp=None
+            package=namespace.get('__package__')
+            self.module_sources[name]={'module':name,'file':filename,'source_stamp':stamp,
+                                       'package':package if type(package) is str else None}
+        return self.module_sources[name]
+
+    def source_read(self,frame,namespace,name,scope):
+        record=self.module_source(namespace)
+        if not record:return
+        uid=self.stack[-1]['uid'];site=(record['file'],name,scope,frame.f_lasti)
+        seen=self.read_sites.setdefault(uid,set())
+        if site in seen:return
+        seen.add(site)
+        self.emit('source_read',uid=uid,namespace=record,name=name,scope=scope,
+                  file=frame.f_code.co_filename,line=frame.f_lineno,offset=frame.f_lasti)
 
     def framework(self, module):
         return (type(module) is str and not module.startswith('torch.testing._internal') and
@@ -303,6 +328,8 @@ class Recorder:
                 elif self.native:self.native.end(top['uid'])
                 self.emit('return',uid=top['uid'],kind=event,time_ns=time.monotonic_ns())
                 self.stack.pop()
+                self.read_sites.pop(top['uid'],None)
+                self.module_operands.pop(top['uid'],None)
                 for key in [k for k in self.views if k[0]==top['uid']]:self.views.pop(key)
                 if not self.stack:self.file.flush()  # Preserve each completed API window, not each object event.
         except Exception as exc:
@@ -316,20 +343,37 @@ class Recorder:
         if event=='call' and (self.stack or self.framework(frame.f_globals.get('__name__'))):
             key=id(frame.f_code)
             if key not in self.global_loads:
-                self.global_loads[key]={i.offset:(i.opname,i.argval) for i in dis.get_instructions(frame.f_code) if i.opname in ('LOAD_GLOBAL','LOAD_NAME')}
+                instructions=list(dis.get_instructions(frame.f_code))
+                self.global_loads[key]={i.offset:(i.opname,i.argval,instructions[n+1].offset if n+1<len(instructions) else None)
+                    for n,i in enumerate(instructions) if i.opname in ('LOAD_GLOBAL','LOAD_NAME','LOAD_ATTR')}
             frame.f_trace_opcodes=bool(self.global_loads[key])
         if event=='opcode' and self.stack and not self.busy and self.stack[-1]['kind']=='python' and self.stack[-1]['frame']==id(frame):
             instruction=self.global_loads.get(id(frame.f_code),{}).get(frame.f_lasti)
+            uid=self.stack[-1]['uid'];operand=self.module_operands.pop(uid,None)
             if instruction:
-                opname,name=instruction
-                scopes=([frame.f_locals] if opname=='LOAD_NAME' else [])+[frame.f_globals,frame.f_builtins]
-                for scope in scopes:
-                    if name in scope:
-                        self.busy=True
-                        try:self.snapshot(frame,'global_read',{'global:'+name:scope[name]})
-                        except Exception as exc:self.gaps.add('global_observation_error:'+type(exc).__name__)
-                        finally:self.busy=False
-                        break
+                opname,name,next_offset=instruction
+                self.busy=True
+                try:
+                    if opname=='LOAD_ATTR':
+                        # Only a straight LOAD_GLOBAL/LOAD_NAME -> LOAD_ATTR chain
+                        # over exact modules. Never evaluate arbitrary getattr.
+                        if operand and operand[0]==frame.f_lasti:
+                            namespace=vars(operand[1])
+                            if name in namespace:
+                                self.source_read(frame,namespace,name,'module_attribute')
+                                value=namespace[name]
+                                if type(value) is types.ModuleType:self.module_operands[uid]=(next_offset,value)
+                    else:
+                        scopes=([frame.f_locals] if opname=='LOAD_NAME' else [])+[frame.f_globals,frame.f_builtins]
+                        for scope in scopes:
+                            if name in scope:
+                                value=scope[name]
+                                if scope is frame.f_globals:self.source_read(frame,scope,name,'global')
+                                self.snapshot(frame,'global_read',{'global:'+name:value})
+                                if type(value) is types.ModuleType:self.module_operands[uid]=(next_offset,value)
+                                break
+                except Exception as exc:self.gaps.add('global_observation_error:'+type(exc).__name__)
+                finally:self.busy=False
         if event=='line' and self.stack and not self.busy and self.stack[-1]['kind']=='python' and self.stack[-1]['frame']==id(frame):
             self.busy=True
             try:self.snapshot(frame,'locals')
@@ -351,7 +395,8 @@ class Recorder:
         if self.body_code is not None and not self.body_entries:self.gaps.add('test_body_not_entered')
         self.closed=True
         self.emit('end',calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
-                  gaps=sorted(self.gaps),all_objects_complete=False)
+                  gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
+                  source_read_policy='namespace-load/1')
         self.file.close()
 
 

@@ -1,43 +1,23 @@
 """Canonical source definitions. Runtime names are aliases, never identity keys."""
-import ast
 import hashlib
-import json
 from pathlib import Path
-
-def key(value):return hashlib.sha256(json.dumps(value,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+from .changed_objects import key, source_identity, canonical_path, decode_python, index_python
 
 class SourceEntities:
     def __init__(self,roots=None):
         self.roots={k:Path(v).resolve() for k,v in (roots or {}).items()};self.files={};self.entities={};self.cpp_files={}
 
     def path(self,filename):
-        p=Path(filename).resolve();candidates=[]
-        for label,root in self.roots.items():
-            if p.is_relative_to(root):
-                relative=p.relative_to(root).as_posix()
-                prefix='torch_npu/' if label=='torch_npu' else 'torch/' if label=='pytorch' else label+'/'
-                candidates.append((len(str(root)),int(relative.startswith(prefix)),label+'/'+relative))
-        return max(candidates)[2] if candidates else p.as_posix()
+        return canonical_path(filename,self.roots)
 
     def load(self,filename):
         filename=str(Path(filename).resolve())
         if filename not in self.files:
             try:
-                p=Path(filename);data=p.read_bytes();s=p.stat();text=data.decode('utf-8')
-                tree=ast.parse(text);definitions=[];ordinals={}
-                def walk(node,parents):
-                    for child in ast.iter_child_nodes(node):
-                        if isinstance(child,(ast.ClassDef,ast.FunctionDef,ast.AsyncFunctionDef)):
-                            name='.'.join(parents+[child.name]);kind='type' if isinstance(child,ast.ClassDef) else 'function'
-                            first=min([child.lineno]+[d.lineno for d in child.decorator_list])
-                            ordinal=ordinals.get((kind,name),0);ordinals[kind,name]=ordinal+1
-                            definitions.append({'name':name,'kind':kind,'line':first,'end_line':child.end_lineno,
-                                                'ordinal':ordinal,'parent':'.'.join(parents)})
-                            walk(child,parents+[child.name])
-                        else:walk(child,parents)
-                walk(tree,[])
+                p=Path(filename);data=p.read_bytes();s=p.stat();text=decode_python(data)
+                definitions=index_python(text)
                 self.files[filename]={'path':self.path(filename),'sha256':hashlib.sha256(data).hexdigest(),
-                                      'content':text,'stamp':[s.st_size,s.st_mtime_ns],'definitions':definitions}
+                                      'filename':filename,'content':text,'stamp':[s.st_size,s.st_mtime_ns],'definitions':definitions}
             except (OSError,UnicodeError,SyntaxError):self.files[filename]=None
         return self.files[filename]
 
@@ -46,8 +26,8 @@ class SourceEntities:
         source=self.load(record['file'])
         if source is None:return None,'source_unavailable'
         if record.get('source_stamp') and record['source_stamp']!=source['stamp']:return None,'source_changed_since_capture'
-        matches=[d for d in source['definitions'] if d['kind']=='function' and d['line']==record.get('first_line')]
-        if len(matches)!=1:return None,'ambiguous_code_definition'
+        matches=[d for d in source['definitions'] if d['kind']=='function' and d['line']==record.get('first_line') and not d.get('declaration_only')]
+        if len(matches)!=1 or matches[0].get('ambiguous'):return None,'ambiguous_code_definition'
         return self.entity(source,matches[0],'python','runtime_code_first_line'),None
 
     def instance(self,record):
@@ -57,19 +37,64 @@ class SourceEntities:
             if source is None or (hint.get('source_stamp') and hint['source_stamp']!=source['stamp']):continue
             methods=[d for d in source['definitions'] if d['kind']=='function' and d['line']==hint['first_line']]
             for method in methods:
-                candidates.extend((source,d) for d in source['definitions'] if d['kind']=='type' and d['name']==method['parent'])
+                candidates.extend((source,d) for d in source['definitions'] if d['kind']=='type' and d['name']==method['parent'] and not d.get('ambiguous'))
         unique={(s['path'],d['name'],d['ordinal']):(s,d) for s,d in candidates}
         if len(unique)==1:
             s,d=next(iter(unique.values()));return self.entity(s,d,'python','class_own_method_locations'),None
         return None,'ambiguous_class_owner' if unique else 'class_definition_not_proven'
 
     def entity(self,source,definition,language,evidence):
-        eid=key([source['path'],definition['kind'],definition['name'],definition.get('ordinal',0)])
+        eid=source_identity(source['path'],definition['kind'],definition['name'])
         self.entities[eid]={'id':eid,'path':source['path'],'kind':definition['kind'],'name':definition['name'],
                             'ordinal':definition.get('ordinal',0),'line':definition['line'],'end_line':definition['end_line'],
                             'source_sha256':source['sha256'],'language':language,'status':'mapped','evidence':evidence,
                             'source_text':'\n'.join(source['content'].splitlines()[definition['line']-1:definition['end_line']])}
         return eid
+
+    def named(self,record,name=None):
+        if not record.get('file'):return None,'namespace_source_unavailable'
+        source=self.load(record['file'])
+        if source is None:return None,'source_unavailable'
+        if not record.get('source_stamp') or record['source_stamp']!=source['stamp']:
+            return None,'namespace_source_unverified_or_changed'
+        matches=[d for d in source['definitions'] if d['name']==(name or '<module>') and not d.get('declaration_only')]
+        kinds={d['kind'] for d in matches}
+        if not matches:return None,'binding_not_declared_in_source'
+        if len(kinds)!=1 or any(d.get('ambiguous') for d in matches):return None,'ambiguous_source_binding'
+        return self.entity(source,matches[0],'python','observed_namespace_binding' if name else 'module_source_file'),None
+
+    def containers(self,eid):
+        entity=self.entities[eid]
+        if entity['language']!='python' or not entity['path']:return []
+        source=next((s for s in self.files.values() if s and s['path']==entity['path']),None)
+        if source is None:return []
+        return [self.entity(source,d,'python','lexical_source_container') for d in source['definitions']
+                if (d['kind']=='module' and entity['kind']!='module') or
+                (d['kind'] in ('type','function') and entity['name'].startswith(d['name']+'.') and not d.get('ambiguous') and not d.get('declaration_only'))]
+
+    def import_origins(self,record,name,modules,seen=None):
+        """Static provenance candidates only; never claim imports prove runtime aliasing."""
+        seen=set() if seen is None else seen
+        marker=(record.get('file'),name)
+        if marker in seen:return []
+        seen.add(marker)
+        source=self.load(record['file']) if record.get('file') else None
+        if not source or source['stamp']!=record.get('source_stamp'):return []
+        matches=[d for d in source['definitions'] if d['name']==name]
+        if len(matches)!=1 or not matches[0].get('import'):return []
+        spec=matches[0]['import'];module=spec['module']
+        if spec['level']:
+            package=record.get('package') or ''
+            parts=package.split('.') if package else []
+            if spec['level']>len(parts):return []
+            module='.'.join(parts[:len(parts)-spec['level']+1]+([module] if module else []))
+        origin=modules.get(module)
+        if not origin:return []
+        eid,reason=self.named(origin,spec['name'])
+        if not eid:return []
+        result=[eid]
+        if spec['name']:result+=self.import_origins(origin,spec['name'],modules,seen)
+        return result
 
     def unresolved(self,identity,label,language,reason,annotation=None):
         eid=key(['unresolved',identity])

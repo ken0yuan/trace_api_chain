@@ -1,0 +1,29 @@
+--- a/examples/source_identity_config.py
++++ b/examples/source_identity_config.py
+@@ -1,2 +1,2 @@
+-GPU_TYPES = {"cuda"}
+-UNUSED_TYPES = {"unused"}
++GPU_TYPES = {"cuda", "npu"}
++UNUSED_TYPES = {"unused", "new"}
+--- a/examples/source_identity_backend.py
++++ b/examples/source_identity_backend.py
+@@ -2,15 +2,17 @@
+ import source_identity_config as config
+ 
+ 
+-class Backend:
++class Backend(object):
+     def run(self, device):
+         if device == "unused":
+             return device in config.UNUSED_TYPES
+         return self.__consume(device)
+ 
+     def __consume(self, device):
+-        return device in SUPPORTED_DEVICES and device in config.GPU_TYPES
++        return not device in SUPPORTED_DEVICES and device in config.GPU_TYPES
+ 
+ 
+ def api(device):
+     return Backend().run(device)
++
++# module configuration changed

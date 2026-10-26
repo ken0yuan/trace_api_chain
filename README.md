@@ -54,6 +54,18 @@ trace-api-chain html --db /tmp/pytorch-torchnpu.sqlite --api torch.Tensor.fill_ 
 
 打开 `/tmp/fill-page/C03.html`，移动页面时保留 `C03.data/`。HTML 只读 SQL；原采集目录、源码和构建环境离线或移走后，仍可生成已入库 API 的页面。页面是已观测源码路径的汇总，不冒充某一次按时间排序的调用记录。
 
+## 从 diff 反查源码对象与调用链
+
+```bash
+python src/changed_objects.py change.diff --repo /home/user/src/pytorch --base HEAD --label pytorch --db /tmp/pytorch-torchnpu.sqlite --out /tmp/changed-objects.json
+```
+
+`changed_objects.py` 可单文件运行，只依赖 Python 标准库；安装后也可调用 `trace-changed-objects`。`--base` 必须对应 diff 的旧侧版本；没有 Git 时用 `--before-root` 指定旧源码快照。只识别对象时省略 `--db`。同一个 diff 可以返回多个对象，规则覆盖模块、函数、类、方法以及模块/类绑定，不依赖 GPU_TYPES 等具体名称。
+
+真实验证见 [PyTorch PR #201098：源码对象与 API 路径](docs/validation/pytorch-201098.md)：原始提交 diff 识别出 20 个对象，CPU/CUDA 实测将其中两个改动函数对应到 flex_attention API；其余 18 个保持未观测状态。包含原始 diff、完整 JSON 结果与复现命令，65 项回归通过。
+
+diff 与重放共用 `源码根标签/相对文件 + kind + 源码词法限定名`，运行时别名、地址和行号不进入身份。`--label` 必须与 replay 的 `--source-root` 标签及根目录层级一致。读取全局绑定和直接模块属性时，新采集器写出 source_read；重放将读取证据与静态导入来源分别存入 source_dependencies。旧记录没有读取事件的部分需要重新采集。详见 [diff 对象与调用链](docs/diff对象与调用链.md)。
+
 ## 合并规则与边界
 
 Python 函数优先使用运行时 code object 的文件/首行与 AST 定义匹配，展示名或导出名改变不改变源码归属。实例以自身 Python 方法的代码位置寻找唯一类归属；不能唯一定位的对象进入 pending，不按名字相似强行合并。空类、动态生成类或复杂方法替换可能缺少足够源码锚点。
