@@ -1,0 +1,47 @@
+{
+  "metadata_url": "https://apt.llvm.org/jammy/dists/llvm-toolchain-jammy-22/main/binary-arm64/Packages.gz",
+  "packages": [
+    {
+      "Package": "libllvm22",
+      "Version": "1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81",
+      "Filename": "pool/main/l/llvm-toolchain-22/libllvm22_22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81_arm64.deb",
+      "SHA256": "da22322e05193d13260229d93c6f1c313031478e7fca846690a1771537c78cc4",
+      "Depends": "libc6 (>= 2.34), libedit2 (>= 2.11-20080614-0), libffi8 (>= 3.4), libgcc-s1 (>= 4.2), libstdc++6 (>= 12), libxml2 (>= 2.7.4), libz3-4 (>= 4.8.12), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.0)"
+    },
+    {
+      "Package": "lld-22",
+      "Version": "1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81",
+      "Filename": "pool/main/l/llvm-toolchain-22/lld-22_22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81_arm64.deb",
+      "SHA256": "d7f0f458164a14e814071da3d1290185d31e2e774c5120ad9a46eaf773155efa",
+      "Depends": "libc6 (>= 2.34), libgcc-s1 (>= 3.0), libllvm22 (= 1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81), libstdc++6 (>= 12), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.2)"
+    }
+  ],
+  "version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+  "error": "",
+  "wrapper": "/home/workspace-ycy/compile-performance/toolchains/llvm22/bin/ld.lld",
+  "validated_at": "2026-10-26T11:10:46.494840+00:00",
+  "extracted_dependencies": [
+    {
+      "file": "libedit2_3.1-20210910-1build1_arm64.deb",
+      "sha256": "7445804608b7feef2484dd217203574323c49f2a6530d92b78bd65a2e5ab4657",
+      "package_metadata": "Package: libedit2\nVersion: 3.1-20210910-1build1\nDepends: libbsd0 (>= 0.1.3), libc6 (>= 2.33), libtinfo6 (>= 6)\n"
+    },
+    {
+      "file": "libz3-4_4.8.12-1_arm64.deb",
+      "sha256": "7e621d50221b74d6c8f2b339c99a6193d021474325aa25a54613adf67da40506",
+      "package_metadata": "Package: libz3-4\nVersion: 4.8.12-1\nDepends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 11)\n"
+    },
+    {
+      "file": "libbsd0_0.11.5-1_arm64.deb",
+      "sha256": "19703bfe6fde9a161e42f5107451a46cc182a62dd0621a55d06aec7dc372991d",
+      "package_metadata": "Package: libbsd0\nVersion: 0.11.5-1\nDepends: libc6 (>= 2.33), libmd0 (>= 1.0.3-2)\n"
+    },
+    {
+      "file": "libmd0_1.0.4-1build1_arm64.deb",
+      "sha256": "6f87f19f71411a94ae370f7f9bcf4c7dfb5d4393f11de99634ac3137448ad678",
+      "package_metadata": "Package: libmd0\nVersion: 1.0.4-1build1\nDepends: libc6 (>= 2.33)\n"
+    }
+  ],
+  "system_packages_modified": false,
+  "linker_binary_sha256": "c35ac5b29ecf2de377c64be87d2dad9dc4476b64e43225c49fc1fea2970891a7"
+}

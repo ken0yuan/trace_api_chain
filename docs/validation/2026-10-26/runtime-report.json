@@ -1,0 +1,2521 @@
+{
+  "timing": {
+    "status": "success",
+    "comparisons": [
+      {
+        "id": "C03_constant__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.000706109756097561,
+          "min_seconds": 0.0006926358536585366,
+          "max_seconds": 0.0007515102439024391,
+          "round_means_seconds": [
+            0.000706109756097561,
+            0.0007105039024390244,
+            0.0006926358536585366,
+            0.000713150487804878,
+            0.0007007185365853659,
+            0.0007086673170731707,
+            0.0007515102439024391,
+            0.0006946256097560975,
+            0.0006964119512195122
+          ],
+          "calls_per_round": 41
+        },
+        "instrumented": {
+          "median_seconds": 0.006938111219512195,
+          "min_seconds": 0.006861373902439024,
+          "max_seconds": 0.006989465121951219,
+          "round_means_seconds": [
+            0.0069241451219512196,
+            0.006938111219512195,
+            0.006869558536585366,
+            0.006948577073170732,
+            0.006861373902439024,
+            0.006958545365853658,
+            0.006908238048780488,
+            0.00695086756097561,
+            0.006989465121951219
+          ],
+          "calls_per_round": 41
+        },
+        "ratio": 9.82582546070016,
+        "overhead_percent": 882.5825460700161
+      },
+      {
+        "id": "C03_diagonal__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0012891145833333333,
+          "min_seconds": 0.0012813820833333333,
+          "max_seconds": 0.0013712491666666667,
+          "round_means_seconds": [
+            0.0013177091666666666,
+            0.0012813820833333333,
+            0.0012844675,
+            0.0012891145833333333,
+            0.00129615875,
+            0.0012996420833333334,
+            0.0013712491666666667,
+            0.0012818258333333334,
+            0.0012889591666666667
+          ],
+          "calls_per_round": 24
+        },
+        "instrumented": {
+          "median_seconds": 0.014713564166666667,
+          "min_seconds": 0.014588922083333334,
+          "max_seconds": 0.01495381375,
+          "round_means_seconds": [
+            0.014690489583333334,
+            0.014837864583333334,
+            0.014588922083333334,
+            0.014713564166666667,
+            0.014615415833333333,
+            0.014728180416666667,
+            0.014646087916666667,
+            0.01495381375,
+            0.014718680416666666
+          ],
+          "calls_per_round": 24
+        },
+        "ratio": 11.413697709183468,
+        "overhead_percent": 1041.3697709183468
+      },
+      {
+        "id": "C03_fill__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.65210976,
+          "min_seconds": 0.63803086,
+          "max_seconds": 0.66817641,
+          "round_means_seconds": [
+            0.65200163,
+            0.65402829,
+            0.66817641,
+            0.63918457,
+            0.6501941,
+            0.65996541,
+            0.65210976,
+            0.63803086,
+            0.65380028
+          ],
+          "calls_per_round": 1
+        },
+        "instrumented": {
+          "median_seconds": 19.98194791,
+          "min_seconds": 19.96136181,
+          "max_seconds": 20.01029249,
+          "round_means_seconds": [
+            19.96136181,
+            19.99588264,
+            19.98134438,
+            19.97188076,
+            19.98562748,
+            19.98194791,
+            19.9731842,
+            20.01029249,
+            19.99335678
+          ],
+          "calls_per_round": 1
+        },
+        "ratio": 30.64200098768649,
+        "overhead_percent": 2964.2000987686492
+      },
+      {
+        "id": "C03_ones_zeros__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0013147947826086957,
+          "min_seconds": 0.0012951478260869566,
+          "max_seconds": 0.001407071304347826,
+          "round_means_seconds": [
+            0.0013234517391304348,
+            0.001300317391304348,
+            0.0013147947826086957,
+            0.001312355652173913,
+            0.001360265652173913,
+            0.0013614739130434783,
+            0.001407071304347826,
+            0.0012951478260869566,
+            0.0013139295652173913
+          ],
+          "calls_per_round": 23
+        },
+        "instrumented": {
+          "median_seconds": 0.012440594782608696,
+          "min_seconds": 0.012375061304347826,
+          "max_seconds": 0.012572759130434782,
+          "round_means_seconds": [
+            0.012375061304347826,
+            0.012515305217391304,
+            0.01239697652173913,
+            0.012422383043478261,
+            0.012518515217391304,
+            0.012440594782608696,
+            0.012430325652173913,
+            0.012572759130434782,
+            0.012442991739130434
+          ],
+          "calls_per_round": 23
+        },
+        "ratio": 9.462004981435356,
+        "overhead_percent": 846.2004981435357
+      },
+      {
+        "id": "C04_broadcast__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0004909988,
+          "min_seconds": 0.0004790106,
+          "max_seconds": 0.0005225032,
+          "round_means_seconds": [
+            0.0004909988,
+            0.0004849912,
+            0.0004898044,
+            0.000490974,
+            0.0005085204,
+            0.0005057872,
+            0.0005225032,
+            0.0004790106,
+            0.0005044224
+          ],
+          "calls_per_round": 50
+        },
+        "instrumented": {
+          "median_seconds": 0.0042908842,
+          "min_seconds": 0.0042746888,
+          "max_seconds": 0.0043551454,
+          "round_means_seconds": [
+            0.0042746888,
+            0.0042915578,
+            0.0042781102,
+            0.0043551454,
+            0.0042908842,
+            0.0042904028,
+            0.0042882396,
+            0.0042915858,
+            0.0042936032
+          ],
+          "calls_per_round": 50
+        },
+        "ratio": 8.739093048699916,
+        "overhead_percent": 773.9093048699916
+      },
+      {
+        "id": "C04_clone__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.001944561875,
+          "min_seconds": 0.001875023125,
+          "max_seconds": 0.00202998,
+          "round_means_seconds": [
+            0.0019281662500000001,
+            0.001911188125,
+            0.001944561875,
+            0.0019104425,
+            0.001991605,
+            0.001980455,
+            0.00202998,
+            0.001875023125,
+            0.0019774525
+          ],
+          "calls_per_round": 16
+        },
+        "instrumented": {
+          "median_seconds": 0.014397580625,
+          "min_seconds": 0.014314175,
+          "max_seconds": 0.0144210875,
+          "round_means_seconds": [
+            0.014314175,
+            0.014410925,
+            0.01433628375,
+            0.0144210875,
+            0.0143892275,
+            0.01441885375,
+            0.0143846325,
+            0.014397580625,
+            0.014414495624999999
+          ],
+          "calls_per_round": 16
+        },
+        "ratio": 7.404022885617872,
+        "overhead_percent": 640.4022885617871
+      },
+      {
+        "id": "C04_transpose__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0023417461538461537,
+          "min_seconds": 0.002254203076923077,
+          "max_seconds": 0.0024251315384615385,
+          "round_means_seconds": [
+            0.002336529230769231,
+            0.00228343,
+            0.0023417461538461537,
+            0.002309440769230769,
+            0.0023766153846153846,
+            0.0023668284615384616,
+            0.0024251315384615385,
+            0.002254203076923077,
+            0.0023812807692307693
+          ],
+          "calls_per_round": 13
+        },
+        "instrumented": {
+          "median_seconds": 0.039355433076923074,
+          "min_seconds": 0.039304176923076924,
+          "max_seconds": 0.03938591153846154,
+          "round_means_seconds": [
+            0.039304176923076924,
+            0.039359146923076925,
+            0.03931664076923077,
+            0.039355433076923074,
+            0.03938591153846154,
+            0.03934315076923077,
+            0.03937415076923077,
+            0.03935169461538462,
+            0.03935818846153846
+          ],
+          "calls_per_round": 13
+        },
+        "ratio": 16.806020162469164,
+        "overhead_percent": 1580.6020162469163
+      },
+      {
+        "id": "C05_empty__cpu_float32",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.00072075475,
+          "min_seconds": 0.00070061425,
+          "max_seconds": 0.0007397105,
+          "round_means_seconds": [
+            0.000705147,
+            0.00070061425,
+            0.00071536875,
+            0.00073466325,
+            0.000725548,
+            0.00072075475,
+            0.0007397105,
+            0.0007014405,
+            0.000721535
+          ],
+          "calls_per_round": 40
+        },
+        "instrumented": {
+          "median_seconds": 0.002371594,
+          "min_seconds": 0.00235386775,
+          "max_seconds": 0.00237977875,
+          "round_means_seconds": [
+            0.00235386775,
+            0.0023739165,
+            0.0023613172500000002,
+            0.00237977875,
+            0.002371594,
+            0.002371918,
+            0.0023735225,
+            0.00236438475,
+            0.00237070075
+          ],
+          "calls_per_round": 40
+        },
+        "ratio": 3.2904313152289317,
+        "overhead_percent": 229.04313152289316
+      },
+      {
+        "id": "C05_empty__cpu_float64",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.000719420731707317,
+          "min_seconds": 0.0006975890243902439,
+          "max_seconds": 0.0007305468292682927,
+          "round_means_seconds": [
+            0.0007305468292682927,
+            0.0006975890243902439,
+            0.0007113607317073171,
+            0.0007172141463414635,
+            0.000719420731707317,
+            0.0007212780487804878,
+            0.0007241075609756098,
+            0.0007015231707317073,
+            0.0007292546341463415
+          ],
+          "calls_per_round": 41
+        },
+        "instrumented": {
+          "median_seconds": 0.002368699756097561,
+          "min_seconds": 0.0023524631707317074,
+          "max_seconds": 0.00238965243902439,
+          "round_means_seconds": [
+            0.00238965243902439,
+            0.002371703414634146,
+            0.0023524631707317074,
+            0.0023658019512195123,
+            0.002373441707317073,
+            0.00237068756097561,
+            0.002360211463414634,
+            0.002366629756097561,
+            0.002368699756097561
+          ],
+          "calls_per_round": 41
+        },
+        "ratio": 3.2925097258126037,
+        "overhead_percent": 229.25097258126038
+      },
+      {
+        "id": "C05_empty_nonrecursive__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0007219926829268292,
+          "min_seconds": 0.0007030368292682927,
+          "max_seconds": 0.0007413536585365853,
+          "round_means_seconds": [
+            0.0007219926829268292,
+            0.0007030368292682927,
+            0.0007125068292682927,
+            0.0007278141463414634,
+            0.0007413536585365853,
+            0.0007198668292682927,
+            0.0007314256097560976,
+            0.0007031941463414634,
+            0.0007378946341463415
+          ],
+          "calls_per_round": 41
+        },
+        "instrumented": {
+          "median_seconds": 0.002224703170731707,
+          "min_seconds": 0.0022164175609756098,
+          "max_seconds": 0.002324872682926829,
+          "round_means_seconds": [
+            0.002228369512195122,
+            0.002224703170731707,
+            0.002324872682926829,
+            0.0022260360975609756,
+            0.002220166341463415,
+            0.0022765856097560974,
+            0.0022164175609756098,
+            0.0022178590243902437,
+            0.002223280487804878
+          ],
+          "calls_per_round": 41
+        },
+        "ratio": 3.0813375583159077,
+        "overhead_percent": 208.13375583159078
+      },
+      {
+        "id": "C05_to__cpu",
+        "device": "cpu",
+        "baseline": {
+          "median_seconds": 0.0004537724,
+          "min_seconds": 0.00044382,
+          "max_seconds": 0.0004679266,
+          "round_means_seconds": [
+            0.0004513264,
+            0.0004456074,
+            0.0004447218,
+            0.0004537724,
+            0.0004673926,
+            0.0004604556,
+            0.0004679266,
+            0.00044382,
+            0.0004559518
+          ],
+          "calls_per_round": 50
+        },
+        "instrumented": {
+          "median_seconds": 0.0013537838,
+          "min_seconds": 0.001351471,
+          "max_seconds": 0.0013657792,
+          "round_means_seconds": [
+            0.0013537838,
+            0.0013540428,
+            0.0013657792,
+            0.0013535056,
+            0.001353512,
+            0.0013629377999999999,
+            0.0013525429999999999,
+            0.001351471,
+            0.0013539228
+          ],
+          "calls_per_round": 50
+        },
+        "ratio": 2.983398285131489,
+        "overhead_percent": 198.3398285131489
+      },
+      {
+        "id": "C03_constant__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.001752223125,
+          "min_seconds": 0.001654176875,
+          "max_seconds": 0.001847165625,
+          "round_means_seconds": [
+            0.0017867,
+            0.001772006875,
+            0.001752223125,
+            0.00170633875,
+            0.001654176875,
+            0.001692005625,
+            0.001730276875,
+            0.001825856875,
+            0.001847165625
+          ],
+          "calls_per_round": 16
+        },
+        "instrumented": {
+          "median_seconds": 0.0065661075,
+          "min_seconds": 0.006528380625,
+          "max_seconds": 0.00671013125,
+          "round_means_seconds": [
+            0.0065661075,
+            0.00660411375,
+            0.006557903125,
+            0.006528380625,
+            0.006585265,
+            0.006542524375,
+            0.006605733125,
+            0.00671013125,
+            0.006534856875
+          ],
+          "calls_per_round": 16
+        },
+        "ratio": 3.7473010179568313,
+        "overhead_percent": 274.73010179568314
+      },
+      {
+        "id": "C03_diagonal__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.00367500125,
+          "min_seconds": 0.0034353625,
+          "max_seconds": 0.00383839625,
+          "round_means_seconds": [
+            0.003649885,
+            0.0034353625,
+            0.00368274,
+            0.00372460625,
+            0.00350325375,
+            0.00362692375,
+            0.00367500125,
+            0.00374721625,
+            0.00383839625
+          ],
+          "calls_per_round": 8
+        },
+        "instrumented": {
+          "median_seconds": 0.0186617125,
+          "min_seconds": 0.0184573375,
+          "max_seconds": 0.0189764425,
+          "round_means_seconds": [
+            0.0189285025,
+            0.0184573375,
+            0.01877369375,
+            0.01859827,
+            0.018548864999999998,
+            0.01855862125,
+            0.0186617125,
+            0.0189764425,
+            0.01869618875
+          ],
+          "calls_per_round": 8
+        },
+        "ratio": 5.07801527958664,
+        "overhead_percent": 407.801527958664
+      },
+      {
+        "id": "C03_ones_zeros__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.00320439,
+          "min_seconds": 0.002997021,
+          "max_seconds": 0.003446115,
+          "round_means_seconds": [
+            0.003060412,
+            0.002997021,
+            0.003221249,
+            0.003165318,
+            0.00320439,
+            0.0031491410000000003,
+            0.003313752,
+            0.003380296,
+            0.003446115
+          ],
+          "calls_per_round": 10
+        },
+        "instrumented": {
+          "median_seconds": 0.01301608,
+          "min_seconds": 0.012877843,
+          "max_seconds": 0.013199381999999999,
+          "round_means_seconds": [
+            0.013092475,
+            0.012937393,
+            0.01301608,
+            0.013199381999999999,
+            0.012958468,
+            0.013062319,
+            0.012877843,
+            0.013044665,
+            0.012909081
+          ],
+          "calls_per_round": 10
+        },
+        "ratio": 4.06195250890185,
+        "overhead_percent": 306.19525089018504
+      },
+      {
+        "id": "C04_broadcast__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.0010297723333333334,
+          "min_seconds": 0.000974952,
+          "max_seconds": 0.001090423,
+          "round_means_seconds": [
+            0.00097511,
+            0.0010255263333333333,
+            0.001039184,
+            0.0010297723333333334,
+            0.000974952,
+            0.0010216003333333333,
+            0.001038485,
+            0.001048002,
+            0.001090423
+          ],
+          "calls_per_round": 30
+        },
+        "instrumented": {
+          "median_seconds": 0.005666884,
+          "min_seconds": 0.005641356,
+          "max_seconds": 0.005691549333333334,
+          "round_means_seconds": [
+            0.005679243,
+            0.005688288666666667,
+            0.005674997333333333,
+            0.0056637016666666665,
+            0.005649484333333333,
+            0.005666884,
+            0.005641356,
+            0.005691549333333334,
+            0.005651994
+          ],
+          "calls_per_round": 30
+        },
+        "ratio": 5.50304549516932,
+        "overhead_percent": 450.304549516932
+      },
+      {
+        "id": "C05_empty_nonrecursive__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.0008162667647058823,
+          "min_seconds": 0.0007867861764705882,
+          "max_seconds": 0.0008512555882352941,
+          "round_means_seconds": [
+            0.00082224,
+            0.0007867861764705882,
+            0.00081887,
+            0.0008154870588235294,
+            0.000791445294117647,
+            0.0007962882352941177,
+            0.0008162667647058823,
+            0.0008393470588235294,
+            0.0008512555882352941
+          ],
+          "calls_per_round": 34
+        },
+        "instrumented": {
+          "median_seconds": 0.0032460285294117646,
+          "min_seconds": 0.0032324429411764704,
+          "max_seconds": 0.0032953520588235295,
+          "round_means_seconds": [
+            0.0032953520588235295,
+            0.0032435811764705883,
+            0.0032341464705882353,
+            0.0032391,
+            0.0032324429411764704,
+            0.003262595,
+            0.0032465885294117648,
+            0.00326733,
+            0.0032460285294117646
+          ],
+          "calls_per_round": 34
+        },
+        "ratio": 3.9766760938519594,
+        "overhead_percent": 297.66760938519593
+      },
+      {
+        "id": "C05_to__npu",
+        "device": "npu",
+        "baseline": {
+          "median_seconds": 0.0020609273333333333,
+          "min_seconds": 0.0019374113333333334,
+          "max_seconds": 0.002148316,
+          "round_means_seconds": [
+            0.0020137426666666665,
+            0.0019374113333333334,
+            0.0020989146666666667,
+            0.0020609273333333333,
+            0.00196203,
+            0.0020477953333333334,
+            0.0020747393333333335,
+            0.00209046,
+            0.002148316
+          ],
+          "calls_per_round": 15
+        },
+        "instrumented": {
+          "median_seconds": 0.006901115333333333,
+          "min_seconds": 0.006871833333333333,
+          "max_seconds": 0.007015119333333333,
+          "round_means_seconds": [
+            0.006956552666666667,
+            0.006889557333333333,
+            0.0069196453333333335,
+            0.006901115333333333,
+            0.006897356666666667,
+            0.006904889333333333,
+            0.006885296,
+            0.007015119333333333,
+            0.006871833333333333
+          ],
+          "calls_per_round": 15
+        },
+        "ratio": 3.3485485983494163,
+        "overhead_percent": 234.85485983494164
+      }
+    ],
+    "comparable_cases": {
+      "cpu": [
+        "C03_constant__cpu",
+        "C03_diagonal__cpu",
+        "C03_fill__cpu",
+        "C03_ones_zeros__cpu",
+        "C04_broadcast__cpu",
+        "C04_clone__cpu",
+        "C04_transpose__cpu",
+        "C05_empty__cpu_float32",
+        "C05_empty__cpu_float64",
+        "C05_empty_nonrecursive__cpu",
+        "C05_to__cpu"
+      ],
+      "npu": [
+        "C03_constant__npu",
+        "C03_diagonal__npu",
+        "C03_ones_zeros__npu",
+        "C04_broadcast__npu",
+        "C05_empty_nonrecursive__npu",
+        "C05_to__npu"
+      ]
+    },
+    "warmups": {
+      "baseline/cpu": {
+        "mode": "warmup",
+        "round": null,
+        "rows": [
+          {
+            "id": "C03_constant__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00254779,
+              0.00073201,
+              0.0007332
+            ],
+            "calibration_seconds": 0.000732605
+          },
+          {
+            "id": "C03_diagonal__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00156152,
+              0.0013013,
+              0.00129666
+            ],
+            "calibration_seconds": 0.00129898
+          },
+          {
+            "id": "C03_fill__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.63476281,
+              0.65890601,
+              0.65306847
+            ],
+            "calibration_seconds": 0.65598724
+          },
+          {
+            "id": "C03_ones_zeros__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00147316,
+              0.00133384,
+              0.00135727
+            ],
+            "calibration_seconds": 0.001345555
+          },
+          {
+            "id": "C04_broadcast__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00059247,
+              0.00049654,
+              0.00049918
+            ],
+            "calibration_seconds": 0.0004978599999999999
+          },
+          {
+            "id": "C04_clone__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00203464,
+              0.00198215,
+              0.00195762
+            ],
+            "calibration_seconds": 0.001969885
+          },
+          {
+            "id": "C04_transpose__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00254839,
+              0.00235662,
+              0.00230829
+            ],
+            "calibration_seconds": 0.0023324549999999998
+          },
+          {
+            "id": "C05_empty__cpu_float32",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00207874,
+              0.00077277,
+              0.00074223
+            ],
+            "calibration_seconds": 0.0007574999999999999
+          },
+          {
+            "id": "C05_empty__cpu_float64",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00075775,
+              0.00073817,
+              0.00073053
+            ],
+            "calibration_seconds": 0.0007343499999999999
+          },
+          {
+            "id": "C05_empty_nonrecursive__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00082702,
+              0.00074052,
+              0.00072479
+            ],
+            "calibration_seconds": 0.000732655
+          },
+          {
+            "id": "C05_to__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00067495,
+              0.00047147,
+              0.00045761
+            ],
+            "calibration_seconds": 0.00046454
+          }
+        ]
+      },
+      "instrumented/cpu": {
+        "mode": "warmup",
+        "round": null,
+        "rows": [
+          {
+            "id": "C03_constant__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.0104315,
+              0.00691511,
+              0.00692389
+            ],
+            "calibration_seconds": 0.0069195
+          },
+          {
+            "id": "C03_diagonal__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.01541184,
+              0.0146229,
+              0.01462029
+            ],
+            "calibration_seconds": 0.014621595
+          },
+          {
+            "id": "C03_fill__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              19.98088536,
+              19.96046144,
+              19.96498343
+            ],
+            "calibration_seconds": 19.962722435
+          },
+          {
+            "id": "C03_ones_zeros__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.01259303,
+              0.01242433,
+              0.01240234
+            ],
+            "calibration_seconds": 0.012413335000000001
+          },
+          {
+            "id": "C04_broadcast__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00446678,
+              0.0042893,
+              0.00428691
+            ],
+            "calibration_seconds": 0.004288105
+          },
+          {
+            "id": "C04_clone__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.01453732,
+              0.01436375,
+              0.01433269
+            ],
+            "calibration_seconds": 0.01434822
+          },
+          {
+            "id": "C04_transpose__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.0401542,
+              0.03936258,
+              0.0393412
+            ],
+            "calibration_seconds": 0.03935189
+          },
+          {
+            "id": "C05_empty__cpu_float32",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00483551,
+              0.00246049,
+              0.00239934
+            ],
+            "calibration_seconds": 0.002429915
+          },
+          {
+            "id": "C05_empty__cpu_float64",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00241751,
+              0.00237571,
+              0.00237089
+            ],
+            "calibration_seconds": 0.0023733
+          },
+          {
+            "id": "C05_empty_nonrecursive__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00235205,
+              0.00225008,
+              0.00221793
+            ],
+            "calibration_seconds": 0.002234005
+          },
+          {
+            "id": "C05_to__cpu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00161172,
+              0.00139405,
+              0.00135257
+            ],
+            "calibration_seconds": 0.00137331
+          }
+        ]
+      },
+      "baseline/npu": {
+        "mode": "warmup",
+        "round": null,
+        "rows": [
+          {
+            "id": "C03_constant__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.31101757,
+              0.00198083,
+              0.00192988
+            ],
+            "calibration_seconds": 0.0019553549999999998
+          },
+          {
+            "id": "C03_diagonal__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.0703683,
+              0.00386894,
+              0.0037885
+            ],
+            "calibration_seconds": 0.00382872
+          },
+          {
+            "id": "C03_ones_zeros__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00458987,
+              0.00338337,
+              0.00326943
+            ],
+            "calibration_seconds": 0.0033264
+          },
+          {
+            "id": "C04_broadcast__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00835672,
+              0.00100518,
+              0.0010061
+            ],
+            "calibration_seconds": 0.00100564
+          },
+          {
+            "id": "C05_empty_nonrecursive__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00182062,
+              0.00090445,
+              0.00086372
+            ],
+            "calibration_seconds": 0.000884085
+          },
+          {
+            "id": "C05_to__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00323919,
+              0.00206873,
+              0.00201112
+            ],
+            "calibration_seconds": 0.0020399249999999997
+          }
+        ]
+      },
+      "instrumented/npu": {
+        "mode": "warmup",
+        "round": null,
+        "rows": [
+          {
+            "id": "C03_constant__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.33774256,
+              0.00768013,
+              0.00671098
+            ],
+            "calibration_seconds": 0.007195555
+          },
+          {
+            "id": "C03_diagonal__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.08649346,
+              0.02052587,
+              0.01898042
+            ],
+            "calibration_seconds": 0.019753145
+          },
+          {
+            "id": "C03_ones_zeros__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.01509687,
+              0.01325676,
+              0.0132096
+            ],
+            "calibration_seconds": 0.01323318
+          },
+          {
+            "id": "C04_broadcast__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.01371384,
+              0.00570948,
+              0.00568759
+            ],
+            "calibration_seconds": 0.005698535
+          },
+          {
+            "id": "C05_empty_nonrecursive__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00468463,
+              0.00333913,
+              0.00330975
+            ],
+            "calibration_seconds": 0.00332444
+          },
+          {
+            "id": "C05_to__npu",
+            "status": "passed",
+            "warmup_seconds": [
+              0.00891177,
+              0.00705489,
+              0.00943949
+            ],
+            "calibration_seconds": 0.00824719
+          }
+        ]
+      }
+    },
+    "worker_versions": {
+      "baseline/cpu": {
+        "ready": true,
+        "device": "cpu",
+        "torch": "2.16.0a0+git26650ac",
+        "cases": [
+          {
+            "id": "C03_fill__cpu",
+            "method": "test_fill_all_dtypes_and_devices_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_fill",
+            "source": "test/test_tensor_creation_ops.py",
+            "original_class": "TestTensorCreation",
+            "original_method": "test_fill_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.fill_"
+            ],
+            "line": 198,
+            "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+          },
+          {
+            "id": "C03_diagonal__cpu",
+            "method": "test_fill_diagonal",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_diagonal",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_fill_diagonal",
+            "apis": [
+              "Tensor.fill_diagonal_"
+            ],
+            "line": 9734,
+            "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+          },
+          {
+            "id": "C03_constant__cpu",
+            "method": "test_constant",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_constant",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_constant",
+            "apis": [
+              "nn.init.constant_",
+              "Tensor.fill_"
+            ],
+            "line": 193,
+            "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+          },
+          {
+            "id": "C03_ones_zeros__cpu",
+            "method": "test_ones_and_zeros",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_ones_zeros",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_ones_and_zeros",
+            "apis": [
+              "nn.init.ones_",
+              "nn.init.zeros_"
+            ],
+            "line": 201,
+            "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+          },
+          {
+            "id": "C04_clone__cpu",
+            "method": "test_clone_all_dtypes_and_devices_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_clone",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorchDeviceType",
+            "original_method": "test_clone_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.clone"
+            ],
+            "line": 3648,
+            "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+          },
+          {
+            "id": "C04_broadcast__cpu",
+            "method": "test_copy_broadcast_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_broadcast",
+            "source": "test/test_torch.py",
+            "original_class": "TestDevicePrecision",
+            "original_method": "test_copy_broadcast",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 7550,
+            "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+          },
+          {
+            "id": "C04_transpose__cpu",
+            "method": "test_copy_transpose",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_transpose",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_copy_transpose",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 10181,
+            "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+          },
+          {
+            "id": "C05_to__cpu",
+            "method": "test_to_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_to",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_to",
+            "apis": [
+              "nn.Module.to"
+            ],
+            "line": 15291,
+            "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+          },
+          {
+            "id": "C05_empty__cpu_float32",
+            "method": "test_module_to_empty_cpu_float32",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty__cpu_float64",
+            "method": "test_module_to_empty_cpu_float64",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty_nonrecursive__cpu",
+            "method": "test_module_to_empty_non_recursive_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty_nonrecursive",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty_non_recursive",
+            "apis": [
+              "nn.Module.to_empty"
+            ],
+            "line": 13073,
+            "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+          }
+        ]
+      },
+      "instrumented/cpu": {
+        "ready": true,
+        "device": "cpu",
+        "torch": "2.16.0a0+git26650ac",
+        "cases": [
+          {
+            "id": "C03_fill__cpu",
+            "method": "test_fill_all_dtypes_and_devices_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_fill",
+            "source": "test/test_tensor_creation_ops.py",
+            "original_class": "TestTensorCreation",
+            "original_method": "test_fill_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.fill_"
+            ],
+            "line": 198,
+            "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+          },
+          {
+            "id": "C03_diagonal__cpu",
+            "method": "test_fill_diagonal",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_diagonal",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_fill_diagonal",
+            "apis": [
+              "Tensor.fill_diagonal_"
+            ],
+            "line": 9734,
+            "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+          },
+          {
+            "id": "C03_constant__cpu",
+            "method": "test_constant",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_constant",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_constant",
+            "apis": [
+              "nn.init.constant_",
+              "Tensor.fill_"
+            ],
+            "line": 193,
+            "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+          },
+          {
+            "id": "C03_ones_zeros__cpu",
+            "method": "test_ones_and_zeros",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C03_ones_zeros",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_ones_and_zeros",
+            "apis": [
+              "nn.init.ones_",
+              "nn.init.zeros_"
+            ],
+            "line": 201,
+            "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+          },
+          {
+            "id": "C04_clone__cpu",
+            "method": "test_clone_all_dtypes_and_devices_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_clone",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorchDeviceType",
+            "original_method": "test_clone_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.clone"
+            ],
+            "line": 3648,
+            "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+          },
+          {
+            "id": "C04_broadcast__cpu",
+            "method": "test_copy_broadcast_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_broadcast",
+            "source": "test/test_torch.py",
+            "original_class": "TestDevicePrecision",
+            "original_method": "test_copy_broadcast",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 7550,
+            "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+          },
+          {
+            "id": "C04_transpose__cpu",
+            "method": "test_copy_transpose",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C04_transpose",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_copy_transpose",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 10181,
+            "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+          },
+          {
+            "id": "C05_to__cpu",
+            "method": "test_to_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_to",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_to",
+            "apis": [
+              "nn.Module.to"
+            ],
+            "line": 15291,
+            "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+          },
+          {
+            "id": "C05_empty__cpu_float32",
+            "method": "test_module_to_empty_cpu_float32",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty__cpu_float64",
+            "method": "test_module_to_empty_cpu_float64",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty_nonrecursive__cpu",
+            "method": "test_module_to_empty_non_recursive_cpu",
+            "device": "cpu",
+            "adapted_default_device": false,
+            "spec": "C05_empty_nonrecursive",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty_non_recursive",
+            "apis": [
+              "nn.Module.to_empty"
+            ],
+            "line": 13073,
+            "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+          }
+        ]
+      },
+      "baseline/npu": {
+        "ready": true,
+        "device": "npu",
+        "torch": "2.16.0a0+git26650ac",
+        "cases": [
+          {
+            "id": "C03_fill__npu",
+            "method": "test_fill_all_dtypes_and_devices_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C03_fill",
+            "source": "test/test_tensor_creation_ops.py",
+            "original_class": "TestTensorCreation",
+            "original_method": "test_fill_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.fill_"
+            ],
+            "line": 198,
+            "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+          },
+          {
+            "id": "C03_diagonal__npu",
+            "method": "test_fill_diagonal",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_diagonal",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_fill_diagonal",
+            "apis": [
+              "Tensor.fill_diagonal_"
+            ],
+            "line": 9734,
+            "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+          },
+          {
+            "id": "C03_constant__npu",
+            "method": "test_constant",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_constant",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_constant",
+            "apis": [
+              "nn.init.constant_",
+              "Tensor.fill_"
+            ],
+            "line": 193,
+            "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+          },
+          {
+            "id": "C03_ones_zeros__npu",
+            "method": "test_ones_and_zeros",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_ones_zeros",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_ones_and_zeros",
+            "apis": [
+              "nn.init.ones_",
+              "nn.init.zeros_"
+            ],
+            "line": 201,
+            "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+          },
+          {
+            "id": "C04_clone__npu",
+            "method": "test_clone_all_dtypes_and_devices_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C04_clone",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorchDeviceType",
+            "original_method": "test_clone_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.clone"
+            ],
+            "line": 3648,
+            "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+          },
+          {
+            "id": "C04_broadcast__npu",
+            "method": "test_copy_broadcast_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C04_broadcast",
+            "source": "test/test_torch.py",
+            "original_class": "TestDevicePrecision",
+            "original_method": "test_copy_broadcast",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 7550,
+            "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+          },
+          {
+            "id": "C04_transpose__npu",
+            "method": "test_copy_transpose",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C04_transpose",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_copy_transpose",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 10181,
+            "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+          },
+          {
+            "id": "C05_to__npu",
+            "method": "test_to_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_to",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_to",
+            "apis": [
+              "nn.Module.to"
+            ],
+            "line": 15291,
+            "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+          },
+          {
+            "id": "C05_empty__npu_float32",
+            "method": "test_module_to_empty_npu_float32",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty__npu_float64",
+            "method": "test_module_to_empty_npu_float64",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty_nonrecursive__npu",
+            "method": "test_module_to_empty_non_recursive_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty_nonrecursive",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty_non_recursive",
+            "apis": [
+              "nn.Module.to_empty"
+            ],
+            "line": 13073,
+            "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+          }
+        ]
+      },
+      "instrumented/npu": {
+        "ready": true,
+        "device": "npu",
+        "torch": "2.16.0a0+git26650ac",
+        "cases": [
+          {
+            "id": "C03_fill__npu",
+            "method": "test_fill_all_dtypes_and_devices_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C03_fill",
+            "source": "test/test_tensor_creation_ops.py",
+            "original_class": "TestTensorCreation",
+            "original_method": "test_fill_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.fill_"
+            ],
+            "line": 198,
+            "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+          },
+          {
+            "id": "C03_diagonal__npu",
+            "method": "test_fill_diagonal",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_diagonal",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_fill_diagonal",
+            "apis": [
+              "Tensor.fill_diagonal_"
+            ],
+            "line": 9734,
+            "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+          },
+          {
+            "id": "C03_constant__npu",
+            "method": "test_constant",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_constant",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_constant",
+            "apis": [
+              "nn.init.constant_",
+              "Tensor.fill_"
+            ],
+            "line": 193,
+            "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+          },
+          {
+            "id": "C03_ones_zeros__npu",
+            "method": "test_ones_and_zeros",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C03_ones_zeros",
+            "source": "test/nn/test_init.py",
+            "original_class": "TestNNInit",
+            "original_method": "test_ones_and_zeros",
+            "apis": [
+              "nn.init.ones_",
+              "nn.init.zeros_"
+            ],
+            "line": 201,
+            "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+          },
+          {
+            "id": "C04_clone__npu",
+            "method": "test_clone_all_dtypes_and_devices_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C04_clone",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorchDeviceType",
+            "original_method": "test_clone_all_dtypes_and_devices",
+            "apis": [
+              "Tensor.clone"
+            ],
+            "line": 3648,
+            "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+          },
+          {
+            "id": "C04_broadcast__npu",
+            "method": "test_copy_broadcast_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C04_broadcast",
+            "source": "test/test_torch.py",
+            "original_class": "TestDevicePrecision",
+            "original_method": "test_copy_broadcast",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 7550,
+            "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+          },
+          {
+            "id": "C04_transpose__npu",
+            "method": "test_copy_transpose",
+            "device": "npu",
+            "adapted_default_device": true,
+            "spec": "C04_transpose",
+            "source": "test/test_torch.py",
+            "original_class": "TestTorch",
+            "original_method": "test_copy_transpose",
+            "apis": [
+              "Tensor.copy_"
+            ],
+            "line": 10181,
+            "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+          },
+          {
+            "id": "C05_to__npu",
+            "method": "test_to_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_to",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_to",
+            "apis": [
+              "nn.Module.to"
+            ],
+            "line": 15291,
+            "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+          },
+          {
+            "id": "C05_empty__npu_float32",
+            "method": "test_module_to_empty_npu_float32",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty__npu_float64",
+            "method": "test_module_to_empty_npu_float64",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty",
+            "apis": [
+              "nn.Module.to_empty",
+              "nn.Module.to"
+            ],
+            "line": 13036,
+            "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+          },
+          {
+            "id": "C05_empty_nonrecursive__npu",
+            "method": "test_module_to_empty_non_recursive_npu",
+            "device": "npu",
+            "adapted_default_device": false,
+            "spec": "C05_empty_nonrecursive",
+            "source": "test/test_nn.py",
+            "original_class": "TestNNDeviceType",
+            "original_method": "test_module_to_empty_non_recursive",
+            "apis": [
+              "nn.Module.to_empty"
+            ],
+            "line": 13073,
+            "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+          }
+        ]
+      }
+    },
+    "rounds": 9,
+    "scope": "Original selected test-method body including input creation and assertions; excludes imports, class setup, per-test setUp/tearDown. NPU synchronized before and after every call. No trace plugin enabled.",
+    "protocol": "Three warmups; same baseline-calibrated batch size in both variants; nine batch means; alternate variant order each round; one operation stream at a time; torch/OMP/MKL CPU threads=1. Median of nine batch means is reported."
+  },
+  "cases": [
+    {
+      "id": "C03_fill__cpu",
+      "method": "test_fill_all_dtypes_and_devices_cpu",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C03_fill",
+      "source": "test/test_tensor_creation_ops.py",
+      "original_class": "TestTensorCreation",
+      "original_method": "test_fill_all_dtypes_and_devices",
+      "apis": [
+        "Tensor.fill_"
+      ],
+      "line": 198,
+      "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+    },
+    {
+      "id": "C03_diagonal__cpu",
+      "method": "test_fill_diagonal",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C03_diagonal",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorch",
+      "original_method": "test_fill_diagonal",
+      "apis": [
+        "Tensor.fill_diagonal_"
+      ],
+      "line": 9734,
+      "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+    },
+    {
+      "id": "C03_constant__cpu",
+      "method": "test_constant",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C03_constant",
+      "source": "test/nn/test_init.py",
+      "original_class": "TestNNInit",
+      "original_method": "test_constant",
+      "apis": [
+        "nn.init.constant_",
+        "Tensor.fill_"
+      ],
+      "line": 193,
+      "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+    },
+    {
+      "id": "C03_ones_zeros__cpu",
+      "method": "test_ones_and_zeros",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C03_ones_zeros",
+      "source": "test/nn/test_init.py",
+      "original_class": "TestNNInit",
+      "original_method": "test_ones_and_zeros",
+      "apis": [
+        "nn.init.ones_",
+        "nn.init.zeros_"
+      ],
+      "line": 201,
+      "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+    },
+    {
+      "id": "C04_clone__cpu",
+      "method": "test_clone_all_dtypes_and_devices_cpu",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C04_clone",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorchDeviceType",
+      "original_method": "test_clone_all_dtypes_and_devices",
+      "apis": [
+        "Tensor.clone"
+      ],
+      "line": 3648,
+      "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+    },
+    {
+      "id": "C04_broadcast__cpu",
+      "method": "test_copy_broadcast_cpu",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C04_broadcast",
+      "source": "test/test_torch.py",
+      "original_class": "TestDevicePrecision",
+      "original_method": "test_copy_broadcast",
+      "apis": [
+        "Tensor.copy_"
+      ],
+      "line": 7550,
+      "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+    },
+    {
+      "id": "C04_transpose__cpu",
+      "method": "test_copy_transpose",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C04_transpose",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorch",
+      "original_method": "test_copy_transpose",
+      "apis": [
+        "Tensor.copy_"
+      ],
+      "line": 10181,
+      "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+    },
+    {
+      "id": "C05_to__cpu",
+      "method": "test_to_cpu",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C05_to",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_to",
+      "apis": [
+        "nn.Module.to"
+      ],
+      "line": 15291,
+      "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+    },
+    {
+      "id": "C05_empty__cpu_float32",
+      "method": "test_module_to_empty_cpu_float32",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C05_empty",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty",
+      "apis": [
+        "nn.Module.to_empty",
+        "nn.Module.to"
+      ],
+      "line": 13036,
+      "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+    },
+    {
+      "id": "C05_empty__cpu_float64",
+      "method": "test_module_to_empty_cpu_float64",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C05_empty",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty",
+      "apis": [
+        "nn.Module.to_empty",
+        "nn.Module.to"
+      ],
+      "line": 13036,
+      "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+    },
+    {
+      "id": "C05_empty_nonrecursive__cpu",
+      "method": "test_module_to_empty_non_recursive_cpu",
+      "device": "cpu",
+      "adapted_default_device": false,
+      "spec": "C05_empty_nonrecursive",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty_non_recursive",
+      "apis": [
+        "nn.Module.to_empty"
+      ],
+      "line": 13073,
+      "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+    },
+    {
+      "id": "C03_fill__npu",
+      "method": "test_fill_all_dtypes_and_devices_npu",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C03_fill",
+      "source": "test/test_tensor_creation_ops.py",
+      "original_class": "TestTensorCreation",
+      "original_method": "test_fill_all_dtypes_and_devices",
+      "apis": [
+        "Tensor.fill_"
+      ],
+      "line": 198,
+      "method_sha256": "d36a325e0a85998358ad58857a279c34876a21fea7faee7262ef3e285ecc4420"
+    },
+    {
+      "id": "C03_diagonal__npu",
+      "method": "test_fill_diagonal",
+      "device": "npu",
+      "adapted_default_device": true,
+      "spec": "C03_diagonal",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorch",
+      "original_method": "test_fill_diagonal",
+      "apis": [
+        "Tensor.fill_diagonal_"
+      ],
+      "line": 9734,
+      "method_sha256": "3c468260abb98b14f16d4d34d4b2efc3146e52d2af2cf7a503e2562bd07164d4"
+    },
+    {
+      "id": "C03_constant__npu",
+      "method": "test_constant",
+      "device": "npu",
+      "adapted_default_device": true,
+      "spec": "C03_constant",
+      "source": "test/nn/test_init.py",
+      "original_class": "TestNNInit",
+      "original_method": "test_constant",
+      "apis": [
+        "nn.init.constant_",
+        "Tensor.fill_"
+      ],
+      "line": 193,
+      "method_sha256": "851ef6b4bcc44fd95d7824b0675e191b6aad1c8ec12ca7596cac5694ba5b4fb2"
+    },
+    {
+      "id": "C03_ones_zeros__npu",
+      "method": "test_ones_and_zeros",
+      "device": "npu",
+      "adapted_default_device": true,
+      "spec": "C03_ones_zeros",
+      "source": "test/nn/test_init.py",
+      "original_class": "TestNNInit",
+      "original_method": "test_ones_and_zeros",
+      "apis": [
+        "nn.init.ones_",
+        "nn.init.zeros_"
+      ],
+      "line": 201,
+      "method_sha256": "dc978e43db8f2f62d55cf1009116e32fa0a9dde8ae843491bb6e5ddebab6ab55"
+    },
+    {
+      "id": "C04_clone__npu",
+      "method": "test_clone_all_dtypes_and_devices_npu",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C04_clone",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorchDeviceType",
+      "original_method": "test_clone_all_dtypes_and_devices",
+      "apis": [
+        "Tensor.clone"
+      ],
+      "line": 3648,
+      "method_sha256": "063e60a842dd43a4ab9c2b95f0497cec3ef71639dc78f6e43d5be9c0352d7849"
+    },
+    {
+      "id": "C04_broadcast__npu",
+      "method": "test_copy_broadcast_npu",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C04_broadcast",
+      "source": "test/test_torch.py",
+      "original_class": "TestDevicePrecision",
+      "original_method": "test_copy_broadcast",
+      "apis": [
+        "Tensor.copy_"
+      ],
+      "line": 7550,
+      "method_sha256": "5e35b7196412b8fbcc01e8c8366cc2e2a02346cbae76ca9f1936b07a57e14d6b"
+    },
+    {
+      "id": "C04_transpose__npu",
+      "method": "test_copy_transpose",
+      "device": "npu",
+      "adapted_default_device": true,
+      "spec": "C04_transpose",
+      "source": "test/test_torch.py",
+      "original_class": "TestTorch",
+      "original_method": "test_copy_transpose",
+      "apis": [
+        "Tensor.copy_"
+      ],
+      "line": 10181,
+      "method_sha256": "25fc70fdabedc9b1fd3ead0672623cf7baa289e659a17df0bec225835a272b5d"
+    },
+    {
+      "id": "C05_to__npu",
+      "method": "test_to_npu",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C05_to",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_to",
+      "apis": [
+        "nn.Module.to"
+      ],
+      "line": 15291,
+      "method_sha256": "339c7d58084c5a2e0da8376044f985a1d2056ed6e9e07224c097dd47dccc0997"
+    },
+    {
+      "id": "C05_empty__npu_float32",
+      "method": "test_module_to_empty_npu_float32",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C05_empty",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty",
+      "apis": [
+        "nn.Module.to_empty",
+        "nn.Module.to"
+      ],
+      "line": 13036,
+      "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+    },
+    {
+      "id": "C05_empty__npu_float64",
+      "method": "test_module_to_empty_npu_float64",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C05_empty",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty",
+      "apis": [
+        "nn.Module.to_empty",
+        "nn.Module.to"
+      ],
+      "line": 13036,
+      "method_sha256": "3dff16674af0c898ec42be714cd061b83d73c3af55a19569113cce1d1359d406"
+    },
+    {
+      "id": "C05_empty_nonrecursive__npu",
+      "method": "test_module_to_empty_non_recursive_npu",
+      "device": "npu",
+      "adapted_default_device": false,
+      "spec": "C05_empty_nonrecursive",
+      "source": "test/test_nn.py",
+      "original_class": "TestNNDeviceType",
+      "original_method": "test_module_to_empty_non_recursive",
+      "apis": [
+        "nn.Module.to_empty"
+      ],
+      "line": 13073,
+      "method_sha256": "d307d76201b0ad6c0d4badbcb15746c5d7cbc5a18ccc88ad187eb74b63819963"
+    }
+  ],
+  "correctness": {
+    "baseline-cpu": [
+      {
+        "id": "C03_fill__cpu",
+        "status": "passed",
+        "seconds": 0.66311389
+      },
+      {
+        "id": "C03_diagonal__cpu",
+        "status": "passed",
+        "seconds": 0.00182071
+      },
+      {
+        "id": "C03_constant__cpu",
+        "status": "passed",
+        "seconds": 0.00094019
+      },
+      {
+        "id": "C03_ones_zeros__cpu",
+        "status": "passed",
+        "seconds": 0.00141277
+      },
+      {
+        "id": "C04_clone__cpu",
+        "status": "passed",
+        "seconds": 0.00195262
+      },
+      {
+        "id": "C04_broadcast__cpu",
+        "status": "passed",
+        "seconds": 0.00056236
+      },
+      {
+        "id": "C04_transpose__cpu",
+        "status": "passed",
+        "seconds": 0.0026996
+      },
+      {
+        "id": "C05_to__cpu",
+        "status": "passed",
+        "seconds": 0.00136378
+      },
+      {
+        "id": "C05_empty__cpu_float32",
+        "status": "passed",
+        "seconds": 0.00219108
+      },
+      {
+        "id": "C05_empty__cpu_float64",
+        "status": "passed",
+        "seconds": 0.00081555
+      },
+      {
+        "id": "C05_empty_nonrecursive__cpu",
+        "status": "passed",
+        "seconds": 0.00090022
+      }
+    ],
+    "baseline-npu": [
+      {
+        "id": "C03_fill__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    expected=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:42 (PID:347136, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347136] 2026-10-26-12:53:42.730.225 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 692, in instantiated_test\n    raise rte\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_tensor_creation_ops.py\", line 208, in test_fill_all_dtypes_and_devices\n    self.assertEqual(x, torch.tensor([n] * numel, dtype=dt, device=device))\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    expected=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C03_diagonal__npu",
+        "status": "passed",
+        "seconds": 0.00946254
+      },
+      {
+        "id": "C03_constant__npu",
+        "status": "passed",
+        "seconds": 0.00393755
+      },
+      {
+        "id": "C03_ones_zeros__npu",
+        "status": "passed",
+        "seconds": 0.00428661
+      },
+      {
+        "id": "C04_clone__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    expected=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:42 (PID:347136, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347136] 2026-10-26-12:53:42.871.224 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 692, in instantiated_test\n    raise rte\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_torch.py\", line 3652, in test_clone_all_dtypes_and_devices\n    self.assertEqual(x, y)\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    expected=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C04_broadcast__npu",
+        "status": "passed",
+        "seconds": 0.00641488
+      },
+      {
+        "id": "C04_transpose__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    expected=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/utils/_device.py\", line 122, in __torch_function__\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:42 (PID:347136, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347136] 2026-10-26-12:53:42.895.821 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_torch.py\", line 10197, in test_copy_transpose\n    self.assertEqual(y[:, 0], range(100))\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    expected=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C05_to__npu",
+        "status": "passed",
+        "seconds": 0.002736
+      },
+      {
+        "id": "C05_empty__npu_float32",
+        "status": "failed",
+        "reason": "\"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"",
+        "traceback": "NotImplementedError: Cannot copy out of meta tensor; no data!\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 1700, in dep_fn\n    return fn(slf, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_nn.py\", line 13052, in test_module_to_empty\n    with self.assertRaisesRegex(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 275, in __exit__\n    self._raiseFailure('\"{}\" does not match \"{}\"'.format(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 199, in _raiseFailure\n    raise self.test_case.failureException(msg)\nAssertionError: \"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"\n"
+      },
+      {
+        "id": "C05_empty__npu_float64",
+        "status": "failed",
+        "reason": "\"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"",
+        "traceback": "NotImplementedError: Cannot copy out of meta tensor; no data!\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 1700, in dep_fn\n    return fn(slf, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_nn.py\", line 13052, in test_module_to_empty\n    with self.assertRaisesRegex(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 275, in __exit__\n    self._raiseFailure('\"{}\" does not match \"{}\"'.format(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 199, in _raiseFailure\n    raise self.test_case.failureException(msg)\nAssertionError: \"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"\n"
+      },
+      {
+        "id": "C05_empty_nonrecursive__npu",
+        "status": "passed",
+        "seconds": 0.00115382
+      }
+    ],
+    "instrumented-cpu": [
+      {
+        "id": "C03_fill__cpu",
+        "status": "passed",
+        "seconds": 19.43753065
+      },
+      {
+        "id": "C03_diagonal__cpu",
+        "status": "passed",
+        "seconds": 0.01570321
+      },
+      {
+        "id": "C03_constant__cpu",
+        "status": "passed",
+        "seconds": 0.00724368
+      },
+      {
+        "id": "C03_ones_zeros__cpu",
+        "status": "passed",
+        "seconds": 0.01257085
+      },
+      {
+        "id": "C04_clone__cpu",
+        "status": "passed",
+        "seconds": 0.01469305
+      },
+      {
+        "id": "C04_broadcast__cpu",
+        "status": "passed",
+        "seconds": 0.00444075
+      },
+      {
+        "id": "C04_transpose__cpu",
+        "status": "passed",
+        "seconds": 0.04008108
+      },
+      {
+        "id": "C05_to__cpu",
+        "status": "passed",
+        "seconds": 0.00239182
+      },
+      {
+        "id": "C05_empty__cpu_float32",
+        "status": "passed",
+        "seconds": 0.00413921
+      },
+      {
+        "id": "C05_empty__cpu_float64",
+        "status": "passed",
+        "seconds": 0.00248376
+      },
+      {
+        "id": "C05_empty_nonrecursive__cpu",
+        "status": "passed",
+        "seconds": 0.00237599
+      }
+    ],
+    "instrumented-npu": [
+      {
+        "id": "C03_fill__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    expected=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:57 (PID:347138, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347138] 2026-10-26-12:53:57.657.636 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 692, in instantiated_test\n    raise rte\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_tensor_creation_ops.py\", line 208, in test_fill_all_dtypes_and_devices\n    self.assertEqual(x, torch.tensor([n] * numel, dtype=dt, device=device))\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    expected=tensor([-2000.+0.j, -2000.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C03_diagonal__npu",
+        "status": "passed",
+        "seconds": 0.02756415
+      },
+      {
+        "id": "C03_constant__npu",
+        "status": "passed",
+        "seconds": 0.00938104
+      },
+      {
+        "id": "C03_ones_zeros__npu",
+        "status": "passed",
+        "seconds": 0.01387522
+      },
+      {
+        "id": "C04_clone__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    expected=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:57 (PID:347138, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347138] 2026-10-26-12:53:57.874.043 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 692, in instantiated_test\n    raise rte\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_torch.py\", line 3652, in test_clone_all_dtypes_and_devices\n    self.assertEqual(x, y)\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    expected=tensor([1.+0.j, 1.+0.j], device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C04_broadcast__npu",
+        "status": "passed",
+        "seconds": 0.01308553
+      },
+      {
+        "id": "C04_transpose__npu",
+        "status": "failed",
+        "reason": "Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    expected=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.",
+        "traceback": "Traceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1385, in not_close_error_metas\n    pair.compare()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 789, in compare\n    self._compare_values(actual, expected)\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 947, in _compare_values\n    compare_fn(\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1126, in _compare_regular_values_close\n    matches = torch.isclose(\n              ^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/utils/_device.py\", line 122, in __torch_function__\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: isclose:third_party/op-plugin/op_plugin/ops/opapi/StructKernelNpuOpApi_25.cpp:65 NPU function error: call aclnnIsClose failed, error code is 161002\n[ERROR] 2026-10-26-12:53:57 (PID:347138, Device:0, RankID:-1) ERR00100 PTA call acl api failed.\n[PID: 347138] 2026-10-26-12:53:57.925.723 AclNN_Parameter_Error(EZ1001): Tensor self not implemented for DT_COMPLEX64, should be in dtype support list [DT_FLOAT,DT_INT32,DT_INT64,DT_FLOAT16,DT_INT16,DT_INT8,DT_UINT8,DT_DOUBLE,DT_BOOL,DT_BFLOAT16,].\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_torch.py\", line 10197, in test_copy_transpose\n    self.assertEqual(y[:, 0], range(100))\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_utils.py\", line 5058, in assertEqual\n    error_metas = not_close_error_metas(\n                  ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_comparison.py\", line 1391, in not_close_error_metas\n    raise RuntimeError(\nRuntimeError: Comparing\n\nTensorOrArrayPair(\n    id=(),\n    actual=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    expected=tensor([ 0.+0.j,  1.+0.j,  2.+0.j,  3.+0.j,  4.+0.j,  5.+0.j,  6.+0.j,  7.+0.j,  8.+0.j,  9.+0.j,\n        10.+0.j, 11.+0.j, 12.+0.j, 13.+0.j, 14.+0.j, 15.+0.j, 16.+0.j, 17.+0.j, 18.+0.j, 19.+0.j,\n        20.+0.j, 21.+0.j, 22.+0.j, 23.+0.j, 24.+0.j, 25.+0.j, 26.+0.j, 27.+0.j, 28.+0.j, 29.+0.j,\n        30.+0.j, 31.+0.j, 32.+0.j, 33.+0.j, 34.+0.j, 35.+0.j, 36.+0.j, 37.+0.j, 38.+0.j, 39.+0.j,\n        40.+0.j, 41.+0.j, 42.+0.j, 43.+0.j, 44.+0.j, 45.+0.j, 46.+0.j, 47.+0.j, 48.+0.j, 49.+0.j,\n        50.+0.j, 51.+0.j, 52.+0.j, 53.+0.j, 54.+0.j, 55.+0.j, 56.+0.j, 57.+0.j, 58.+0.j, 59.+0.j,\n        60.+0.j, 61.+0.j, 62.+0.j, 63.+0.j, 64.+0.j, 65.+0.j, 66.+0.j, 67.+0.j, 68.+0.j, 69.+0.j,\n        70.+0.j, 71.+0.j, 72.+0.j, 73.+0.j, 74.+0.j, 75.+0.j, 76.+0.j, 77.+0.j, 78.+0.j, 79.+0.j,\n        80.+0.j, 81.+0.j, 82.+0.j, 83.+0.j, 84.+0.j, 85.+0.j, 86.+0.j, 87.+0.j, 88.+0.j, 89.+0.j,\n        90.+0.j, 91.+0.j, 92.+0.j, 93.+0.j, 94.+0.j, 95.+0.j, 96.+0.j, 97.+0.j, 98.+0.j, 99.+0.j],\n       device='npu:0'),\n    rtol=1.3e-06,\n    atol=1e-05,\n    equal_nan=True,\n    check_device=False,\n    check_dtype=True,\n    check_layout=False,\n    check_stride=False,\n)\n\nresulted in the unexpected exception above. If you are a user and see this message during normal operation please file an issue at https://github.com/pytorch/pytorch/issues. If you are a developer and working on the comparison functions, please except the previous error and raise an expressive `ErrorMeta` instead.\n"
+      },
+      {
+        "id": "C05_to__npu",
+        "status": "passed",
+        "seconds": 0.00861635
+      },
+      {
+        "id": "C05_empty__npu_float32",
+        "status": "failed",
+        "reason": "\"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"",
+        "traceback": "NotImplementedError: Cannot copy out of meta tensor; no data!\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 1700, in dep_fn\n    return fn(slf, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_nn.py\", line 13052, in test_module_to_empty\n    with self.assertRaisesRegex(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 275, in __exit__\n    self._raiseFailure('\"{}\" does not match \"{}\"'.format(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 199, in _raiseFailure\n    raise self.test_case.failureException(msg)\nAssertionError: \"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"\n"
+      },
+      {
+        "id": "C05_empty__npu_float64",
+        "status": "failed",
+        "reason": "\"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"",
+        "traceback": "NotImplementedError: Cannot copy out of meta tensor; no data!\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/scenario_correctness.py\", line 20, in <module>\n    method()\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 672, in instantiated_test\n    result = test(self, **param_kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/testing/_internal/common_device_type.py\", line 1700, in dep_fn\n    return fn(slf, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/upstream-reference/test/test_nn.py\", line 13052, in test_module_to_empty\n    with self.assertRaisesRegex(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 275, in __exit__\n    self._raiseFailure('\"{}\" does not match \"{}\"'.format(\n  File \"/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/unittest/case.py\", line 199, in _raiseFailure\n    raise self.test_case.failureException(msg)\nAssertionError: \"Cannot\\ copy\\ out\\ of\\ meta\\ tensor;\\ no\\ data!\\ Please\\ use\\ torch\\.nn\\.Module\\.to_empty\\(\\)\\ instead\\ of\\ torch\\.nn\\.Module\\.to\\(\\)\\ when\\ moving\\ module\\ from\\ meta\\ to\\ a\\ different\\ device\\.\" does not match \"Cannot copy out of meta tensor; no data!\"\n"
+      },
+      {
+        "id": "C05_empty_nonrecursive__npu",
+        "status": "passed",
+        "seconds": 0.00408125
+      }
+    ]
+  },
+  "source_manifest": [
+    {
+      "path": "test/test_tensor_creation_ops.py",
+      "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_tensor_creation_ops.py",
+      "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+      "sha256": "91c147ff16bfe3b3d442d341dfeb93e1174c0de50e07ade27d581ee3b293656c",
+      "bytes": 220635
+    },
+    {
+      "path": "test/test_torch.py",
+      "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_torch.py",
+      "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+      "sha256": "4e4a3434334e4ad9cfe4764398457727d3b9cc3c6ca267d010bda0e35294d920",
+      "bytes": 532027
+    },
+    {
+      "path": "test/nn/test_init.py",
+      "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/nn/test_init.py",
+      "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+      "sha256": "fd26991f70e0710f3093bc8439315bff1903291a3f10ec3eddbe91d4e97fc1bb",
+      "bytes": 29492
+    },
+    {
+      "path": "test/test_nn.py",
+      "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+      "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_nn.py",
+      "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+      "sha256": "5914aff6e7e42b6b11c521b01369b0228b24ae7c29802b2e8c21606861306e52",
+      "bytes": 868071
+    }
+  ],
+  "server_directory": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05",
+  "round_stability": [
+    {
+      "id": "C03_constant__cpu",
+      "baseline_cv": 0.025116494374224606,
+      "instrumented_cv": 0.006042501247474039,
+      "paired_ratio_min": 9.192473562179831,
+      "paired_ratio_max": 10.036394564613248
+    },
+    {
+      "id": "C03_diagonal__cpu",
+      "baseline_cv": 0.021992968963063703,
+      "instrumented_cv": 0.007711609518475215,
+      "paired_ratio_min": 10.680836329891418,
+      "paired_ratio_max": 11.666026195706513
+    },
+    {
+      "id": "C03_fill__cpu",
+      "baseline_cv": 0.014297738453742959,
+      "instrumented_cv": 0.0007316334192521193,
+      "paired_ratio_min": 29.904294855306247,
+      "paired_ratio_max": 31.362577806973164
+    },
+    {
+      "id": "C03_ones_zeros__cpu",
+      "baseline_cv": 0.02751432667999525,
+      "instrumented_cv": 0.0051772079865661045,
+      "paired_ratio_min": 8.83418318159458,
+      "paired_ratio_max": 9.707586174484026
+    },
+    {
+      "id": "C04_broadcast__cpu",
+      "baseline_cv": 0.027577940032271785,
+      "instrumented_cv": 0.005475578698939088,
+      "paired_ratio_min": 8.20710686556561,
+      "paired_ratio_max": 8.95927104744655
+    },
+    {
+      "id": "C04_clone__cpu",
+      "baseline_cv": 0.024998485148041993,
+      "instrumented_cv": 0.002635367184719769,
+      "paired_ratio_min": 7.086095675819466,
+      "paired_ratio_max": 7.678614963748781
+    },
+    {
+      "id": "C04_transpose__cpu",
+      "baseline_cv": 0.022645557346952335,
+      "instrumented_cv": 0.0006550497574601302,
+      "paired_ratio_min": 16.235882526276928,
+      "paired_ratio_max": 17.45703171920897
+    },
+    {
+      "id": "C05_empty__cpu_float32",
+      "baseline_cv": 0.019526300587672456,
+      "instrumented_cv": 0.00329770856543064,
+      "paired_ratio_min": 3.2087181404076324,
+      "paired_ratio_max": 3.3883360208559847
+    },
+    {
+      "id": "C05_empty__cpu_float64",
+      "baseline_cv": 0.01602929187087766,
+      "instrumented_cv": 0.004281066955367651,
+      "paired_ratio_min": 3.248110666955635,
+      "paired_ratio_max": 3.3998576980296242
+    },
+    {
+      "id": "C05_empty_nonrecursive__cpu",
+      "baseline_cv": 0.0193232627414033,
+      "instrumented_cv": 0.016423257609883987,
+      "paired_ratio_min": 2.9947465907782407,
+      "paired_ratio_max": 3.262947928954382
+    },
+    {
+      "id": "C05_to__cpu",
+      "baseline_cv": 0.020333311388142285,
+      "instrumented_cv": 0.0036972994180117244,
+      "paired_ratio_min": 2.890502484791418,
+      "paired_ratio_max": 3.071086688352134
+    },
+    {
+      "id": "C03_constant__npu",
+      "baseline_cv": 0.0360121794153947,
+      "instrumented_cv": 0.00848821565337788,
+      "paired_ratio_min": 3.5377752739416644,
+      "paired_ratio_max": 3.980992056850027
+    },
+    {
+      "id": "C03_diagonal__npu",
+      "baseline_cv": 0.03355124676684273,
+      "instrumented_cv": 0.00939229658165179,
+      "paired_ratio_min": 4.870833424245868,
+      "paired_ratio_max": 5.372748145210294
+    },
+    {
+      "id": "C03_ones_zeros__npu",
+      "baseline_cv": 0.04518497167342628,
+      "instrumented_cv": 0.0077915366601610985,
+      "paired_ratio_min": 3.745980908936585,
+      "paired_ratio_max": 4.316750866944209
+    },
+    {
+      "id": "C04_broadcast__npu",
+      "baseline_cv": 0.03474175471969822,
+      "instrumented_cv": 0.003099080166648857,
+      "paired_ratio_min": 5.183304093915846,
+      "paired_ratio_max": 5.824207525304837
+    },
+    {
+      "id": "C05_empty_nonrecursive__npu",
+      "baseline_cv": 0.026292745980832866,
+      "instrumented_cv": 0.006179039689537504,
+      "paired_ratio_min": 3.8132243409303004,
+      "paired_ratio_max": 4.122570113039906
+    },
+    {
+      "id": "C05_to__npu",
+      "baseline_cv": 0.03281176290700444,
+      "instrumented_cv": 0.006419356869512444,
+      "paired_ratio_min": 3.1987069562081802,
+      "paired_ratio_max": 3.5560632968321646
+    }
+  ]
+}

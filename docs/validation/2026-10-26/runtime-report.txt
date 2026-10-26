@@ -1,0 +1,37 @@
+C03 / C04 / C05 原始测试方法运行耗时对比
+
+测试源码：PyTorch 1ee9fbabf8ea81cd586204a656515d96ccf6917f；原始方法通过 AST 提取，保留函数体、装饰器和源码行号。
+运行库：PyTorch 26650ac257aee280144c73a51a99a1d7a43ee161；torch-npu fc51851eb378dc663d4798435110af75968ad3e3。两组均 GCC 11.4 / LLD 22.1.8。
+对照：默认 Release vs Release + -finstrument-functions -g1；未启用调用链插件、未预加载采集钩子。
+口径：原测试方法函数体，包含数据构造、API 调用、断言；排除导入、setUp/tearDown。NPU 每次测量前后同步。不能当作单一 API 的纯算子延迟。
+3 次预热；相同的批次数；9 轮交替顺序；每轮逐次计时后求平均，再取 9 轮中位数。每个进程 torch/OMP/MKL 线程数为 1。各进程顺序测量。
+这是稳态热缓存实验；没有清除系统或设备缓存。每轮确实重新执行方法，不复用先前测试输出。运行期缓存与编译缓存审计是两个不同口径。
+
+9 轮样本的变异系数：默认组最高 4.52%，插桩组最高 1.64%；原始样本和各实例成对比值范围保存在 JSON。该数值描述本次轮间波动，不是跨机器或跨日期置信区间。
+
+实例 | 默认 ms | 插桩 ms | 倍数 | 增幅
+C03_constant__cpu | 0.706 | 6.938 | 9.826x | +882.58%
+C03_diagonal__cpu | 1.289 | 14.714 | 11.414x | +1041.37%
+C03_fill__cpu | 652.110 | 19981.948 | 30.642x | +2964.20%
+C03_ones_zeros__cpu | 1.315 | 12.441 | 9.462x | +846.20%
+C04_broadcast__cpu | 0.491 | 4.291 | 8.739x | +773.91%
+C04_clone__cpu | 1.945 | 14.398 | 7.404x | +640.40%
+C04_transpose__cpu | 2.342 | 39.355 | 16.806x | +1580.60%
+C05_empty__cpu_float32 | 0.721 | 2.372 | 3.290x | +229.04%
+C05_empty__cpu_float64 | 0.719 | 2.369 | 3.293x | +229.25%
+C05_empty_nonrecursive__cpu | 0.722 | 2.225 | 3.081x | +208.13%
+C05_to__cpu | 0.454 | 1.354 | 2.983x | +198.34%
+C03_constant__npu | 1.752 | 6.566 | 3.747x | +274.73%
+C03_diagonal__npu | 3.675 | 18.662 | 5.078x | +407.80%
+C03_ones_zeros__npu | 3.204 | 13.016 | 4.062x | +306.20%
+C04_broadcast__npu | 1.030 | 5.667 | 5.503x | +450.30%
+C05_empty_nonrecursive__npu | 0.816 | 3.246 | 3.977x | +297.67%
+C05_to__npu | 2.061 | 6.901 | 3.349x | +234.85%
+
+正确性：两版均 CPU 11/11 通过，NPU 6/11 通过；5 个失败实例不作耗时比较。
+NPU fill、clone、copy_transpose：断言使用的 aclnnIsClose 不支持 complex64，不能据此判断待测 API 本身错误。
+NPU module_to_empty float32/float64：torch_npu 的 Module.to 抛出较短错误消息，与原测试期望不符，测试在后续 to_empty 操作前失败。
+原始非 device 参数方法 diagonal、constant、ones_zeros、transpose 为 CPU 测试；其 NPU 实例明确属于使用 torch.device(npu:0) 的额外适配，函数体未修改。
+调用链采集独立执行，结果见最终验证报告；调用链成本不混入以上结果。
+
+服务器目录：/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05

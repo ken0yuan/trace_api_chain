@@ -1,14 +1,34 @@
 """Canonical source definitions. Runtime names are aliases, never identity keys."""
 import hashlib
+import re
 from pathlib import Path
 from .changed_objects import key, source_identity, canonical_path, decode_python, index_python
 
 class SourceEntities:
     def __init__(self,roots=None):
-        self.roots={k:Path(v).resolve() for k,v in (roots or {}).items()};self.files={};self.entities={};self.cpp_files={}
+        self.roots={k:Path(v).resolve() for k,v in (roots or {}).items()};self.files={};self.entities={};self.cpp_files={};self.path_cache={}
 
     def path(self,filename):
-        return canonical_path(filename,self.roots)
+        if str(filename) not in self.path_cache:self.path_cache[str(filename)]=self.canonical_source_path(filename)
+        return self.path_cache[str(filename)]
+
+    def canonical_source_path(self,filename):
+        p=Path(filename).resolve()
+        # Installed source/header copies can refer to the same repository file.
+        # Only an explicit layout correspondence AND identical bytes prove this.
+        text=p.as_posix();candidates=[]
+        for package,label in (('torch','pytorch'),('torch_npu','torch_npu')):
+            marker='/site-packages/'+package+'/'
+            if marker in text and label in self.roots:
+                relative=text.split(marker,1)[1];root=self.roots[label]
+                candidates.append(root/package/relative)
+                if package=='torch' and relative.startswith('include/'):
+                    tail=relative[len('include/'):]
+                    candidates.extend((root/tail,root/'aten/src'/tail,root/'build/aten/src'/tail))
+        for candidate in candidates:
+            if candidate!=p and candidate.is_file() and candidate.read_bytes()==p.read_bytes():
+                return canonical_path(candidate,self.roots)
+        return canonical_path(p,self.roots)
 
     def load(self,filename):
         filename=str(Path(filename).resolve())
@@ -114,11 +134,50 @@ class SourceEntities:
             lines,sha=self.cpp_files[filename]
             name=f.get('declaration_name') or f.get('name')
             if name:
-                path=self.path(filename);eid=key([path,'function',name,line,f.get('linkage_name')])
-                self.entities[eid]={'id':eid,'path':path,'kind':'function','name':name,'ordinal':line,
+                path=self.path(filename)
+                anchor=cpp_source_anchor(f,lines)
+                if not anchor:
+                    return self.unresolved([identity.get('sha256'),identity.get('path'),identity.get('offset')],name,'cpp','ambiguous_DWARF_source_anchor',annotation)
+                column,source_name=anchor
+                eid=key([path,'function',line,column,source_name])
+                self.entities.setdefault(eid,{'id':eid,'path':path,'kind':'function','name':source_name,'ordinal':line,
                                     'line':line,'end_line':line,'source_sha256':sha,'language':'cpp','status':'mapped',
-                                    'evidence':'DWARF_declaration_identity','source_text':lines[line-1] if 0<line<=len(lines) else None,
-                                    'annotation':annotation,'dwarf':f,'build_source_match_verified':False}
+                                    'column':column,'evidence':'DWARF_source_definition_anchor','source_text':lines[line-1],
+                                    'annotation':annotation,'dwarf':f,'runtime_names':[], 'linkage_names':[],
+                                    'build_source_match_verified':False})
+                entity=self.entities[eid]
+                entity['runtime_names']=sorted(set(entity['runtime_names']+[name]))
+                entity['linkage_names']=sorted(set(entity['linkage_names']+([f['linkage_name']] if f.get('linkage_name') else [])))
                 return eid
         label=next((f.get('symbol') for f in reversed((annotation or {}).get('frames',[])) if f.get('symbol') not in (None,'??','')),None)
         return self.unresolved([identity.get('sha256'),identity.get('path'),identity.get('offset')],label,'cpp','no_unique_DWARF_definition',annotation)
+
+
+def cpp_source_anchor(function,lines):
+    """Verify the DWARF declaration token; never equate symbols by demangling.
+
+    Template instantiations share this source token, whereas overloads and
+    explicit specializations have their own line/column. Macro/generated or
+    missing coordinates remain unresolved rather than inventing a definition.
+    """
+    line=function.get('line',0);column=function.get('column',0)
+    if not (0<line<=len(lines) and column>0):return None
+    # GCC's declaration column is a byte column, including tabs as one byte.
+    tail=lines[line-1].encode('utf-8')[column-1:].decode('utf-8',errors='replace')
+    name=function.get('declaration_name') or function.get('name') or ''
+    if name.startswith('operator'):
+        if not tail.startswith('operator'):return None
+        # An operator's actual source spelling is required, not its instantiated
+        # conversion type. Keep unusual conversion operators unresolved.
+        m=re.match(r'operator\s*(\(\)|\[\]|new\[\]|delete\[\]|new|delete|[-+*/%=!<>&|^~,]+)\s*\(',tail)
+        if not m:return None
+        source_name='operator'+m[1]
+        if re.sub(r'\s+','',name).split('<',1)[0]!=source_name and re.sub(r'\s+','',name)!=source_name:return None
+        return column,source_name
+    m=re.match(r'~?[A-Za-z_][A-Za-z_0-9]*',tail)
+    if not m:return None
+    source_name=m[0]
+    if name!=source_name and not name.startswith(source_name+'<'):return None
+    rest=tail[m.end():].lstrip()
+    if not rest.startswith(('(', '<')):return None
+    return column,source_name

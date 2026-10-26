@@ -1,0 +1,7 @@
+{
+  "pin": "v2.32.3-1",
+  "commit": "12df1a11afad322be5a204a2db890161cbf8131d",
+  "path": "/home/workspace-ycy/compile-performance/sources/pytorch/third_party/nccl",
+  "build_artifacts": [],
+  "prepared_before_measurement": true
+}

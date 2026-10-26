@@ -24,7 +24,8 @@ int main(int argc,char **argv) {
   struct rlimit memory={8ULL*1024*1024*1024,8ULL*1024*1024*1024};
   struct rlimit cpu={180,180};
   if (setrlimit(RLIMIT_AS,&memory) || setrlimit(RLIMIT_CPU,&cpu)) return 3;
-  Dwfl_Callbacks cb={.section_address=dwfl_offline_section_address};
+  Dwfl_Callbacks cb={.find_debuginfo=dwfl_standard_find_debuginfo,
+                     .section_address=dwfl_offline_section_address};
   Dwfl *dwfl=dwfl_begin(&cb);
   Dwfl_Module *module=dwfl ? dwfl_report_offline(dwfl,argv[1],argv[1],-1) : NULL;
   if (!module || dwfl_report_end(dwfl,NULL,NULL)) return 4;
@@ -46,7 +47,8 @@ int main(int argc,char **argv) {
       Dwarf_Die owner;
       const char *dir=dwarf_diecu(function,&owner,NULL,NULL) ? attr(&owner,DW_AT_comp_dir) : NULL;
       fputs("{\"kind\":\"definition\",\"file\":",stdout); string(dwarf_decl_file(function));
-      printf(",\"line\":%d,\"name\":",line); string(attr(function,DW_AT_name));
+      int column=0; dwarf_decl_column(function,&column);
+      printf(",\"line\":%d,\"column\":%d,\"name\":",line,column); string(attr(function,DW_AT_name));
       fputs(",\"linkage_name\":",stdout); string(attr(function,DW_AT_linkage_name));
       fputs(",\"comp_dir\":",stdout); string(dir); putchar('}');
     } else fputs("null",stdout);

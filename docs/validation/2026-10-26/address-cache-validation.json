@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "cases": [
+    {
+      "case": "C04_clone__cpu",
+      "original": {
+        "seconds": 2.8993384700006573,
+        "events": 50004,
+        "gaps": [],
+        "sha256": "2b976c01e4ca9456875348cf374ed98abd123fcd9b83e31b61675f8ea7e86e8f",
+        "unique_addresses": 0
+      },
+      "cached": {
+        "seconds": 1.7419396899931598,
+        "events": 50004,
+        "gaps": [],
+        "sha256": "2b976c01e4ca9456875348cf374ed98abd123fcd9b83e31b61675f8ea7e86e8f",
+        "unique_addresses": 2161
+      },
+      "identical_to_frozen_evidence": true
+    },
+    {
+      "case": "C05_to__npu",
+      "original": {
+        "seconds": 22.098479189997306,
+        "events": 240972,
+        "gaps": [],
+        "sha256": "f317df52d66a28ff9daa4f220aaaa670e98910fb72cf479863f7fcdb141c974f",
+        "unique_addresses": 0
+      },
+      "cached": {
+        "seconds": 3.2006562799942913,
+        "events": 240972,
+        "gaps": [],
+        "sha256": "f317df52d66a28ff9daa4f220aaaa670e98910fb72cf479863f7fcdb141c974f",
+        "unique_addresses": 5907
+      },
+      "identical_to_frozen_evidence": true
+    }
+  ]
+}

@@ -71,7 +71,7 @@ def dwarf_definitions(prepared):
     cache_dir=prepared['output']/'symbol-cache';cache_dir.mkdir(exist_ok=True)
     groups={}
     for row in prepared['native']:
-        if row['event']!='enter':continue
+        if row['event'] not in ('enter','path'):continue
         i=row['source_identity']
         if i.get('sha256') and isinstance(i.get('offset'),int):groups.setdefault((i['path'],i['sha256']),set()).add(i['offset'])
     result={}
@@ -97,7 +97,7 @@ def normalize(prepared,roots=None,definitions=None):
     objects={e['id']:e for e in events if e['event']=='object'}
     mapping={};aliases=set();pending=[];native_map={};live_entry={}
     for row in native:
-        if row['event']!='enter':continue
+        if row['event'] not in ('enter','path'):continue
         i=row['source_identity'];identity=(i.get('path'),i.get('offset'))
         if identity not in native_map:
             native_map[identity]=source.cpp(i,definitions.get(identity),prepared['resolved'].get(identity))
@@ -191,6 +191,9 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
              'api_definitions':len(api_entities),'normalized_paths':len(paths),'pending_objects':len(pending),
              'source_dependencies':len(dependency_rows),'source_read_policy':graph.get('source_read_policy'),
              'gaps':graph['gaps'],'raw_evidence':str(prepared['output']),'graph_digest':digest(prepared['output']/'graph.json')}
+    if graph.get('native_storage')=='paths':
+        summary.update(native_storage='paths',native_invocations=graph['native_activations'],
+                       native_path_nodes=graph['native_path_nodes'],runtime_event_history_preserved=False)
     db=connect(db_path)
     try:
         db.execute('BEGIN IMMEDIATE')

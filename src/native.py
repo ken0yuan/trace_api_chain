@@ -38,33 +38,49 @@ def build_hook(output):
     return target
 
 class Bridge:
-    def __init__(self,output):
+    def __init__(self,output,storage='events'):
         self.output=Path(output);self.stack=[];self.active=None;self.segments=[];self.gaps=[]
+        self.storage=storage
+        self.contexts={}
         self.hook=ctypes.CDLL(str(self.output/'compiler-hooks.so'))
         self.hook.trace_index_configure.argtypes=[ctypes.c_char_p]
         self.hook.trace_index_configure.restype=ctypes.c_int
         self.hook.trace_index_stop.restype=ctypes.c_int
         self.hook.trace_index_event_count.restype=ctypes.c_size_t
         if self.hook.trace_index_interposed()!=1:raise RuntimeError('compiler_hook_not_interposed')
+        if storage=='paths':
+            self.hook.trace_paths_begin.argtypes=[ctypes.c_uint64]
+            self.hook.trace_paths_event_count.restype=ctypes.c_uint64
+            self.hook.trace_paths_finish.argtypes=[ctypes.c_char_p]
         self.maps_before=Path('/proc/self/maps').read_text()
 
     def pause(self):
         if self.active is not None:
-            status=self.hook.trace_index_stop()
-            self.active['events']=self.hook.trace_index_event_count()
+            if self.storage=='paths':
+                status=self.hook.trace_paths_pause()
+                self.active['events']=self.hook.trace_paths_event_count()-self.active.pop('start_events')
+            else:
+                status=self.hook.trace_index_stop()
+                self.active['events']=self.hook.trace_index_event_count()
             self.active['stop_status']=status
-            if status:self.gaps.append('overflow_or_write_failure:'+self.active['file'])
+            if status:self.gaps.append('overflow_or_write_failure:'+str(self.active['file'] or self.active['ordinal']))
             self.active=None
 
     def resume_current(self):
         if self.stack and self.active is None:
             name='segment-'+str(len(self.segments)).zfill(6)+'.bin'
             segment={'uid':self.stack[-1],'file':name,'ordinal':len(self.segments)}
-            if self.hook.trace_index_configure(os.fsencode(self.output/name)):
+            if self.storage=='paths':
+                segment['file']=None;segment['start_events']=self.hook.trace_paths_event_count()
+                segment['context']=self.contexts[self.stack[-1]]
+                result=self.hook.trace_paths_begin(int(segment['context']))
+            else:result=self.hook.trace_index_configure(os.fsencode(self.output/name))
+            if result:
                 raise RuntimeError('native_window_open_failed')
             self.active=segment;self.segments.append(segment)
 
-    def begin(self,uid,identity):
+    def begin(self,uid,identity,context=None):
+        self.contexts[uid]=context if context is not None else uid
         self.pause();self.stack.append(uid);self.resume_current()
 
     def end(self,uid):
@@ -76,6 +92,8 @@ class Bridge:
     def close(self):
         self.pause()
         if self.stack:self.gaps.append('unfinished_native_windows')
+        if self.storage=='paths' and self.hook.trace_paths_finish(os.fsencode(self.output/'native-paths.bin')):
+            self.gaps.append('native_path_capture_incomplete')
         after=Path('/proc/self/maps').read_text()
         (self.output/'maps-before.txt').write_text(self.maps_before)
         (self.output/'maps.txt').write_text(after)
@@ -86,11 +104,12 @@ class Bridge:
                 try:
                     stat=os.stat(parts[5]);stamps[parts[5]]=[stat.st_size,stat.st_mtime_ns,stat.st_ino]
                 except OSError:pass
-        save(self.output/'windows.json',{'segments':self.segments,'gaps':self.gaps,'module_stamps':stamps})
+        save(self.output/'windows.json',{'segments':self.segments,'gaps':self.gaps,'module_stamps':stamps,'native_storage':self.storage})
 
 class Modules:
     def __init__(self,maps,stamps):
         self.rows=[];self.headers={};self.stamps=stamps;self.identities={};self.gaps=set()
+        self.address_cache={}
         for line in maps.splitlines():
             p=line.split(None,5)
             if len(p)!=6 or not p[5].startswith('/'):continue
@@ -98,6 +117,8 @@ class Modules:
             self.rows.append((lo,hi,int(p[2],16),p[5]))
 
     def identify(self,pc):
+        # Mappings and module stamps are one immutable capture snapshot.
+        if pc in self.address_cache:return self.address_cache[pc]
         rows=[r for r in self.rows if r[0]<=pc<r[1]]
         if len(rows)!=1:
             self.gaps.add('address_module_unresolved');return {'path':None,'offset':None,'status':'unresolved'}
@@ -130,6 +151,7 @@ class Modules:
             self.gaps.add('ELF_load_bias_ambiguous');return {'path':path,'offset':None,'status':'unresolved'}
         result={'path':path,'offset':pc-biases.pop(),'sha256':sha}
         self.identities[path,result['offset']]=result
+        self.address_cache[pc]=result
         return result
 
 def decode(output):

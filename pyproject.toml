@@ -22,7 +22,7 @@ packages = ["trace_api_chain"]
 package-dir = { trace_api_chain = "src" }
 
 [tool.setuptools.package-data]
-trace_api_chain = ["*.c", "contract.json"]
+trace_api_chain = ["*.c", "*.h", "contract.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

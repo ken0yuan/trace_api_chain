@@ -5,10 +5,13 @@ import shutil
 from .native import decode,digest,save
 from .replay import rebuild,canonical
 from .symbols import resolve
+from .compact import decode_paths,rebuild_paths
 
 def prepare(output,mode=None):
     output=Path(output)
     mode=mode or json.loads((output/'capture-result.json').read_text()).get('mode','full')
+    storage=json.loads((output/'windows.json').read_text()).get('native_storage','events') if mode=='full' else 'events'
+    reconstruct=rebuild_paths if storage=='paths' else rebuild
     evidence=output/'evidence';manifest_path=evidence/'manifest.json'
     if manifest_path.exists():
         manifest=json.loads(manifest_path.read_text())
@@ -23,19 +26,20 @@ def prepare(output,mode=None):
         events=[json.loads(x) for x in (output/'events.jsonl').read_text().splitlines()]
         native=[];gaps=[]
         if mode=='full':
-            native,modules,gaps=decode(output);gaps+=sorted(modules.gaps)
+            native,modules,gaps=(decode_paths(output) if storage=='paths' else decode(output));gaps+=sorted(modules.gaps)
             windows=json.loads((output/'windows.json').read_text())
             if windows['segments'] and not native:raise ValueError('no_compiler_events: instrumented target library required')
-        rebuild(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+        reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
         evidence.mkdir(exist_ok=True);shutil.copyfile(output/'events.jsonl',evidence/'python.jsonl')
         with (evidence/'native.jsonl').open('wb') as f:
             for row in native:f.write(canonical(row))
         raw=[output/'events.jsonl',*sorted(output.glob('segment-*.bin'))]
+        if storage=='paths':raw.append(output/'native-paths.bin')
         raw += [output/name for name in ('windows.json','maps.txt','maps-before.txt','api-catalog.json','pytest-receipt.json') if (output/name).exists()]
         manifest={'sha256':{name:digest(evidence/name) for name in ('python.jsonl','native.jsonl')},
-                  'raw_sha256':{p.name:digest(p) for p in raw},'capture_gaps':gaps,'mode':mode}
+                  'raw_sha256':{p.name:digest(p) for p in raw},'capture_gaps':gaps,'mode':mode,'native_storage':storage}
         save(manifest_path,manifest)
-    graph=rebuild(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+    graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
     graph['gaps']=sorted(set(graph['gaps']+gaps))
     if graph['gaps']:graph['status']='evidence_scope_incomplete'
     (output/'graph.json').write_bytes(canonical(graph))

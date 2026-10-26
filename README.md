@@ -4,6 +4,10 @@
 
 源码文件直接放在 `src/`，没有 `src/trace_api_chain/` 包目录；`pyproject.toml` 将 `src/` 映射为安装后的 `trace_api_chain` 包，pytest 插件名和命令不变。验证记录、共享数据库和生成页面统一在项目内的 `data/`，整个目录由 `.gitignore` 排除。
 
+## 服务器安装与本次修复记录
+
+从零理解环境、使用已安装的 PyTorch/torch-npu、复现 LLD 编译对比、使用完整 API 清单和紧凑路径采集，请阅读 [服务器安装与调用链修复手册](docs/服务器安装与调用链修复手册.md)。文档附有版本、回归验证、性能结果和复现脚本。
+
 ## 安装
 
 ```bash
@@ -15,7 +19,7 @@ python -m pip install /path/to/trace-api-chain
 ## 第一步 pytest 只采集
 
 ```bash
-python -m pytest test/test_torch.py::TestTorchDeviceTypeCUDA::test_fill_barebones_unsigned_cuda_uint16 --callchain-out=/tmp/raw/fill
+python -m pytest test/test_torch.py::TestTorchDeviceTypeCUDA::test_fill_barebones_unsigned_cuda_uint16 --callchain-out=/tmp/raw/fill --callchain-native-storage=paths --callchain-api-catalog=/path/to/api_catalog.json
 ```
 
 插件通过 pytest11 自动加载；设置了 `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` 时加入 `-p trace_api_chain.pytest_plugin`。
@@ -27,6 +31,10 @@ python -m pytest tests/test_backend.py::test_one --callchain-mode=objects --call
 ```
 
 默认根范围为已加载 torch 和 torch_npu 公开绑定的运行时身份目录。自定义后端在 torch API 外部执行时，需要将它的模块命名空间加入范围；采集器不从 torch 调用向外猜测后端对象。
+
+`--callchain-api-catalog` 接受共享文档 API 清单。每个测试使用同一份完整清单，不按测试单独缩小 API 范围；实际能解析的 Python 入口按运行时对象身份匹配。清单 SHA256、总数、已注册入口及未解析入口写入 `api-catalog.json`。C++ 清单条目保留在清单统计中，其被插桩的实际执行作为原生后继采集；这些统计不等于所有 C++ 文档条目已绑定为独立 API 根。
+
+`--callchain-native-storage=paths` 在采集时累计重复原生路径的进入/退出次数，输出 `native-paths.bin`。路径节点和各 Python 调用上下文的支持记录分开保存；重复执行同一路径只增加计数，新增分支才增加结构。逐次时间戳和调用顺序不保留，不能用于逐次时序分析。默认 `events` 保留旧的逐事件模式，适合确实需要完整时序的小规模实验。
 
 采集产物只有 `events.jsonl`、原生 `segment-*.bin`、窗口/模块映射、API 目录和测试回执。此阶段不解析 DWARF、不写主 SQL 库、不生成 HTML。`capture-result.json` 的 `stage=capture_only` 可以核对隔离状态。
 
@@ -70,12 +78,12 @@ diff 与重放共用 `源码根标签/相对文件 + kind + 源码词法限定�
 
 Python 函数优先使用运行时 code object 的文件/首行与 AST 定义匹配，展示名或导出名改变不改变源码归属。实例以自身 Python 方法的代码位置寻找唯一类归属；不能唯一定位的对象进入 pending，不按名字相似强行合并。空类、动态生成类或复杂方法替换可能缺少足够源码锚点。
 
-C++ 使用匹配 ELF 的 PC 和 DWARF 声明位置、名称及 linkage identity。没有唯一 DWARF 定义时保持二进制地址实体并标注未解析；不拿执行行当作函数定义，不随意删除模板参数或合并重载。C++ 定义位置移动时可能产生新身份；旧版本贡献通过版本失效处理，不猜测跨版本迁移。
+C++ 使用匹配 ELF 的 PC 查找 DWARF 声明文件、行、列，并核对该位置的源码声明标识符。身份取自源码定义锚点；编译符号、运行时地址、模板实例名仅是证据。同一模板定义的不同实例复用一个对象，不同重载或显式特化保留各自源码位置。宏生成、缺失列号或无法核对源码标识符的定义保留未解析状态，不猜测合并。已安装头文件只有在其对应仓库路径明确且文件内容完全一致时才复用仓库源码身份。C++ 定义位置移动时可能产生新身份；不猜测跨版本迁移。
 
-合并的是源码实体，不是业务实例的生命周期，也不把各次调用事件当作同一个实例。数据库保留 API、祖先路径、边类型及证据目录指针；完整事件仍保存在原始证据目录。全局关系表的可达路径不自动视为一次真实调用，API 导出使用带上下文的 paths 表。
+源码实体在 `entities` 中只存一份，同一前驱、后继和边类型在 `canonical_relations` 中只出现一次。数据库另外保留 API、祖先路径、边类型及证据目录指针；`paths` 是路径证据，不是新的源码对象。全局关系的任意拼接不自动视为真实调用，API 导出使用实际观测上下文。`events` 模式保存完整事件，`paths` 模式保存聚合结构和次数。
 
 `torch.compile` 调用子树、采集期间返回的包装器，以及 torch._dynamo/torch._inductor 子树明确排除，留下 excluded_call 记录。后两个是较宽的编译子系统边界。当前只归属测试线程；Python 对象是快照与引用观测，C++ 只记录主机函数事件，不记录 C++ 实例、局部变量或 GPU 内核内部执行。
 
-预算：`--callchain-max-events` 每个 native 分片默认 262144 条；`--callchain-max-references` 每个 Python 快照默认 100000 次引用访问；`--callchain-timeout` 默认 3600 秒。溢出、钩子替换、错误序号与不配对事件不得伪装完整。测试退出码与采集状态分别记录。
+预算：`--callchain-max-events` 在 events 模式限制每个 native 分片条数，在 paths 模式限制上下文与路径支持记录数，默认均为 262144；`--callchain-max-paths` 限制原生唯一路径节点数，默认 262144。`--callchain-max-references` 每个 Python 快照默认 100000 次引用访问；`--callchain-timeout` 默认 3600 秒。溢出、钩子替换、错误序号与不配对事件不得伪装完整。测试退出码与采集状态分别记录。
 
 详细对象范围和后端类案例见 `docs/对象采集与源码归一化.md`；SQL 结构见 `docs/SQL数据库说明.md`；代码职责见 `代码树.txt`。

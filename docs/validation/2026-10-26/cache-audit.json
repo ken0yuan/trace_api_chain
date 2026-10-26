@@ -1,0 +1,125 @@
+{
+  "page_cache_cleared": false,
+  "machine_rebooted_between_variants": false,
+  "method": "separate copies of unbuilt source trees; separate build directories; compiler caches disabled; no shared-system page-cache flush",
+  "compiler_binaries": {
+    "/usr/bin/gcc": {
+      "resolved": "/usr/bin/aarch64-linux-gnu-gcc-11",
+      "elf_magic": "7f454c46"
+    },
+    "/usr/bin/g++": {
+      "resolved": "/usr/bin/aarch64-linux-gnu-g++-11",
+      "elf_magic": "7f454c46"
+    }
+  },
+  "cache_programs": {
+    "ccache": null,
+    "sccache": null
+  },
+  "pristine_sources": {
+    "pytorch": {
+      "root_build_exists": false,
+      "build_cache_files": []
+    },
+    "torch-npu": {
+      "root_build_exists": false,
+      "build_cache_files": []
+    }
+  },
+  "stages": {
+    "baseline-r7-lld22-pytorch": {
+      "status": "success",
+      "elapsed_seconds": 438.8117776500003,
+      "compiler_cache_env": {
+        "CCACHE_DISABLE": "1",
+        "SCCACHE_DISABLE": "1"
+      },
+      "compiler_settings": [
+        "CCACHE_BINARY:FILEPATH=CCACHE_BINARY-NOTFOUND",
+        "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+        "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "SCCACHE_EXECUTABLE:FILEPATH=SCCACHE_EXECUTABLE-NOTFOUND",
+        "USE_CCACHE:BOOL=ON",
+        "SCCACHE_EXECUTABLE-ADVANCED:INTERNAL=1"
+      ],
+      "compiler_invocations_recorded": 2976,
+      "calls_with_compile_flag": 2974,
+      "objects_present": 2819,
+      "source_tree_objects_outside_build": 0,
+      "outside_build_object_mtimes_older_than_stage_start": 0,
+      "object_mtimes_older_than_stage_start": 0,
+      "ninja_log_records": 17494,
+      "ninja_log_mtime": 1793013854.245841
+    },
+    "baseline-r7-lld22-torch-npu": {
+      "status": "success",
+      "elapsed_seconds": 375.6129607199982,
+      "compiler_cache_env": {
+        "CCACHE_DISABLE": "1",
+        "SCCACHE_DISABLE": "1"
+      },
+      "compiler_settings": [
+        "CCACHE:FILEPATH=CCACHE-NOTFOUND",
+        "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+        "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc"
+      ],
+      "compiler_invocations_recorded": 1681,
+      "calls_with_compile_flag": 1663,
+      "objects_present": 1581,
+      "source_tree_objects_outside_build": 56,
+      "outside_build_object_mtimes_older_than_stage_start": 0,
+      "object_mtimes_older_than_stage_start": 0,
+      "ninja_log_records": 1625,
+      "ninja_log_mtime": 1793016532.465841
+    },
+    "instrumented-r7-lld22-pytorch": {
+      "status": "success",
+      "elapsed_seconds": 755.954353809997,
+      "compiler_cache_env": {
+        "CCACHE_DISABLE": "1",
+        "SCCACHE_DISABLE": "1"
+      },
+      "compiler_settings": [
+        "CCACHE_BINARY:FILEPATH=CCACHE_BINARY-NOTFOUND",
+        "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+        "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "SCCACHE_EXECUTABLE:FILEPATH=SCCACHE_EXECUTABLE-NOTFOUND",
+        "USE_CCACHE:BOOL=ON",
+        "SCCACHE_EXECUTABLE-ADVANCED:INTERNAL=1"
+      ],
+      "compiler_invocations_recorded": 2976,
+      "calls_with_compile_flag": 2974,
+      "objects_present": 2819,
+      "source_tree_objects_outside_build": 0,
+      "outside_build_object_mtimes_older_than_stage_start": 0,
+      "object_mtimes_older_than_stage_start": 0,
+      "ninja_log_records": 17494,
+      "ninja_log_mtime": 1793015025.765841
+    },
+    "instrumented-r7-lld22-torch-npu": {
+      "status": "success",
+      "elapsed_seconds": 905.822170090003,
+      "compiler_cache_env": {
+        "CCACHE_DISABLE": "1",
+        "SCCACHE_DISABLE": "1"
+      },
+      "compiler_settings": [
+        "CCACHE:FILEPATH=CCACHE-NOTFOUND",
+        "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+        "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc"
+      ],
+      "compiler_invocations_recorded": 1681,
+      "calls_with_compile_flag": 1663,
+      "objects_present": 1581,
+      "source_tree_objects_outside_build": 56,
+      "outside_build_object_mtimes_older_than_stage_start": 0,
+      "object_mtimes_older_than_stage_start": 0,
+      "ninja_log_records": 1625,
+      "ninja_log_mtime": 1793017412.6578412
+    }
+  }
+}

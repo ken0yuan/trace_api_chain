@@ -1,0 +1,32 @@
+PyTorch / torch-npu 源码编译耗时对比
+
+服务器目录：/home/workspace-ycy/compile-performance
+对比：默认 Release vs Release + -finstrument-functions -g1
+编译器 GCC 11.4；两组统一 LLD 22.1.8；并行数 128；每组一次干净构建；不包含下载和环境准备时间。
+
+pytorch: 438.81 s (7 分 18.81 秒) -> 755.95 s (12 分 35.95 秒); 增加 317.14 s，+72.27%（1.723 倍）
+  未独立记录该组件的 Ninja 进程总用时；完整构建总用时已由 monotonic 时钟记录，各目标耗时见 JSON 中的 Ninja 日志明细。
+torch-npu: 375.61 s (6 分 15.61 秒) -> 905.82 s (15 分 5.82 秒); 增加 530.21 s，+141.16%（2.412 倍）
+  Ninja 原生构建阶段：280.03 s -> 715.20 s，+155.40%
+
+合计：814.42 s -> 1661.78 s，+104.04%
+
+源码：PyTorch 26650ac257aee280144c73a51a99a1d7a43ee161
+源码：torch-npu fc51851eb378dc663d4798435110af75968ad3e3
+
+基础环境：/home/workspace-ycy/compile-performance/venv311；82 个唯一依赖版本保持一致，torch 与 torch_npu 未安装。
+两组已编译环境：/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311 与 /home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311
+插件：trace_api_chain 0.3.0 / 96c5fbc；67 项测试通过；新编译库的 CPU/NPU 原生采集、源码定位、重放、SQLite 查询和 HTML 生成通过。
+
+缓存核查：无 ccache/sccache；原始源码无构建缓存；全新构建目录；核对实际 GCC 调用及对象文件时间。未清 Linux 页缓存，因此不是严格冷缓存实验。
+两组采用相同的 SVE 兼容开关；TorchAir 保持默认组件；失败尝试均排除。
+PyTorch 总耗时包含 pip 构建及安装；torch-npu 总耗时包含构建及 wheel 打包，不包含之后的安装。
+每组仅测一次，固定顺序可能影响结果；不能据此给出统计置信区间。
+
+完整数据：/home/workspace-ycy/compile-performance/results/benchmark-report.json
+日志与参数审计：/home/workspace-ycy/compile-performance/logs
+复现脚本：/home/workspace-ycy/compile-performance/scripts/run_benchmark_lld.py；重新运行请指定未使用的 --attempt 名称。
+
+兼容性说明：仅 DVM 子模块在两组中统一使用 -Wno-error=mismatched-new-delete，保留警告。默认组 15 个 DVM 对象文件在调整前后的 SHA-256 全部相同。
+首次 torch-npu 插桩因该警告被当成错误而失败；两组 torch-npu 均归档旧目录后从纯源码重测，已成功的 PyTorch 数据保留。合计是分项构建耗时之和。
+插件版本为 96c5fbc + 本地修复：设置 dwfl_standard_find_debuginfo 回调，避免解析 .gnu_debuglink 时崩溃；新增两项回归测试，修复已同步本地和服务器，尚未提交或推送。

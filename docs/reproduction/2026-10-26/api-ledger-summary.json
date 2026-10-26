@@ -1,0 +1,8 @@
+{
+  "sha256": "c086abe9b812c2c315f1c208dd25b7c83f9d5b0fe825710f25f5fb78d2a0cd48",
+  "apis": 10362,
+  "python": 8559,
+  "cpp": 1803,
+  "scenes": 90,
+  "scope": "Use the complete shared catalog for every test; record all actually reached eligible API entries and their observed descendants."
+}

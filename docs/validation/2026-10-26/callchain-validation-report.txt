@@ -1,0 +1,26 @@
+C03–C05 调用链验证与源码对象复用
+
+共享清单：10,362 项 API；SHA256 c086abe9b812c2c315f1c208dd25b7c83f9d5b0fe825710f25f5fb78d2a0cd48。每个实例使用完整清单，不按测试过滤。
+22 个 CPU/NPU 实例均已采集并重放，采集缺口为 0；功能断言 17 通过、5 失败。
+CPU fill 原测试（全部 dtype/尺寸/循环及清单中其他触达 API）：3,027,459,458 次进入/退出计数，原生聚合文件 8,475,648 字节，Python 记录 31,133,051 字节。
+全部 22 份：原生路径文件合计 84,889,232 字节；Python 观察记录合计 100,289,967 字节。
+共享 SQLite 大小 899,682,304 字节；6,661 个实体记录，17,374 条唯一对象关系，观测 API 别名 180 个。实体含未解析记录，不能把此数当作全部已确认源码对象数。
+
+归并规则：源码对象全局只存一份；同一前驱/后继关系复用。API 与祖先路径作为证据保留，不算新对象。
+A → B → A → C 仍有四个路径位置，只有三个源码对象。模板实例复用已核实的源码定义；不同重载/特化保留自己的源码位置。
+
+源码解析统计：[{"language": "cpp", "status": "mapped", "objects": 3709}, {"language": "cpp", "status": "unresolved", "objects": 2083}, {"language": "python", "status": "mapped", "objects": 309}, {"language": "python", "status": "unresolved", "objects": 560}]
+
+功能失败：NPU fill/clone/transpose 的断言使用 aclnnIsClose，不支持 complex64；两个 NPU to_empty 测试因 Module.to 错误消息不匹配提前结束，未抵达后续 to_empty。非递归 to_empty 的 NPU 测试通过。
+
+范围：只采集测试调用线程的主机 Python 和已插桩原生路径；不含其他线程、设备内核或未插桩库内部。宏生成或不确定源码对象保留未解析。紧凑模式不保留逐次执行时序。
+清单中可解析的 Python 入口全部启用；C++ 清单条目尚未独立绑定为 API 根，其已插桩的原生后继仍被采集。不能把清单总数当作已观测数。
+
+性能数据见 runtime-report.txt/json；该数据不包含插件采集成本。原始测试源码与构建库 commit 不同，详见性能报告。
+旧的 30GB 错误范围采集记录未参与本结果，仍留在服务器；删除动作被自动审批拒绝，没有执行。
+
+服务器工作目录：/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05
+共享数据库：/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/ledger-api-callchains.sqlite
+ZIP 内含共享数据库、全局源码对象图、已观测 API 列表、九个目标 API HTML 视图、各测试回执和复现脚本。
+
+插件修复已同步到本地、服务器源码及正式插件运行目录；74 项回归通过，包括递归路径层级保持和小栈线程兼容验证。

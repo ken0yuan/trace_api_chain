@@ -86,11 +86,12 @@ def test_failed_refresh_rolls_back_previous_graph(tmp_path):
 def test_cpp_same_declaration_merges_but_overloads_do_not(tmp_path):
     p=tmp_path/'api.cpp';p.write_text('void api(int) {} void api(double) {}\n')
     s=SourceEntities();ident={'path':'/libx.so','sha256':'a','offset':1}
-    definition={'function':{'file':str(p),'line':1,'kind':'definition','name':'api','linkage_name':'_Z3apii'}}
+    definition={'function':{'file':str(p),'line':1,'column':6,'kind':'definition','name':'api','linkage_name':'_Z3apii'}}
     a=s.cpp(ident,definition,{'frames':[{'symbol':'runtime_alias_a'}]})
     b=s.cpp({**ident,'offset':2},definition,{'frames':[{'symbol':'runtime_alias_b'}]})
     assert a==b
     definition['function']['linkage_name']='_Z3apid'
+    definition['function']['column']=23
     assert s.cpp(ident,definition,{})!=a
 
 

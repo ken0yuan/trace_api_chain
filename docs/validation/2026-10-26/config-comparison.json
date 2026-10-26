@@ -1,0 +1,100 @@
+{
+  "pytorch": {
+    "option_differences": {},
+    "flags": {
+      "baseline": {
+        "CMAKE_C_FLAGS": {
+          "type": "STRING",
+          "value": ""
+        },
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": ""
+        },
+        "CMAKE_C_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_CXX_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      },
+      "instrumented": {
+        "CMAKE_C_FLAGS": {
+          "type": "STRING",
+          "value": "-finstrument-functions -g1"
+        },
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "-finstrument-functions -g1"
+        },
+        "CMAKE_C_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_CXX_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    }
+  },
+  "torch-npu": {
+    "option_differences": {},
+    "flags": {
+      "baseline": {
+        "CMAKE_C_FLAGS": {
+          "type": "STRING",
+          "value": ""
+        },
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": ""
+        },
+        "CMAKE_C_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_CXX_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      },
+      "instrumented": {
+        "CMAKE_C_FLAGS": {
+          "type": "STRING",
+          "value": "-finstrument-functions -g1"
+        },
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "-finstrument-functions -g1"
+        },
+        "CMAKE_C_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_CXX_FLAGS_RELEASE": {
+          "type": "STRING",
+          "value": "-O3 -DNDEBUG"
+        },
+        "CMAKE_BUILD_TYPE": {
+          "type": "STRING",
+          "value": "Release"
+        }
+      }
+    }
+  }
+}

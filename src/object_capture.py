@@ -103,6 +103,7 @@ class Recorder:
         for name,module in list(sys.modules.items()):
             if type(module) is types.ModuleType:self.module_source(vars(module))
         self.started=False; self.closed=False; self.gaps=set(); self.calls=0; self.roots=0
+        self.path_contexts={}
         self.body_code=None;self.body_depth=0;self.body_entries=0
         self.native=native; self.registry=registry; self.suppressed=0
         self.emit('start',schema='object_callchain/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
@@ -311,12 +312,19 @@ class Recorder:
                      'caller_file':frame.f_back.f_code.co_filename if event=='call' and frame.f_back else frame.f_code.co_filename,
                      'caller_line':frame.f_back.f_lineno if event=='call' and frame.f_back else frame.f_lineno}
                 if event=='c_call':row['native_identity']=native_identity(arg)
+                native_key=row.get('native_identity') or {}
+                context_key=(self.stack[-1]['path_context'] if self.stack else None,row['kind'],definition,
+                             native_key.get('module'),native_key.get('module_offset'),tuple(aliases))
+                if context_key not in self.path_contexts:self.path_contexts[context_key]=len(self.path_contexts)+1
+                row['path_context']=self.path_contexts[context_key]
                 self.emit('call',**row)
                 self.stack.append({**row,'frame':id(frame),'callable':id(arg) if event=='c_call' else None})
                 self.calls+=1;self.roots+=int(parent is None)
                 self.snapshot(frame,'entry' if event=='call' else 'native_entry',
                               None if event=='call' else {'callable':arg,'receiver':getattr(arg,'__self__',None)})
-                if event=='c_call' and self.native:self.native.begin(uid,row['native_identity'])
+                if event=='c_call' and self.native:
+                    if getattr(self.native,'storage',None)=='paths':self.native.begin(uid,row['native_identity'],context=row['path_context'])
+                    else:self.native.begin(uid,row['native_identity'])
             elif self.stack:
                 top=self.stack[-1]
                 matches=(top['kind']=='python' and event=='return' and top['frame']==id(frame)) or (

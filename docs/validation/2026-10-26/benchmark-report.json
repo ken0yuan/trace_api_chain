@@ -1,0 +1,2264 @@
+{
+  "completed_at": "2026-10-26T12:36:11.094908+00:00",
+  "server_root": "/home/workspace-ycy/compile-performance",
+  "comparisons": [
+    {
+      "component": "pytorch",
+      "baseline_seconds": 438.8117776500003,
+      "instrumented_seconds": 755.954353809997,
+      "difference_seconds": 317.1425761599967,
+      "overhead_percent": 72.27303192690331,
+      "ratio": 1.722730319269033,
+      "native_build": {
+        "baseline_seconds": null,
+        "instrumented_seconds": null,
+        "overhead_percent": null
+      },
+      "largest_step_increases": [
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterCompositeExplicitAutograd_0.cpp.o",
+          "baseline_seconds": 166.818,
+          "instrumented_seconds": 445.601,
+          "increase_seconds": 278.783
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_2.cpp.o",
+          "baseline_seconds": 130.427,
+          "instrumented_seconds": 398.205,
+          "increase_seconds": 267.778
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_1.cpp.o",
+          "baseline_seconds": 121.53,
+          "instrumented_seconds": 385.646,
+          "increase_seconds": 264.116
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_0.cpp.o",
+          "baseline_seconds": 114.463,
+          "instrumented_seconds": 349.03,
+          "increase_seconds": 234.56699999999998
+        },
+        {
+          "output": "caffe2/torch/CMakeFiles/torch_python.dir/csrc/distributed/c10d/init.cpp.o",
+          "baseline_seconds": 168.807,
+          "instrumented_seconds": 399.15,
+          "increase_seconds": 230.343
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_3.cpp.o",
+          "baseline_seconds": 105.061,
+          "instrumented_seconds": 322.583,
+          "increase_seconds": 217.52200000000002
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterCompositeImplicitAutograd_0.cpp.o",
+          "baseline_seconds": 112.606,
+          "instrumented_seconds": 315.765,
+          "increase_seconds": 203.159
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_4.cpp.o",
+          "baseline_seconds": 100.128,
+          "instrumented_seconds": 299.625,
+          "increase_seconds": 199.497
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterMeta_0.cpp.o",
+          "baseline_seconds": 154.43,
+          "instrumented_seconds": 344.819,
+          "increase_seconds": 190.389
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp.DEFAULT.cpp.o",
+          "baseline_seconds": 78.142,
+          "instrumented_seconds": 259.619,
+          "increase_seconds": 181.47700000000003
+        }
+      ]
+    },
+    {
+      "component": "torch-npu",
+      "baseline_seconds": 375.6129607199982,
+      "instrumented_seconds": 905.822170090003,
+      "difference_seconds": 530.2092093700048,
+      "overhead_percent": 141.1583903690828,
+      "ratio": 2.411583903690828,
+      "native_build": {
+        "baseline_seconds": 280.03463896000176,
+        "instrumented_seconds": 715.20408856,
+        "overhead_percent": 155.39843614209272
+      },
+      "largest_step_increases": [
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomFunctions.cpp.o",
+          "baseline_seconds": 115.815,
+          "instrumented_seconds": 577.286,
+          "increase_seconds": 461.47099999999995
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/RegisterNPU.cpp.o",
+          "baseline_seconds": 276.872,
+          "instrumented_seconds": 705.906,
+          "increase_seconds": 429.03399999999993
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRegisterSchema.cpp.o",
+          "baseline_seconds": 104.86,
+          "instrumented_seconds": 260.315,
+          "increase_seconds": 155.45499999999998
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionKernelNpuOpApi.cpp.o",
+          "baseline_seconds": 99.757,
+          "instrumented_seconds": 205.204,
+          "increase_seconds": 105.447
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionV2KernelNpuOpApi.cpp.o",
+          "baseline_seconds": 75.753,
+          "instrumented_seconds": 178.345,
+          "increase_seconds": 102.592
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/distributed/ProcessGroupHCCL.cpp.o",
+          "baseline_seconds": 79.602,
+          "instrumented_seconds": 168.625,
+          "increase_seconds": 89.023
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRedispatch.cpp.o",
+          "baseline_seconds": 54.491,
+          "instrumented_seconds": 135.099,
+          "increase_seconds": 80.60799999999999
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/npu/Module.cpp.o",
+          "baseline_seconds": 51.477,
+          "instrumented_seconds": 111.315,
+          "increase_seconds": 59.838
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/VariableType_0.cpp.o",
+          "baseline_seconds": 53.268,
+          "instrumented_seconds": 112.041,
+          "increase_seconds": 58.772999999999996
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/distributed/Init.cpp.o",
+          "baseline_seconds": 45.432,
+          "instrumented_seconds": 102.259,
+          "increase_seconds": 56.827
+        }
+      ]
+    }
+  ],
+  "total": {
+    "baseline_seconds": 814.4247383699985,
+    "instrumented_seconds": 1661.7765239,
+    "difference_seconds": 847.3517855300015,
+    "overhead_percent": 104.04298219451236
+  },
+  "stages": [
+    {
+      "variant": "baseline",
+      "component": "pytorch",
+      "case": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22",
+      "command": [
+        "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "-v",
+        "--no-build-isolation",
+        "--no-deps",
+        "--no-index"
+      ],
+      "source_commit": "26650ac257aee280144c73a51a99a1d7a43ee161",
+      "flags": "",
+      "max_jobs": 128,
+      "started_at": "2026-10-26T11:17:02.953055+00:00",
+      "linker": "lld",
+      "lld_layout": "native",
+      "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+      "status": "success",
+      "load_before": [
+        94.15966796875,
+        70.56298828125,
+        47.36962890625
+      ],
+      "log": "/home/workspace-ycy/compile-performance/logs/baseline-r7-lld22-pytorch.log",
+      "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+      "environment": {
+        "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CFLAGS": "",
+        "CXXFLAGS": "",
+        "MAX_JOBS": "128",
+        "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+        "CMAKE_GENERATOR": "Ninja",
+        "CMAKE_BUILD_TYPE": "Release",
+        "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+        "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+        "CCACHE_DISABLE": "1"
+      },
+      "pid": 244806,
+      "elapsed_seconds": 438.8117776500003,
+      "returncode": 0,
+      "load_after": [
+        55.1552734375,
+        119.74658203125,
+        85.30615234375
+      ],
+      "finished_at": "2026-10-26T11:24:21.765546+00:00",
+      "compiler_invocations": 2976,
+      "invocations_with_both_flags": 0,
+      "flags_verified": true,
+      "smoke_returncode": 0,
+      "resources": {
+        "user_cpu_seconds": 28936.60385,
+        "system_cpu_seconds": 4242.0109,
+        "max_rss_kib": 4997832,
+        "minor_faults": 379751466,
+        "major_faults": 103048,
+        "voluntary_context_switches": 178273,
+        "involuntary_context_switches": 403230
+      },
+      "native_build_seconds": null,
+      "slowest_native_steps": [
+        {
+          "output": "caffe2/torch/CMakeFiles/torch_python.dir/csrc/distributed/c10d/init.cpp.o",
+          "seconds": 168.807
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterCompositeExplicitAutograd_0.cpp.o",
+          "seconds": 166.818
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/torch/csrc/autograd/generated/Functions.cpp.o",
+          "seconds": 165.557
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterMeta_0.cpp.o",
+          "seconds": 154.43
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/native/cpu/FlashAttentionKernel.cpp.DEFAULT.cpp.o",
+          "seconds": 152.968
+        },
+        {
+          "output": "caffe2/CMakeFiles/vec_test_all_types_DEFAULT.dir/__/aten/src/ATen/test/vec_test_all_types.cpp.o",
+          "seconds": 147.418
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_2.cpp.o",
+          "seconds": 130.427
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_1.cpp.o",
+          "seconds": 121.53
+        },
+        {
+          "output": "test_api/CMakeFiles/test_api.dir/modules.cpp.o",
+          "seconds": 118.806
+        },
+        {
+          "output": "test_lazy/CMakeFiles/test_lazy.dir/test_lazy_ops.cpp.o",
+          "seconds": 118.744
+        }
+      ],
+      "binary_verification": {
+        "library": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+        "bytes": 194259048,
+        "has_debug_info": false,
+        "has_debug_line": false,
+        "has_instrument_enter_symbol": false,
+        "has_instrument_exit_symbol": false,
+        "linker_comment": "String dump of section '.comment':\n  [     0]  Linker: Ubuntu LLD 22.1.8\n  [    1b]  GCC: (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    },
+    {
+      "variant": "baseline",
+      "component": "torch-npu",
+      "case": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22",
+      "command": [
+        "bash",
+        "ci/build.sh",
+        "--python=3.11"
+      ],
+      "source_commit": "fc51851eb378dc663d4798435110af75968ad3e3",
+      "flags": "",
+      "max_jobs": 128,
+      "started_at": "2026-10-26T12:03:04.411269+00:00",
+      "linker": "lld",
+      "lld_layout": "native",
+      "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+      "dvm_warning_policy": "Only DVM compile calls use -Wno-error=mismatched-new-delete in both variants; diagnostics remain enabled and code generation is unchanged.",
+      "status": "success",
+      "load_before": [
+        10.486328125,
+        15.794921875,
+        38.990234375
+      ],
+      "log": "/home/workspace-ycy/compile-performance/logs/baseline-r7-lld22-torch-npu.log",
+      "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+      "environment": {
+        "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CFLAGS": "",
+        "CXXFLAGS": "",
+        "MAX_JOBS": "128",
+        "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+        "CMAKE_GENERATOR": null,
+        "CMAKE_BUILD_TYPE": "Release",
+        "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+        "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+        "CCACHE_DISABLE": "1"
+      },
+      "pid": 309089,
+      "elapsed_seconds": 375.6129607199982,
+      "returncode": 0,
+      "load_after": [
+        80.86572265625,
+        87.51416015625,
+        64.85693359375
+      ],
+      "finished_at": "2026-10-26T12:09:20.024660+00:00",
+      "compiler_invocations": 1681,
+      "invocations_with_both_flags": 0,
+      "flags_verified": true,
+      "smoke_returncode": 0,
+      "resources": {
+        "user_cpu_seconds": 22626.236353,
+        "system_cpu_seconds": 5957.202514,
+        "max_rss_kib": 6872812,
+        "minor_faults": 332546728,
+        "major_faults": 34707,
+        "voluntary_context_switches": 63386,
+        "involuntary_context_switches": 409527
+      },
+      "native_build_seconds": 280.03463896000176,
+      "slowest_native_steps": [
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/RegisterNPU.cpp.o",
+          "seconds": 276.872
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomFunctions.cpp.o",
+          "seconds": 115.815
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRegisterSchema.cpp.o",
+          "seconds": 104.86
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionKernelNpuOpApi.cpp.o",
+          "seconds": 99.757
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/distributed/ProcessGroupHCCL.cpp.o",
+          "seconds": 79.602
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionV2KernelNpuOpApi.cpp.o",
+          "seconds": 75.753
+        },
+        {
+          "output": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/torch-npu/third_party/dvm/dvm/libdvm.a",
+          "seconds": 74.323
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/inductor/aoti_package/shape_handling.cpp.o",
+          "seconds": 58.199
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRedispatch.cpp.o",
+          "seconds": 54.491
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/core/npu/NPUCachingAllocator.cpp.o",
+          "seconds": 53.558
+        }
+      ],
+      "binary_verification": {
+        "library": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so",
+        "bytes": 108625664,
+        "has_debug_info": false,
+        "has_debug_line": false,
+        "has_instrument_enter_symbol": false,
+        "has_instrument_exit_symbol": false,
+        "linker_comment": "String dump of section '.comment':\n  [     0]  Linker: Ubuntu LLD 22.1.8\n  [    1b]  GCC: (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    },
+    {
+      "variant": "instrumented",
+      "component": "pytorch",
+      "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22",
+      "command": [
+        "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        ".",
+        "-v",
+        "--no-build-isolation",
+        "--no-deps",
+        "--no-index"
+      ],
+      "source_commit": "26650ac257aee280144c73a51a99a1d7a43ee161",
+      "flags": "-finstrument-functions -g1",
+      "max_jobs": 128,
+      "started_at": "2026-10-26T11:31:17.970252+00:00",
+      "linker": "lld",
+      "lld_layout": "native",
+      "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+      "status": "success",
+      "load_before": [
+        29.515625,
+        84.89208984375,
+        83.384765625
+      ],
+      "log": "/home/workspace-ycy/compile-performance/logs/instrumented-r7-lld22-pytorch.log",
+      "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+      "environment": {
+        "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CFLAGS": "-finstrument-functions -g1",
+        "CXXFLAGS": "-finstrument-functions -g1",
+        "MAX_JOBS": "128",
+        "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+        "CMAKE_GENERATOR": "Ninja",
+        "CMAKE_BUILD_TYPE": "Release",
+        "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+        "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+        "CCACHE_DISABLE": "1"
+      },
+      "pid": 272719,
+      "elapsed_seconds": 755.954353809997,
+      "returncode": 0,
+      "load_after": [
+        30.14892578125,
+        56.7333984375,
+        77.39990234375
+      ],
+      "finished_at": "2026-10-26T11:43:53.925260+00:00",
+      "compiler_invocations": 2976,
+      "invocations_with_both_flags": 2976,
+      "flags_verified": true,
+      "smoke_returncode": 0,
+      "resources": {
+        "user_cpu_seconds": 45658.61992,
+        "system_cpu_seconds": 4272.247627,
+        "max_rss_kib": 10066924,
+        "minor_faults": 491063305,
+        "major_faults": 798843,
+        "voluntary_context_switches": 280590,
+        "involuntary_context_switches": 504521
+      },
+      "native_build_seconds": null,
+      "slowest_native_steps": [
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterCompositeExplicitAutograd_0.cpp.o",
+          "seconds": 445.601
+        },
+        {
+          "output": "caffe2/torch/CMakeFiles/torch_python.dir/csrc/distributed/c10d/init.cpp.o",
+          "seconds": 399.15
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_2.cpp.o",
+          "seconds": 398.205
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_1.cpp.o",
+          "seconds": 385.646
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_0.cpp.o",
+          "seconds": 349.03
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterMeta_0.cpp.o",
+          "seconds": 344.819
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_3.cpp.o",
+          "seconds": 322.583
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/RegisterCompositeImplicitAutograd_0.cpp.o",
+          "seconds": 315.765
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/Operators_4.cpp.o",
+          "seconds": 299.625
+        },
+        {
+          "output": "caffe2/CMakeFiles/torch_cpu.dir/__/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp.DEFAULT.cpp.o",
+          "seconds": 259.619
+        }
+      ],
+      "binary_verification": {
+        "library": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+        "bytes": 1694419160,
+        "has_debug_info": true,
+        "has_debug_line": true,
+        "has_instrument_enter_symbol": true,
+        "has_instrument_exit_symbol": true,
+        "linker_comment": "String dump of section '.comment':\n  [     0]  Linker: Ubuntu LLD 22.1.8\n  [    1b]  GCC: (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    },
+    {
+      "variant": "instrumented",
+      "component": "torch-npu",
+      "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22",
+      "command": [
+        "bash",
+        "ci/build.sh",
+        "--python=3.11"
+      ],
+      "source_commit": "fc51851eb378dc663d4798435110af75968ad3e3",
+      "flags": "-finstrument-functions -g1",
+      "max_jobs": 128,
+      "started_at": "2026-10-26T12:09:30.693464+00:00",
+      "linker": "lld",
+      "lld_layout": "native",
+      "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+      "dvm_warning_policy": "Only DVM compile calls use -Wno-error=mismatched-new-delete in both variants; diagnostics remain enabled and code generation is unchanged.",
+      "status": "success",
+      "load_before": [
+        73.43896484375,
+        85.70263671875,
+        64.509765625
+      ],
+      "log": "/home/workspace-ycy/compile-performance/logs/instrumented-r7-lld22-torch-npu.log",
+      "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+      "environment": {
+        "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+        "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+        "CFLAGS": "-finstrument-functions -g1",
+        "CXXFLAGS": "-finstrument-functions -g1",
+        "MAX_JOBS": "128",
+        "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+        "CMAKE_GENERATOR": null,
+        "CMAKE_BUILD_TYPE": "Release",
+        "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+        "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+        "CCACHE_DISABLE": "1"
+      },
+      "pid": 318760,
+      "elapsed_seconds": 905.822170090003,
+      "returncode": 0,
+      "load_after": [
+        15.7197265625,
+        51.38037109375,
+        67.33935546875
+      ],
+      "finished_at": "2026-10-26T12:24:36.515989+00:00",
+      "compiler_invocations": 1681,
+      "invocations_with_both_flags": 1681,
+      "flags_verified": true,
+      "smoke_returncode": 0,
+      "resources": {
+        "user_cpu_seconds": 33876.254998,
+        "system_cpu_seconds": 4406.953697,
+        "max_rss_kib": 8958000,
+        "minor_faults": 395260661,
+        "major_faults": 260114,
+        "voluntary_context_switches": 129134,
+        "involuntary_context_switches": 519532
+      },
+      "native_build_seconds": 715.20408856,
+      "slowest_native_steps": [
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/RegisterNPU.cpp.o",
+          "seconds": 705.906
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomFunctions.cpp.o",
+          "seconds": 577.286
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRegisterSchema.cpp.o",
+          "seconds": 260.315
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionKernelNpuOpApi.cpp.o",
+          "seconds": 205.204
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/third_party/op-plugin/op_plugin/ops/opapi/FlashAttentionV2KernelNpuOpApi.cpp.o",
+          "seconds": 178.345
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/distributed/ProcessGroupHCCL.cpp.o",
+          "seconds": 168.625
+        },
+        {
+          "output": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu/third_party/dvm/dvm/libdvm.a",
+          "seconds": 144.361
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/CustomRedispatch.cpp.o",
+          "seconds": 135.099
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/aten/VariableType_0.cpp.o",
+          "seconds": 112.041
+        },
+        {
+          "output": "CMakeFiles/torch_npu_objs.dir/torch_npu/csrc/npu/Module.cpp.o",
+          "seconds": 111.315
+        }
+      ],
+      "binary_verification": {
+        "library": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so",
+        "bytes": 820627608,
+        "has_debug_info": true,
+        "has_debug_line": true,
+        "has_instrument_enter_symbol": true,
+        "has_instrument_exit_symbol": true,
+        "linker_comment": "String dump of section '.comment':\n  [     0]  Linker: Ubuntu LLD 22.1.8\n  [    1b]  GCC: (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    }
+  ],
+  "base_environment": {
+    "path": "/home/workspace-ycy/compile-performance/venv311",
+    "unique_dependency_versions": 82,
+    "matches_snapshot": true,
+    "torch_installed": false,
+    "torch_npu_installed": false
+  },
+  "plugin": {
+    "commit": "96c5fbc4cec6611a7a248f030f6b787b893ef372",
+    "version": "0.3.0 + local debuglink fix",
+    "tests_passed": 67,
+    "runtime": "/home/workspace-ycy/compile-performance/plugin-runtime",
+    "activation": "/home/workspace-ycy/compile-performance/environment/plugin-env.sh",
+    "end_to_end": {
+      "status": "success",
+      "plugin": "trace_api_chain",
+      "plugin_commit": "96c5fbc4cec6611a7a248f030f6b787b893ef372",
+      "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22",
+      "scenarios": [
+        {
+          "scenario": "cpu",
+          "device": "cpu",
+          "capture": {
+            "status": "captured",
+            "stage": "capture_only",
+            "mode": "full",
+            "gaps": [],
+            "pytest_exit_code": 0,
+            "elapsed_seconds": 33.963881449992186,
+            "replay_performed": false,
+            "database_written": false,
+            "html_generated": false
+          },
+          "native_events": 44014,
+          "target_library_events": 43086,
+          "target_libraries": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libc10.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_python.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so"
+          ],
+          "graph_status": "observed_scope_validated",
+          "replay": {
+            "test": "test_trace_lld.py::test_add",
+            "captured_calls": 22010,
+            "canonical_entities": 2518,
+            "api_definitions": 3,
+            "normalized_paths": 12591,
+            "pending_objects": 4,
+            "source_dependencies": 2,
+            "source_read_policy": "namespace-load/1",
+            "gaps": [],
+            "raw_evidence": "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "graph_digest": "a4a8205d6039bb662f084a10325cb9d5b79363798e1ad6b4da736d8ef444ab87",
+            "status": "refreshed",
+            "slot": "lld_cpu"
+          }
+        },
+        {
+          "scenario": "npu",
+          "device": "npu:0",
+          "capture": {
+            "status": "captured",
+            "stage": "capture_only",
+            "mode": "full",
+            "gaps": [],
+            "pytest_exit_code": 0,
+            "elapsed_seconds": 31.35871780999878,
+            "replay_performed": false,
+            "database_written": false,
+            "html_generated": false
+          },
+          "native_events": 119208,
+          "target_library_events": 116284,
+          "target_libraries": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libc10.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_python.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtensorpipe.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so"
+          ],
+          "graph_status": "observed_scope_validated",
+          "replay": {
+            "test": "test_trace_lld.py::test_add",
+            "captured_calls": 59607,
+            "canonical_entities": 3826,
+            "api_definitions": 3,
+            "normalized_paths": 19582,
+            "pending_objects": 4,
+            "source_dependencies": 2,
+            "source_read_policy": "namespace-load/1",
+            "gaps": [],
+            "raw_evidence": "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "graph_digest": "b434ada6921de58bd36b18fc6526d35ec8e00fbbbdc85bdb6525c1daabc3ded9",
+            "status": "refreshed",
+            "slot": "lld_npu"
+          }
+        }
+      ],
+      "commands": [
+        {
+          "stage": "plugin-regression",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/npu-test-infra/plugin/trace_api_chain/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--basetemp",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/pytest-tmp"
+          ],
+          "returncode": 0,
+          "seconds": 11.179866070000571
+        },
+        {
+          "stage": "capture-cpu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/test_trace_lld.py::test_add",
+            "-q",
+            "--callchain-out=/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "--callchain-mode=full",
+            "--callchain-timeout=600"
+          ],
+          "returncode": 0,
+          "seconds": 34.25741704000393
+        },
+        {
+          "stage": "replay-cpu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "replay",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--source-root",
+            "pytorch=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/pytorch",
+            "--source-root",
+            "torch_npu=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+            "--slot",
+            "lld_cpu"
+          ],
+          "returncode": 0,
+          "seconds": 87.328645149988
+        },
+        {
+          "stage": "capture-npu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/test_trace_lld.py::test_add",
+            "-q",
+            "--callchain-out=/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "--callchain-mode=full",
+            "--callchain-timeout=600"
+          ],
+          "returncode": 0,
+          "seconds": 31.653833999997005
+        },
+        {
+          "stage": "replay-npu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "replay",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--source-root",
+            "pytorch=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/pytorch",
+            "--source-root",
+            "torch_npu=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+            "--slot",
+            "lld_npu"
+          ],
+          "returncode": 0,
+          "seconds": 134.43370785999286
+        },
+        {
+          "stage": "apis",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "apis",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite"
+          ],
+          "returncode": 0,
+          "seconds": 3.2181180699990364
+        },
+        {
+          "stage": "query",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "query",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--api",
+            "torch.add",
+            "--out",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add.json"
+          ],
+          "returncode": 0,
+          "seconds": 2.317725259999861
+        },
+        {
+          "stage": "html",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "html",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--api",
+            "torch.add",
+            "--out",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add-html"
+          ],
+          "returncode": 0,
+          "seconds": 2.0678674000082538
+        }
+      ],
+      "database": "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+      "html": "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add-html/C03.html",
+      "source_located_entities": 1532,
+      "scope": "Real CPU and NPU torch.add execution through capture, native events, offline replay, SQLite query, source locations and HTML; not a guarantee for every possible API."
+    },
+    "local_patch": "Register dwfl_standard_find_debuginfo callback; add missing/present split-debug regression tests. Both previously reproduced SIGSEGV, all 67 tests pass after the fix."
+  },
+  "machine_and_protocol": {
+    "uname": "Linux 0a5ca2485336 5.10.0-60.18.0.50.oe2203.aarch64 #1 SMP Wed Mar 30 02:43:08 UTC 2022 aarch64 aarch64 aarch64 GNU/Linux\n",
+    "cpu": "Architecture:                    aarch64\nCPU op-mode(s):                  64-bit\nByte Order:                      Little Endian\nCPU(s):                          256\nOn-line CPU(s) list:             0-255\nVendor ID:                       HiSilicon\nModel name:                      Kunpeng-920\nModel:                           0\nThread(s) per core:              1\nCore(s) per cluster:             64\nSocket(s):                       -\nCluster(s):                      4\nStepping:                        0x1\nFrequency boost:                 disabled\nCPU max MHz:                     3000.0000\nCPU min MHz:                     200.0000\nBogoMIPS:                        200.00\nFlags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma dcpop asimddp asimdfhm ssbs\nL1d cache:                       16 MiB (256 instances)\nL1i cache:                       16 MiB (256 instances)\nL2 cache:                        128 MiB (256 instances)\nL3 cache:                        256 MiB (8 instances)\nNUMA node(s):                    8\nNUMA node0 CPU(s):               0-31\nNUMA node1 CPU(s):               32-63\nNUMA node2 CPU(s):               64-95\nNUMA node3 CPU(s):               96-127\nNUMA node4 CPU(s):               128-159\nNUMA node5 CPU(s):               160-191\nNUMA node6 CPU(s):               192-223\nNUMA node7 CPU(s):               224-255\nVulnerability Itlb multihit:     Not affected\nVulnerability L1tf:              Not affected\nVulnerability Mds:               Not affected\nVulnerability Meltdown:          Not affected\nVulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:        Mitigation; __user pointer sanitization\nVulnerability Spectre v2:        Not affected\nVulnerability Srbds:             Not affected\nVulnerability Tsx async abort:   Not affected\n",
+    "gcc": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "gxx": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "python": "Python 3.11.17\n",
+    "memory": "               total        used        free      shared  buff/cache   available\nMem:     2158576246784 16286441472 2105479970816   161554432 36809834496 2133513158656\nSwap:     4294963200           0  4294963200\n",
+    "disk": "Filesystem                     1B-blocks        Used     Available Use% Mounted on\n/dev/mapper/vg_sda-lv_root 3833302466560 67724369920 3765578096640   2% /home/workspace-ycy\n",
+    "utc": "2026-10-26T08:05:37.691352+00:00",
+    "container": "0a5ca2485336",
+    "parallel_jobs": 128,
+    "source_commits": {
+      "pytorch": "26650ac257aee280144c73a51a99a1d7a43ee161",
+      "torch-npu": "fc51851eb378dc663d4798435110af75968ad3e3"
+    },
+    "experiment": {
+      "baseline_flags": "",
+      "instrumented_flags": "-finstrument-functions -g1",
+      "build_type": "Release",
+      "sequence": [
+        "baseline PyTorch",
+        "baseline torch-npu",
+        "instrumented PyTorch",
+        "instrumented torch-npu"
+      ],
+      "repetitions_per_variant": 1,
+      "compiler_cache": "disabled",
+      "source_download_in_timing": false,
+      "environment_setup_in_timing": false,
+      "note": "Single paired clean build, not a repeated-run statistical estimate. Same dependency snapshot, tools, compiler audit wrappers and job limit in both variants. Other system workloads are not stopped.",
+      "common_machine_compatibility": {
+        "BUILD_IGNORE_SVE_UNAVAILABLE": "1",
+        "reason": "GCC 11 SVE compile probe failed; both variants skip optional SVE kernels"
+      },
+      "torch_npu_generator": "Unset global CMAKE_GENERATOR; top-level setup auto-detects Ninja, nested TorchAir helper uses Makefiles.",
+      "source_layout": "PyTorch editable build is measured, then sources and native install artifacts are copied into case venv for torch-npu outside the measured interval.",
+      "linker": "Both groups use GCC 11.4 + LLD 22.1.8, retaining Cortex-A53 erratum protection. PyTorch uses native LLD layout and upstream symbol ordering, 8 linker threads. Official LLD packages are extracted under the experiment root; system toolchains are unchanged.",
+      "nccl_source_preparation": {
+        "pin": "v2.32.3-1",
+        "commit": "12df1a11afad322be5a204a2db890161cbf8131d",
+        "path": "/home/workspace-ycy/compile-performance/sources/pytorch/third_party/nccl",
+        "build_artifacts": [],
+        "prepared_before_measurement": true
+      },
+      "dvm_warning_policy": "Both torch-npu builds retain DVM diagnostics but use -Wno-error=mismatched-new-delete. This changes warning treatment, not code generation. Only DVM compile calls receive this compatibility flag."
+    }
+  },
+  "cache_audit": {
+    "page_cache_cleared": false,
+    "machine_rebooted_between_variants": false,
+    "method": "separate copies of unbuilt source trees; separate build directories; compiler caches disabled; no shared-system page-cache flush",
+    "compiler_binaries": {
+      "/usr/bin/gcc": {
+        "resolved": "/usr/bin/aarch64-linux-gnu-gcc-11",
+        "elf_magic": "7f454c46"
+      },
+      "/usr/bin/g++": {
+        "resolved": "/usr/bin/aarch64-linux-gnu-g++-11",
+        "elf_magic": "7f454c46"
+      }
+    },
+    "cache_programs": {
+      "ccache": null,
+      "sccache": null
+    },
+    "pristine_sources": {
+      "pytorch": {
+        "root_build_exists": false,
+        "build_cache_files": []
+      },
+      "torch-npu": {
+        "root_build_exists": false,
+        "build_cache_files": []
+      }
+    },
+    "stages": {
+      "baseline-r7-lld22-pytorch": {
+        "status": "success",
+        "elapsed_seconds": 438.8117776500003,
+        "compiler_cache_env": {
+          "CCACHE_DISABLE": "1",
+          "SCCACHE_DISABLE": "1"
+        },
+        "compiler_settings": [
+          "CCACHE_BINARY:FILEPATH=CCACHE_BINARY-NOTFOUND",
+          "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+          "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+          "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+          "SCCACHE_EXECUTABLE:FILEPATH=SCCACHE_EXECUTABLE-NOTFOUND",
+          "USE_CCACHE:BOOL=ON",
+          "SCCACHE_EXECUTABLE-ADVANCED:INTERNAL=1"
+        ],
+        "compiler_invocations_recorded": 2976,
+        "calls_with_compile_flag": 2974,
+        "objects_present": 2819,
+        "source_tree_objects_outside_build": 0,
+        "outside_build_object_mtimes_older_than_stage_start": 0,
+        "object_mtimes_older_than_stage_start": 0,
+        "ninja_log_records": 17494,
+        "ninja_log_mtime": 1793013854.245841
+      },
+      "baseline-r7-lld22-torch-npu": {
+        "status": "success",
+        "elapsed_seconds": 375.6129607199982,
+        "compiler_cache_env": {
+          "CCACHE_DISABLE": "1",
+          "SCCACHE_DISABLE": "1"
+        },
+        "compiler_settings": [
+          "CCACHE:FILEPATH=CCACHE-NOTFOUND",
+          "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+          "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+          "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc"
+        ],
+        "compiler_invocations_recorded": 1681,
+        "calls_with_compile_flag": 1663,
+        "objects_present": 1581,
+        "source_tree_objects_outside_build": 56,
+        "outside_build_object_mtimes_older_than_stage_start": 0,
+        "object_mtimes_older_than_stage_start": 0,
+        "ninja_log_records": 1625,
+        "ninja_log_mtime": 1793016532.465841
+      },
+      "instrumented-r7-lld22-pytorch": {
+        "status": "success",
+        "elapsed_seconds": 755.954353809997,
+        "compiler_cache_env": {
+          "CCACHE_DISABLE": "1",
+          "SCCACHE_DISABLE": "1"
+        },
+        "compiler_settings": [
+          "CCACHE_BINARY:FILEPATH=CCACHE_BINARY-NOTFOUND",
+          "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+          "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+          "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc",
+          "SCCACHE_EXECUTABLE:FILEPATH=SCCACHE_EXECUTABLE-NOTFOUND",
+          "USE_CCACHE:BOOL=ON",
+          "SCCACHE_EXECUTABLE-ADVANCED:INTERNAL=1"
+        ],
+        "compiler_invocations_recorded": 2976,
+        "calls_with_compile_flag": 2974,
+        "objects_present": 2819,
+        "source_tree_objects_outside_build": 0,
+        "outside_build_object_mtimes_older_than_stage_start": 0,
+        "object_mtimes_older_than_stage_start": 0,
+        "ninja_log_records": 17494,
+        "ninja_log_mtime": 1793015025.765841
+      },
+      "instrumented-r7-lld22-torch-npu": {
+        "status": "success",
+        "elapsed_seconds": 905.822170090003,
+        "compiler_cache_env": {
+          "CCACHE_DISABLE": "1",
+          "SCCACHE_DISABLE": "1"
+        },
+        "compiler_settings": [
+          "CCACHE:FILEPATH=CCACHE-NOTFOUND",
+          "CCACHE_PROGRAM:FILEPATH=CCACHE_PROGRAM-NOTFOUND",
+          "CMAKE_CXX_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/g++",
+          "CMAKE_C_COMPILER:FILEPATH=/home/workspace-ycy/compile-performance/tool-wrappers-r7-lld22/gcc"
+        ],
+        "compiler_invocations_recorded": 1681,
+        "calls_with_compile_flag": 1663,
+        "objects_present": 1581,
+        "source_tree_objects_outside_build": 56,
+        "outside_build_object_mtimes_older_than_stage_start": 0,
+        "object_mtimes_older_than_stage_start": 0,
+        "ninja_log_records": 1625,
+        "ninja_log_mtime": 1793017412.6578412
+      }
+    }
+  },
+  "configuration_audit": {
+    "pytorch": {
+      "option_differences": {},
+      "flags": {
+        "baseline": {
+          "CMAKE_C_FLAGS": {
+            "type": "STRING",
+            "value": ""
+          },
+          "CMAKE_CXX_FLAGS": {
+            "type": "STRING",
+            "value": ""
+          },
+          "CMAKE_C_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_CXX_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_BUILD_TYPE": {
+            "type": "STRING",
+            "value": "Release"
+          }
+        },
+        "instrumented": {
+          "CMAKE_C_FLAGS": {
+            "type": "STRING",
+            "value": "-finstrument-functions -g1"
+          },
+          "CMAKE_CXX_FLAGS": {
+            "type": "STRING",
+            "value": "-finstrument-functions -g1"
+          },
+          "CMAKE_C_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_CXX_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_BUILD_TYPE": {
+            "type": "STRING",
+            "value": "Release"
+          }
+        }
+      }
+    },
+    "torch-npu": {
+      "option_differences": {},
+      "flags": {
+        "baseline": {
+          "CMAKE_C_FLAGS": {
+            "type": "STRING",
+            "value": ""
+          },
+          "CMAKE_CXX_FLAGS": {
+            "type": "STRING",
+            "value": ""
+          },
+          "CMAKE_C_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_CXX_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_BUILD_TYPE": {
+            "type": "STRING",
+            "value": "Release"
+          }
+        },
+        "instrumented": {
+          "CMAKE_C_FLAGS": {
+            "type": "STRING",
+            "value": "-finstrument-functions -g1"
+          },
+          "CMAKE_CXX_FLAGS": {
+            "type": "STRING",
+            "value": "-finstrument-functions -g1"
+          },
+          "CMAKE_C_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_CXX_FLAGS_RELEASE": {
+            "type": "STRING",
+            "value": "-O3 -DNDEBUG"
+          },
+          "CMAKE_BUILD_TYPE": {
+            "type": "STRING",
+            "value": "Release"
+          }
+        }
+      }
+    }
+  },
+  "limitations": [
+    "One paired clean build per variant, baseline then instrumented. No repeat-based confidence interval.",
+    "No OS page-cache flush or reboot; filesystem cache, order effects and other server workloads are not eliminated.",
+    "PyTorch total measures pip editable build/install. torch-npu total measures ci/build.sh build and wheel packaging, excluding subsequent wheel installation.",
+    "Ninja per-target durations overlap under parallelism and cannot be added to reconstruct wall time.",
+    "wait4 max_rss_kib is a process high-water mark, not the simultaneous aggregate memory of all compiler jobs.",
+    "PyTorch measurements were retained after passing validation; both torch-npu stages were independently rebuilt from pristine source copies after the DVM warning failure. The total is the sum of component build times, not one uninterrupted wall-clock run."
+  ],
+  "excluded_attempts": [
+    "Missing system time command before compilation; measurement changed to Python monotonic clock and wait4.",
+    "Initial PyTorch configure failed SVE probe.",
+    "torch-npu precompile tools import conflict from editable PyTorch.",
+    "Initial torch-npu partial build failed nested TorchAir generator mismatch; source directory archived and fresh source copied before successful run.",
+    "Initial r7 torch-npu instrumentation failed in DVM due to -Werror=mismatched-new-delete. Both prior NPU stages were archived and rebuilt cleanly with the same DVM-only warning policy; no NPU object files were reused.",
+    "r3 BFD instrumented run used for diagnosis and interrupted; excluded from final timing.",
+    "r4 LLD configure attempted NCCL download; aborted, dependency source prepared before r5.",
+    "r5 LLD 15 native layout was slow; r6 generated-script linking was fast but baseline import failed with SIGSEGV. Both configurations are excluded. Only r7 isolated LLD 22 native layout is used for the final comparison."
+  ],
+  "linker_toolchain": {
+    "metadata_url": "https://apt.llvm.org/jammy/dists/llvm-toolchain-jammy-22/main/binary-arm64/Packages.gz",
+    "packages": [
+      {
+        "Package": "libllvm22",
+        "Version": "1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81",
+        "Filename": "pool/main/l/llvm-toolchain-22/libllvm22_22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81_arm64.deb",
+        "SHA256": "da22322e05193d13260229d93c6f1c313031478e7fca846690a1771537c78cc4",
+        "Depends": "libc6 (>= 2.34), libedit2 (>= 2.11-20080614-0), libffi8 (>= 3.4), libgcc-s1 (>= 4.2), libstdc++6 (>= 12), libxml2 (>= 2.7.4), libz3-4 (>= 4.8.12), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.0)"
+      },
+      {
+        "Package": "lld-22",
+        "Version": "1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81",
+        "Filename": "pool/main/l/llvm-toolchain-22/lld-22_22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81_arm64.deb",
+        "SHA256": "d7f0f458164a14e814071da3d1290185d31e2e774c5120ad9a46eaf773155efa",
+        "Depends": "libc6 (>= 2.34), libgcc-s1 (>= 3.0), libllvm22 (= 1:22.1.8~++20260613092327+e80beda6e255-1~exp1~20260613092437.81), libstdc++6 (>= 12), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.2)"
+      }
+    ],
+    "version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+    "error": "",
+    "wrapper": "/home/workspace-ycy/compile-performance/toolchains/llvm22/bin/ld.lld",
+    "validated_at": "2026-10-26T11:10:46.494840+00:00",
+    "extracted_dependencies": [
+      {
+        "file": "libedit2_3.1-20210910-1build1_arm64.deb",
+        "sha256": "7445804608b7feef2484dd217203574323c49f2a6530d92b78bd65a2e5ab4657",
+        "package_metadata": "Package: libedit2\nVersion: 3.1-20210910-1build1\nDepends: libbsd0 (>= 0.1.3), libc6 (>= 2.33), libtinfo6 (>= 6)\n"
+      },
+      {
+        "file": "libz3-4_4.8.12-1_arm64.deb",
+        "sha256": "7e621d50221b74d6c8f2b339c99a6193d021474325aa25a54613adf67da40506",
+        "package_metadata": "Package: libz3-4\nVersion: 4.8.12-1\nDepends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 11)\n"
+      },
+      {
+        "file": "libbsd0_0.11.5-1_arm64.deb",
+        "sha256": "19703bfe6fde9a161e42f5107451a46cc182a62dd0621a55d06aec7dc372991d",
+        "package_metadata": "Package: libbsd0\nVersion: 0.11.5-1\nDepends: libc6 (>= 2.33), libmd0 (>= 1.0.3-2)\n"
+      },
+      {
+        "file": "libmd0_1.0.4-1build1_arm64.deb",
+        "sha256": "6f87f19f71411a94ae370f7f9bcf4c7dfb5d4393f11de99634ac3137448ad678",
+        "package_metadata": "Package: libmd0\nVersion: 1.0.4-1build1\nDepends: libc6 (>= 2.33)\n"
+      }
+    ],
+    "system_packages_modified": false,
+    "linker_binary_sha256": "c35ac5b29ecf2de377c64be87d2dad9dc4476b64e43225c49fc1fea2970891a7"
+  },
+  "torch_npu_clean_retry": {
+    "reason": "DVM -Werror=mismatched-new-delete rejects instrumentation; same warning-only compatibility flag is now used in both DVM builds.",
+    "pytorch_stages_retained": true,
+    "npu_stages_rebuilt_from_fresh_sources": [
+      {
+        "variant": "baseline",
+        "source": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/torch-npu",
+        "archived_source": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/torch-npu.before-dvm-policy",
+        "old_inode": 4414575318,
+        "new_inode": 2171483370,
+        "fresh_build_directory_absent": true,
+        "old_torch_npu_removed": true
+      },
+      {
+        "variant": "instrumented",
+        "source": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+        "archived_source": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu.before-dvm-policy",
+        "old_inode": 2238392617,
+        "new_inode": 4418041212,
+        "fresh_build_directory_absent": true,
+        "old_torch_npu_removed": true
+      }
+    ],
+    "probe": {
+      "returncode": 0,
+      "seconds": 3.569699200001196,
+      "warning_policy": "DVM only: -Wno-error=mismatched-new-delete"
+    },
+    "archive": "/home/workspace-ycy/compile-performance/excluded/r7-npu-before-dvm-policy",
+    "started_at": "2026-10-26T12:03:02.932691+00:00"
+  },
+  "dvm_warning_audit": {
+    "baseline_objects_compared": [
+      {
+        "object": "ops.o",
+        "same_sha256": true,
+        "before": "183d0366cd3fd3638d3bac810c67a0d00510a2bb5faa5adb666bdfc26baa5c9d",
+        "after": "183d0366cd3fd3638d3bac810c67a0d00510a2bb5faa5adb666bdfc26baa5c9d"
+      },
+      {
+        "object": "ops_m.o",
+        "same_sha256": true,
+        "before": "077db1b8b33d2dfb52e13ebf7ef85de420baa06b10b3eea723426a2266b7a49e",
+        "after": "077db1b8b33d2dfb52e13ebf7ef85de420baa06b10b3eea723426a2266b7a49e"
+      },
+      {
+        "object": "ops_c.o",
+        "same_sha256": true,
+        "before": "2c553dad9a52203cd4a1cd5a0f32288a1d02bb7407913899a38ef37a43deb5ab",
+        "after": "2c553dad9a52203cd4a1cd5a0f32288a1d02bb7407913899a38ef37a43deb5ab"
+      },
+      {
+        "object": "kernel.o",
+        "same_sha256": true,
+        "before": "f08a08a7b649dd603c27e3555b447e2910437d698f391787a5f00fa607c3e67f",
+        "after": "f08a08a7b649dd603c27e3555b447e2910437d698f391787a5f00fa607c3e67f"
+      },
+      {
+        "object": "xkernel.o",
+        "same_sha256": true,
+        "before": "9f3dbcb1cf3a62d67a87948824b48c9da57cc6f8837173a7f1a4acdfd7799bf8",
+        "after": "9f3dbcb1cf3a62d67a87948824b48c9da57cc6f8837173a7f1a4acdfd7799bf8"
+      },
+      {
+        "object": "gkernel.o",
+        "same_sha256": true,
+        "before": "0d6e23c859b706f915832db6d4c2a18800310ae9b22c777d50857ada7db5befd",
+        "after": "0d6e23c859b706f915832db6d4c2a18800310ae9b22c777d50857ada7db5befd"
+      },
+      {
+        "object": "code.o",
+        "same_sha256": true,
+        "before": "22bb8f7ec5e44052323ae4b063e3fd080d47966d08b42191d7329ce58566ef57",
+        "after": "22bb8f7ec5e44052323ae4b063e3fd080d47966d08b42191d7329ce58566ef57"
+      },
+      {
+        "object": "dvm.o",
+        "same_sha256": true,
+        "before": "b61240a08dcdabfce1636cb506c1da59e26e05f976292777aed638d9189062d0",
+        "after": "b61240a08dcdabfce1636cb506c1da59e26e05f976292777aed638d9189062d0"
+      },
+      {
+        "object": "schedule.o",
+        "same_sha256": true,
+        "before": "3bf66316a4f316e8d155f835ae22f8d2ab667fd8549c529fef03a380b5c0c955",
+        "after": "3bf66316a4f316e8d155f835ae22f8d2ab667fd8549c529fef03a380b5c0c955"
+      },
+      {
+        "object": "pass.o",
+        "same_sha256": true,
+        "before": "886050aa6fc7d2e9ea1af9222c5689f6693b40ec850f9d004f0b5673239f2a12",
+        "after": "886050aa6fc7d2e9ea1af9222c5689f6693b40ec850f9d004f0b5673239f2a12"
+      },
+      {
+        "object": "vf_fusion.o",
+        "same_sha256": true,
+        "before": "d502550dd544bc36cd5a4d3ebb1d705767d7583594ac2ceba65033fcd78a348f",
+        "after": "d502550dd544bc36cd5a4d3ebb1d705767d7583594ac2ceba65033fcd78a348f"
+      },
+      {
+        "object": "msprof.o",
+        "same_sha256": true,
+        "before": "d43466615f31a16da76df22d06c94c42633c4b328d351515ea44f7d5e71a4c19",
+        "after": "d43466615f31a16da76df22d06c94c42633c4b328d351515ea44f7d5e71a4c19"
+      },
+      {
+        "object": "system.o",
+        "same_sha256": true,
+        "before": "eb8d4694ebffbad8757d5232043190dac70924a4bf37bcdd7959951273e85fa5",
+        "after": "eb8d4694ebffbad8757d5232043190dac70924a4bf37bcdd7959951273e85fa5"
+      },
+      {
+        "object": "comm.o",
+        "same_sha256": true,
+        "before": "7849aa829a940bc4bde7a9dc9d44ac00008d875646ebecb8aeb9c0a601f09adc",
+        "after": "7849aa829a940bc4bde7a9dc9d44ac00008d875646ebecb8aeb9c0a601f09adc"
+      },
+      {
+        "object": "vm.o",
+        "same_sha256": true,
+        "before": "0c851be24dce4f844260ef629092e42063d07666ea49159d725944d2dec9ee65",
+        "after": "0c851be24dce4f844260ef629092e42063d07666ea49159d725944d2dec9ee65"
+      }
+    ],
+    "all_baseline_objects_identical": true,
+    "compiler_calls": {
+      "baseline": {
+        "dvm_compile_calls": 15,
+        "with_common_warning_policy": 15,
+        "warning_flag_elsewhere": 0
+      },
+      "instrumented": {
+        "dvm_compile_calls": 15,
+        "with_common_warning_policy": 15,
+        "warning_flag_elsewhere": 0
+      }
+    }
+  },
+  "baseline_npu_operation": {
+    "returncode": 0,
+    "seconds": 8.7847559699876,
+    "stdout": "{\"torch\": \"2.16.0a0+git26650ac\", \"torch_npu\": \"2.16.0a0+gitfc51851\", \"device\": \"npu:0\", \"result\": [3.0, 4.0]}\n",
+    "stderr": "[W1026 12:27:37.161515650 NPUCachingAllocator.cpp:169] Warning: The current CANN and Soc versions require processing for 32 padding size, with memory allocation. (function operator())\n"
+  },
+  "linker_diagnosis": {
+    "created_at": "2026-10-26T12:32:14.474067+00:00",
+    "root": "/home/workspace-ycy/compile-performance/diagnostics/linker",
+    "original_bfd_link_seconds": {
+      "baseline": 157.555,
+      "instrumented": 3398.087
+    },
+    "lld_same_inputs": {
+      "elapsed": 36.9034332500014,
+      "returncode": 0,
+      "maxrss": 9952680
+    },
+    "object_expansion": [
+      {
+        "file": "RegisterCompositeExplicitAutograd_0.cpp.o",
+        "baseline-r3": {
+          "bytes": 15162752,
+          "sections": 26979,
+          "section_bytes": {
+            "other": 973628,
+            "text": 1535836,
+            "relocations": 2652120,
+            "symbol_table": 1105416,
+            "symbol_strings": 7183476
+          },
+          "section_counts": {
+            "other": 10304,
+            "text": 7571,
+            "relocations": 9100,
+            "symbol_table": 1,
+            "symbol_strings": 2
+          }
+        },
+        "instrumented-r3": {
+          "bytes": 149020344,
+          "sections": 161315,
+          "section_bytes": {
+            "other": 5465390,
+            "text": 13130320,
+            "relocations": 38745528,
+            "debug": 22962692,
+            "symbol_table": 5692776,
+            "symbol_strings": 52339850
+          },
+          "section_counts": {
+            "other": 39893,
+            "text": 59395,
+            "relocations": 62016,
+            "debug": 7,
+            "symbol_table": 1,
+            "symbol_strings": 2
+          }
+        }
+      },
+      {
+        "file": "RegisterMeta_0.cpp.o",
+        "baseline-r3": {
+          "bytes": 13782400,
+          "sections": 29749,
+          "section_bytes": {
+            "other": 877668,
+            "text": 1590720,
+            "relocations": 2943912,
+            "symbol_table": 1204176,
+            "symbol_strings": 5238524
+          },
+          "section_counts": {
+            "other": 11295,
+            "text": 7834,
+            "relocations": 10616,
+            "symbol_table": 1,
+            "symbol_strings": 2
+          }
+        },
+        "instrumented-r3": {
+          "bytes": 106261536,
+          "sections": 130591,
+          "section_bytes": {
+            "other": 4359915,
+            "text": 10323548,
+            "relocations": 30676296,
+            "debug": 15087263,
+            "symbol_table": 4668888,
+            "symbol_strings": 32478690
+          },
+          "section_counts": {
+            "other": 33697,
+            "text": 46594,
+            "relocations": 50289,
+            "debug": 7,
+            "symbol_table": 1,
+            "symbol_strings": 2
+          }
+        }
+      }
+    ],
+    "profile_original_first_125_seconds": {
+      "samples": 624,
+      "inclusive_frames": [
+        [
+          ":??",
+          624
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:_start",
+          620
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:lang_process",
+          620
+        ],
+        [
+          "libc.so.6:__libc_init_first",
+          620
+        ],
+        [
+          "libc.so.6:__libc_start_main",
+          620
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:main",
+          620
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0",
+          535
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1",
+          535
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0",
+          529
+        ],
+        [
+          "libc.so.6:strpbrk",
+          448
+        ],
+        [
+          "libc.so.6:strcspn",
+          445
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:open_input_bfds",
+          79
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:load_symbols",
+          78
+        ],
+        [
+          "libc.so.6:strcmp",
+          55
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:ldfile_try_open_bfd",
+          42
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:ldfile_open_file",
+          42
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_elf64_object_p",
+          38
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_check_format_matches",
+          38
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_section_from_shdr",
+          36
+        ],
+        [
+          "libbfd-2.38-system.so:_bfd_elf_make_section_from_shdr",
+          33
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_elf_link_add_symbols",
+          25
+        ],
+        [
+          "libc.so.6:read",
+          18
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_hash_lookup",
+          17
+        ],
+        [
+          "libc.so.6:fread",
+          14
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_bread",
+          14
+        ]
+      ],
+      "last_stacks": [
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8f8bf8dc",
+          "libc.so.6:strcspn+0x93300",
+          "libc.so.6:strpbrk+0x93b34",
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0+0x36018",
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0+0x35184",
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1+0x34d70",
+          "aarch64-linux-gnu-ld.bfd:lang_process+0x2f2dc",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cc08",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8f8bf8dc",
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0+0x36018",
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0+0x35184",
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1+0x34d70",
+          "aarch64-linux-gnu-ld.bfd:lang_process+0x2f2dc",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cc08",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8f8bf8dc",
+          "libc.so.6:strcspn+0x932f4",
+          "libc.so.6:strpbrk+0x93b34",
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0+0x36018",
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0+0x35184",
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1+0x34d70",
+          "aarch64-linux-gnu-ld.bfd:lang_process+0x2f2dc",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cc08",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8f8bf8dc",
+          "libc.so.6:strcmp+0x92fd4",
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0+0x36034",
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0+0x35184",
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1+0x34d70",
+          "aarch64-linux-gnu-ld.bfd:lang_process+0x2f2dc",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cc08",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8f8bf8dc",
+          "libc.so.6:strcspn+0x93320",
+          "libc.so.6:strpbrk+0x93b34",
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0+0x36018",
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0+0x35184",
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1+0x34d70",
+          "aarch64-linux-gnu-ld.bfd:lang_process+0x2f2dc",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cc08",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ]
+      ]
+    },
+    "profile_without_prioritized_script": {
+      "samples": 2039,
+      "inclusive_frames": [
+        [
+          ":??",
+          2039
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:main",
+          2034
+        ],
+        [
+          "libc.so.6:__libc_init_first",
+          2034
+        ],
+        [
+          "libc.so.6:__libc_start_main",
+          2034
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:_start",
+          2034
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_elf_final_link",
+          1447
+        ],
+        [
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0",
+          1424
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_hash_traverse",
+          1424
+        ],
+        [
+          "libbfd-2.38-system.so:_bfd_aarch64_erratum_843419_branch_to_stub",
+          1051
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:lang_process",
+          586
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:map_input_to_output_sections.isra.0",
+          355
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:walk_wild.lto_priv.0",
+          347
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:walk_wild_section_general.lto_priv.0",
+          278
+        ],
+        [
+          "libc.so.6:glob_pattern_p",
+          241
+        ],
+        [
+          "libc.so.6:fnmatch",
+          221
+        ],
+        [
+          "libc.so.6:__wcsncasecmp_l",
+          169
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:lang_gc_sections_1",
+          165
+        ],
+        [
+          "libc.so.6:__gconv_get_alias_db",
+          146
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:gldaarch64linux_after_allocation.lto_priv.0",
+          91
+        ],
+        [
+          "libbfd-2.38-system.so:elf64_aarch64_size_stubs",
+          82
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:open_input_bfds",
+          74
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:load_symbols",
+          73
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:ldfile_try_open_bfd",
+          41
+        ],
+        [
+          "aarch64-linux-gnu-ld.bfd:ldfile_open_file",
+          41
+        ],
+        [
+          "libbfd-2.38-system.so:bfd_check_format_matches",
+          39
+        ]
+      ],
+      "last_stacks": [
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8a6b48dc",
+          "libbfd-2.38-system.so:_bfd_aarch64_erratum_843419_branch_to_stub+0x6352c",
+          "libbfd-2.38-system.so:bfd_hash_traverse+0x45380",
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0+0x62a14",
+          "libbfd-2.38-system.so:bfd_elf_final_link+0x9d5a4",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cccc",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8a6b48dc",
+          "libbfd-2.38-system.so:_bfd_aarch64_erratum_843419_branch_to_stub+0x6352c",
+          "libbfd-2.38-system.so:bfd_hash_traverse+0x45380",
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0+0x62a14",
+          "libbfd-2.38-system.so:bfd_elf_final_link+0x9d5a4",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cccc",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8a6b48dc",
+          "libbfd-2.38-system.so:_bfd_aarch64_erratum_843419_branch_to_stub+0x6352c",
+          "libbfd-2.38-system.so:bfd_hash_traverse+0x45380",
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0+0x62a14",
+          "libbfd-2.38-system.so:bfd_elf_final_link+0x9d5a4",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cccc",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8a6b48dc",
+          "libbfd-2.38-system.so:bfd_hash_traverse+0x45374",
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0+0x62a14",
+          "libbfd-2.38-system.so:bfd_elf_final_link+0x9d5a4",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cccc",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ],
+        [
+          "self-profile.so:sample+0x9d4",
+          ":??+0xffff8a6b48dc",
+          "libbfd-2.38-system.so:_bfd_aarch64_erratum_843419_branch_to_stub+0x6352c",
+          "libbfd-2.38-system.so:bfd_hash_traverse+0x45380",
+          "libbfd-2.38-system.so:elf64_aarch64_write_section.lto_priv.0+0x62a14",
+          "libbfd-2.38-system.so:bfd_elf_final_link+0x9d5a4",
+          "aarch64-linux-gnu-ld.bfd:main+0x3cccc",
+          "libc.so.6:__libc_init_first+0x27400",
+          "libc.so.6:__libc_start_main+0x274d8",
+          "aarch64-linux-gnu-ld.bfd:_start+0x3bf30"
+        ]
+      ]
+    },
+    "additional_probes": {
+      "bfd-no-script-result.json": {
+        "elapsed": 241.00062110999716,
+        "returncode": "timeout",
+        "maxrss": 9822896
+      },
+      "bfd-no-erratum-result.json": {
+        "elapsed": 600.6653919599921,
+        "returncode": "timeout",
+        "maxrss": 8071164
+      },
+      "bfd-no-script-no-erratum-result.json": {
+        "elapsed": 600.7688487499981,
+        "returncode": "timeout",
+        "maxrss": 9957356
+      }
+    },
+    "causal_interpretation": "Instrumentation greatly increases section/code/relocation/string-table volume. Sampling shows BFD section-pattern scanning, and later repeated full stub-table traversal for each section in elf64_aarch64_write_section -> bfd_hash_traverse -> _bfd_aarch64_erratum_843419_branch_to_stub. Same object inputs link successfully with LLD in 36.9s. Removing just selected BFD options is not established as a complete remedy. IMPORTANT: Successful LLD linking in 36.9 seconds did not establish runtime compatibility. The generated-script configuration failed runtime validation and is rejected.",
+    "measurement_corrections": [
+      "Original r3 instrumented build overlapped diagnostics and is excluded from final clean timing.",
+      "r4 LLD attempt encountered NCCL source fetching inside configure; aborted and excluded. NCCL v2.32.3-1 source-only checkout was prepared outside timing for r5.",
+      "No ccache/sccache, fresh build dirs; OS page cache not flushed, so not a strict cold-cache experiment.",
+      "r5 native LLD 15 was excluded after slow linking. Generated-script links finished in about 36 seconds, but r6 baseline subsequently failed import with SIGSEGV and is rejected. Native LLD 15 without ordering also exceeded 180 seconds, so the ordering file alone is not established as the cause. A newer official isolated LLD is under validation."
+    ],
+    "decision": "User explicitly approved unified LLD for both groups, conditional on trace_api_chain full capture/replay/source-location/SQL/HTML validation on new PyTorch and torch-npu.",
+    "lld_configuration_probes": [
+      {
+        "label": "native-order-8",
+        "elapsed": 90.4820265499875,
+        "returncode": "timeout"
+      },
+      {
+        "label": "script-8",
+        "elapsed": 35.937582550002844,
+        "returncode": 0
+      },
+      {
+        "label": "script-32",
+        "elapsed": 35.79088883000077,
+        "returncode": 0
+      }
+    ],
+    "lld22_preflight": {
+      "status": "success",
+      "mapped_cpp_source_entities": 1178,
+      "links": [
+        {
+          "library": "libtorch_cpu.so",
+          "elapsed": 16.748813650003285,
+          "returncode": 0
+        },
+        {
+          "library": "libtorch.so",
+          "elapsed": 0.16573598999821115,
+          "returncode": 0
+        },
+        {
+          "library": "libshm.so",
+          "elapsed": 0.11583417998917866,
+          "returncode": 0
+        },
+        {
+          "library": "libtorch_python.so",
+          "elapsed": 2.823043800002779,
+          "returncode": 0
+        }
+      ]
+    },
+    "plugin_debuglink_fix": {
+      "cause": "Missing Dwfl_Callbacks.find_debuginfo callback causes SIGSEGV for ELF binaries containing .gnu_debuglink.",
+      "reproduction": "Two small shared-library tests both failed before the fix: split debug file present and missing.",
+      "fix": "Set dwfl_standard_find_debuginfo; preserve unresolved symbols as unmapped when debug file is absent.",
+      "regression": "67 passed after the fix",
+      "changed_files": [
+        "src/dwarf_lookup.c",
+        "tests/test_dwarf_debuglink.py"
+      ]
+    },
+    "final_plugin_validation": {
+      "status": "success",
+      "plugin": "trace_api_chain",
+      "plugin_commit": "96c5fbc4cec6611a7a248f030f6b787b893ef372",
+      "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22",
+      "scenarios": [
+        {
+          "scenario": "cpu",
+          "device": "cpu",
+          "capture": {
+            "status": "captured",
+            "stage": "capture_only",
+            "mode": "full",
+            "gaps": [],
+            "pytest_exit_code": 0,
+            "elapsed_seconds": 33.963881449992186,
+            "replay_performed": false,
+            "database_written": false,
+            "html_generated": false
+          },
+          "native_events": 44014,
+          "target_library_events": 43086,
+          "target_libraries": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libc10.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_python.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so"
+          ],
+          "graph_status": "observed_scope_validated",
+          "replay": {
+            "test": "test_trace_lld.py::test_add",
+            "captured_calls": 22010,
+            "canonical_entities": 2518,
+            "api_definitions": 3,
+            "normalized_paths": 12591,
+            "pending_objects": 4,
+            "source_dependencies": 2,
+            "source_read_policy": "namespace-load/1",
+            "gaps": [],
+            "raw_evidence": "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "graph_digest": "a4a8205d6039bb662f084a10325cb9d5b79363798e1ad6b4da736d8ef444ab87",
+            "status": "refreshed",
+            "slot": "lld_cpu"
+          }
+        },
+        {
+          "scenario": "npu",
+          "device": "npu:0",
+          "capture": {
+            "status": "captured",
+            "stage": "capture_only",
+            "mode": "full",
+            "gaps": [],
+            "pytest_exit_code": 0,
+            "elapsed_seconds": 31.35871780999878,
+            "replay_performed": false,
+            "database_written": false,
+            "html_generated": false
+          },
+          "native_events": 119208,
+          "target_library_events": 116284,
+          "target_libraries": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libc10.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch/lib/libtorch_python.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtensorpipe.so",
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so"
+          ],
+          "graph_status": "observed_scope_validated",
+          "replay": {
+            "test": "test_trace_lld.py::test_add",
+            "captured_calls": 59607,
+            "canonical_entities": 3826,
+            "api_definitions": 3,
+            "normalized_paths": 19582,
+            "pending_objects": 4,
+            "source_dependencies": 2,
+            "source_read_policy": "namespace-load/1",
+            "gaps": [],
+            "raw_evidence": "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "graph_digest": "b434ada6921de58bd36b18fc6526d35ec8e00fbbbdc85bdb6525c1daabc3ded9",
+            "status": "refreshed",
+            "slot": "lld_npu"
+          }
+        }
+      ],
+      "commands": [
+        {
+          "stage": "plugin-regression",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/npu-test-infra/plugin/trace_api_chain/tests",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--basetemp",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/pytest-tmp"
+          ],
+          "returncode": 0,
+          "seconds": 11.179866070000571
+        },
+        {
+          "stage": "capture-cpu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/test_trace_lld.py::test_add",
+            "-q",
+            "--callchain-out=/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "--callchain-mode=full",
+            "--callchain-timeout=600"
+          ],
+          "returncode": 0,
+          "seconds": 34.25741704000393
+        },
+        {
+          "stage": "replay-cpu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "replay",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-cpu",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--source-root",
+            "pytorch=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/pytorch",
+            "--source-root",
+            "torch_npu=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+            "--slot",
+            "lld_cpu"
+          ],
+          "returncode": 0,
+          "seconds": 87.328645149988
+        },
+        {
+          "stage": "capture-npu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-m",
+            "pytest",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/test_trace_lld.py::test_add",
+            "-q",
+            "--callchain-out=/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "--callchain-mode=full",
+            "--callchain-timeout=600"
+          ],
+          "returncode": 0,
+          "seconds": 31.653833999997005
+        },
+        {
+          "stage": "replay-npu",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "replay",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/capture-npu",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--source-root",
+            "pytorch=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/pytorch",
+            "--source-root",
+            "torch_npu=/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+            "--slot",
+            "lld_npu"
+          ],
+          "returncode": 0,
+          "seconds": 134.43370785999286
+        },
+        {
+          "stage": "apis",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "apis",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite"
+          ],
+          "returncode": 0,
+          "seconds": 3.2181180699990364
+        },
+        {
+          "stage": "query",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "query",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--api",
+            "torch.add",
+            "--out",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add.json"
+          ],
+          "returncode": 0,
+          "seconds": 2.317725259999861
+        },
+        {
+          "stage": "html",
+          "command": [
+            "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/venv311/bin/python",
+            "-c",
+            "from trace_api_chain.cli import main; raise SystemExit(main())",
+            "html",
+            "--db",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+            "--api",
+            "torch.add",
+            "--out",
+            "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add-html"
+          ],
+          "returncode": 0,
+          "seconds": 2.0678674000082538
+        }
+      ],
+      "database": "/home/workspace-ycy/compile-performance/plugin-validation-lld/api-callchains.sqlite",
+      "html": "/home/workspace-ycy/compile-performance/plugin-validation-lld/torch-add-html/C03.html",
+      "source_located_entities": 1532,
+      "scope": "Real CPU and NPU torch.add execution through capture, native events, offline replay, SQLite query, source locations and HTML; not a guarantee for every possible API."
+    },
+    "final_comparison": [
+      {
+        "component": "pytorch",
+        "baseline_seconds": 438.8117776500003,
+        "instrumented_seconds": 755.954353809997,
+        "difference_seconds": 317.1425761599967,
+        "overhead_percent": 72.27303192690331,
+        "ratio": 1.722730319269033
+      },
+      {
+        "component": "torch-npu",
+        "baseline_seconds": 375.6129607199982,
+        "instrumented_seconds": 905.822170090003,
+        "difference_seconds": 530.2092093700048,
+        "overhead_percent": 141.1583903690828,
+        "ratio": 2.411583903690828
+      }
+    ],
+    "npu_clean_retry": {
+      "reason": "DVM -Werror=mismatched-new-delete rejects instrumentation; same warning-only compatibility flag is now used in both DVM builds.",
+      "pytorch_stages_retained": true,
+      "npu_stages_rebuilt_from_fresh_sources": [
+        {
+          "variant": "baseline",
+          "source": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/torch-npu",
+          "archived_source": "/home/workspace-ycy/compile-performance/cases/baseline-r7-lld22/torch-npu.before-dvm-policy",
+          "old_inode": 4414575318,
+          "new_inode": 2171483370,
+          "fresh_build_directory_absent": true,
+          "old_torch_npu_removed": true
+        },
+        {
+          "variant": "instrumented",
+          "source": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu",
+          "archived_source": "/home/workspace-ycy/compile-performance/cases/instrumented-r7-lld22/torch-npu.before-dvm-policy",
+          "old_inode": 2238392617,
+          "new_inode": 4418041212,
+          "fresh_build_directory_absent": true,
+          "old_torch_npu_removed": true
+        }
+      ],
+      "probe": {
+        "returncode": 0,
+        "seconds": 3.569699200001196,
+        "warning_policy": "DVM only: -Wno-error=mismatched-new-delete"
+      },
+      "archive": "/home/workspace-ycy/compile-performance/excluded/r7-npu-before-dvm-policy",
+      "started_at": "2026-10-26T12:03:02.932691+00:00"
+    },
+    "dvm_warning_audit": {
+      "baseline_objects_compared": [
+        {
+          "object": "ops.o",
+          "same_sha256": true,
+          "before": "183d0366cd3fd3638d3bac810c67a0d00510a2bb5faa5adb666bdfc26baa5c9d",
+          "after": "183d0366cd3fd3638d3bac810c67a0d00510a2bb5faa5adb666bdfc26baa5c9d"
+        },
+        {
+          "object": "ops_m.o",
+          "same_sha256": true,
+          "before": "077db1b8b33d2dfb52e13ebf7ef85de420baa06b10b3eea723426a2266b7a49e",
+          "after": "077db1b8b33d2dfb52e13ebf7ef85de420baa06b10b3eea723426a2266b7a49e"
+        },
+        {
+          "object": "ops_c.o",
+          "same_sha256": true,
+          "before": "2c553dad9a52203cd4a1cd5a0f32288a1d02bb7407913899a38ef37a43deb5ab",
+          "after": "2c553dad9a52203cd4a1cd5a0f32288a1d02bb7407913899a38ef37a43deb5ab"
+        },
+        {
+          "object": "kernel.o",
+          "same_sha256": true,
+          "before": "f08a08a7b649dd603c27e3555b447e2910437d698f391787a5f00fa607c3e67f",
+          "after": "f08a08a7b649dd603c27e3555b447e2910437d698f391787a5f00fa607c3e67f"
+        },
+        {
+          "object": "xkernel.o",
+          "same_sha256": true,
+          "before": "9f3dbcb1cf3a62d67a87948824b48c9da57cc6f8837173a7f1a4acdfd7799bf8",
+          "after": "9f3dbcb1cf3a62d67a87948824b48c9da57cc6f8837173a7f1a4acdfd7799bf8"
+        },
+        {
+          "object": "gkernel.o",
+          "same_sha256": true,
+          "before": "0d6e23c859b706f915832db6d4c2a18800310ae9b22c777d50857ada7db5befd",
+          "after": "0d6e23c859b706f915832db6d4c2a18800310ae9b22c777d50857ada7db5befd"
+        },
+        {
+          "object": "code.o",
+          "same_sha256": true,
+          "before": "22bb8f7ec5e44052323ae4b063e3fd080d47966d08b42191d7329ce58566ef57",
+          "after": "22bb8f7ec5e44052323ae4b063e3fd080d47966d08b42191d7329ce58566ef57"
+        },
+        {
+          "object": "dvm.o",
+          "same_sha256": true,
+          "before": "b61240a08dcdabfce1636cb506c1da59e26e05f976292777aed638d9189062d0",
+          "after": "b61240a08dcdabfce1636cb506c1da59e26e05f976292777aed638d9189062d0"
+        },
+        {
+          "object": "schedule.o",
+          "same_sha256": true,
+          "before": "3bf66316a4f316e8d155f835ae22f8d2ab667fd8549c529fef03a380b5c0c955",
+          "after": "3bf66316a4f316e8d155f835ae22f8d2ab667fd8549c529fef03a380b5c0c955"
+        },
+        {
+          "object": "pass.o",
+          "same_sha256": true,
+          "before": "886050aa6fc7d2e9ea1af9222c5689f6693b40ec850f9d004f0b5673239f2a12",
+          "after": "886050aa6fc7d2e9ea1af9222c5689f6693b40ec850f9d004f0b5673239f2a12"
+        },
+        {
+          "object": "vf_fusion.o",
+          "same_sha256": true,
+          "before": "d502550dd544bc36cd5a4d3ebb1d705767d7583594ac2ceba65033fcd78a348f",
+          "after": "d502550dd544bc36cd5a4d3ebb1d705767d7583594ac2ceba65033fcd78a348f"
+        },
+        {
+          "object": "msprof.o",
+          "same_sha256": true,
+          "before": "d43466615f31a16da76df22d06c94c42633c4b328d351515ea44f7d5e71a4c19",
+          "after": "d43466615f31a16da76df22d06c94c42633c4b328d351515ea44f7d5e71a4c19"
+        },
+        {
+          "object": "system.o",
+          "same_sha256": true,
+          "before": "eb8d4694ebffbad8757d5232043190dac70924a4bf37bcdd7959951273e85fa5",
+          "after": "eb8d4694ebffbad8757d5232043190dac70924a4bf37bcdd7959951273e85fa5"
+        },
+        {
+          "object": "comm.o",
+          "same_sha256": true,
+          "before": "7849aa829a940bc4bde7a9dc9d44ac00008d875646ebecb8aeb9c0a601f09adc",
+          "after": "7849aa829a940bc4bde7a9dc9d44ac00008d875646ebecb8aeb9c0a601f09adc"
+        },
+        {
+          "object": "vm.o",
+          "same_sha256": true,
+          "before": "0c851be24dce4f844260ef629092e42063d07666ea49159d725944d2dec9ee65",
+          "after": "0c851be24dce4f844260ef629092e42063d07666ea49159d725944d2dec9ee65"
+        }
+      ],
+      "all_baseline_objects_identical": true,
+      "compiler_calls": {
+        "baseline": {
+          "dvm_compile_calls": 15,
+          "with_common_warning_policy": 15,
+          "warning_flag_elsewhere": 0
+        },
+        "instrumented": {
+          "dvm_compile_calls": 15,
+          "with_common_warning_policy": 15,
+          "warning_flag_elsewhere": 0
+        }
+      }
+    }
+  },
+  "lld_configuration_probes": [
+    {
+      "label": "native-order-8",
+      "elapsed": 90.4820265499875,
+      "returncode": "timeout"
+    },
+    {
+      "label": "script-8",
+      "elapsed": 35.937582550002844,
+      "returncode": 0
+    },
+    {
+      "label": "script-32",
+      "elapsed": 35.79088883000077,
+      "returncode": 0
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "path": "test/test_tensor_creation_ops.py",
+    "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+    "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_tensor_creation_ops.py",
+    "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+    "sha256": "91c147ff16bfe3b3d442d341dfeb93e1174c0de50e07ade27d581ee3b293656c",
+    "bytes": 220635
+  },
+  {
+    "path": "test/test_torch.py",
+    "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+    "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_torch.py",
+    "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+    "sha256": "4e4a3434334e4ad9cfe4764398457727d3b9cc3c6ca267d010bda0e35294d920",
+    "bytes": 532027
+  },
+  {
+    "path": "test/nn/test_init.py",
+    "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+    "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/nn/test_init.py",
+    "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+    "sha256": "fd26991f70e0710f3093bc8439315bff1903291a3f10ec3eddbe91d4e97fc1bb",
+    "bytes": 29492
+  },
+  {
+    "path": "test/test_nn.py",
+    "commit": "1ee9fbabf8ea81cd586204a656515d96ccf6917f",
+    "official_url": "https://raw.githubusercontent.com/pytorch/pytorch/1ee9fbabf8ea81cd586204a656515d96ccf6917f/test/test_nn.py",
+    "retrieved_via": "local-git:/home/workspace-ycy/npu-test-infra/data/runtime/pytorch-main.git",
+    "sha256": "5914aff6e7e42b6b11c521b01369b0228b24ae7c29802b2e8c21606861306e52",
+    "bytes": 868071
+  }
+]

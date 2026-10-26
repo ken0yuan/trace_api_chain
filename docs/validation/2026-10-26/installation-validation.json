@@ -1,0 +1,9 @@
+{
+  "wheel": "trace_api_chain-0.3.0-py3-none-any.whl",
+  "native_sources_packaged": true,
+  "installed_origin": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/plugin-documentation-validation/installed/trace_api_chain/__init__.py",
+  "pytest_exit_code": 0,
+  "bash_blocks_syntax_checked": 10,
+  "script_syntax": "passed",
+  "status": "passed"
+}

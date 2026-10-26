@@ -1,12 +1,26 @@
 """Runtime identity catalog of loaded public bindings; no source-name guessing."""
 import inspect
+import hashlib
+import json
+from pathlib import Path
 import sys
 import types
 
 
 class Registry:
-    def __init__(self, namespaces=('torch', 'torch_npu')):
+    def __init__(self, namespaces=('torch', 'torch_npu'),catalog_path=None):
         self.namespaces=tuple(namespaces)
+        self.ledger=None;self.allowed=None
+        if catalog_path:
+            raw=Path(catalog_path).read_bytes();document=json.loads(raw)
+            if not isinstance(document.get('apis'),list):raise ValueError('API ledger must contain apis list')
+            apis=document['apis'];ids=[a['api_id'] for a in apis]
+            if len(set(ids))!=len(ids):raise ValueError('API ledger contains duplicate api_id')
+            self.allowed={'runtime:'+a['qualified_name'] for a in apis if a['language']=='python'}
+            self.ledger={'path':str(Path(catalog_path).resolve()),'sha256':hashlib.sha256(raw).hexdigest(),
+                         'apis':len(apis),'python':sum(a['language']=='python' for a in apis),
+                         'cpp':sum(a['language']=='cpp' for a in apis),
+                         'policy':'Every test uses this entire ledger. Resolvable Python identities are entries; all descendants including native functions are captured. Non-callable and unloaded entries are not claimed observed.'}
         self.catalog=set(); self.python={}; self.native={}; self.descriptors={}
         self.excluded_bodies={}; self.keep=[]
         for module_name,module in sorted(list(sys.modules.items())):
@@ -23,6 +37,8 @@ class Registry:
                         if member.startswith('_') and member not in ('__init__','__call__'):continue
                         if type(descriptor) in (staticmethod,classmethod):descriptor=descriptor.__func__
                         self.add(path+'.'+member,descriptor,owner=value)
+                        if member=='__init__' and self.allowed is not None and 'runtime:'+path in self.allowed:
+                            self.add(path,descriptor,owner=value)
         torch=sys.modules.get('torch')
         compile_fn=vars(torch).get('compile') if torch is not None else None
         if type(compile_fn) is types.FunctionType:
@@ -35,6 +51,7 @@ class Registry:
 
     def add(self,path,value,owner=None):
         api='runtime:'+path
+        if self.allowed is not None and api not in self.allowed:return
         if type(value) is types.FunctionType:
             self.python.setdefault((value.__code__,id(value.__globals__)),[]).append((api,owner))
         elif type(value) in (types.BuiltinFunctionType,types.BuiltinMethodType):
@@ -73,6 +90,8 @@ class Registry:
 
     def describe(self):
         return {'schema':'runtime-api-catalog/1','namespaces':self.namespaces,
+                'shared_ledger':self.ledger,
+                'ledger_python_entries_not_resolved':sorted(self.allowed-self.catalog) if self.allowed is not None else [],
                 'api_ids':sorted(self.catalog),
                 'python_identity':'code object and globals identity; compatible receiver type for methods',
                 'native_identity':'callable identity or receiver type static descriptor identity',
