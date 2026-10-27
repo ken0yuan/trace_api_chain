@@ -14,7 +14,7 @@ static __thread uint32_t *path_node_hash, *path_support_hash;
 static __thread struct path_frame *path_stack;
 static __thread uint32_t path_node_used, path_support_used, path_depth;
 static __thread size_t path_node_cap, path_support_cap, path_node_slots, path_support_slots;
-static __thread uint64_t path_window, path_events;
+static __thread uint64_t path_window, path_events, path_exit_callsite_variations;
 static __thread int path_failed, path_initialized;
 
 static uint64_t path_mix(uint64_t x) {
@@ -46,6 +46,7 @@ int trace_paths_begin(uint64_t window) {
 }
 int trace_paths_pause(void) { path_active=0;return path_failed ? -1 : 0; }
 uint64_t trace_paths_event_count(void) { return path_events; }
+uint64_t trace_paths_exit_callsite_variations(void) { return path_exit_callsite_variations; }
 static void path_record_enter(void *fn,void *caller) {
     if(path_failed) return;
     if(path_depth>=PATH_DEPTH) { path_failed|=2;return; }
@@ -82,7 +83,12 @@ static void path_record_exit(void *fn,void *caller) {
     if(path_failed) return;
     if(!path_depth) { path_failed|=16;return; }
     struct path_frame *p=&path_stack[path_depth-1];
-    if(p->function!=(uintptr_t)fn || p->caller!=(uintptr_t)caller || p->window!=path_window) { path_failed|=32;return; }
+    /* GCC may inline the entry but outline the exit into a .part/.isra clone.
+     * The same conceptual function then reports different call-site addresses.
+     * Pair only the top function in its original window; never search/unwind
+     * the stack to make an exit fit. Keep the entry call site as path metadata. */
+    if(p->function!=(uintptr_t)fn || p->window!=path_window) { path_failed|=32;return; }
+    if(p->caller!=(uintptr_t)caller) path_exit_callsite_variations++;
     path_supports[p->support-1].exits++;path_events++;path_depth--;
 }
 int trace_paths_finish(const char *path) {

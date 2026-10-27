@@ -1,0 +1,3003 @@
+{
+  "fill_original": {
+    "id": "C03_fill__cpu",
+    "device": "cpu",
+    "baseline": {
+      "median_seconds": 0.67950891,
+      "min_seconds": 0.66109645,
+      "max_seconds": 0.70724135,
+      "cv_percent": 2.259494751261917,
+      "samples": [
+        0.69071694,
+        0.67769905,
+        0.66109645,
+        0.67427626,
+        0.67950891,
+        0.66350333,
+        0.68889902,
+        0.70724135,
+        0.69871156
+      ],
+      "calls_per_round": 1
+    },
+    "full": {
+      "median_seconds": 21.60388028,
+      "min_seconds": 21.41927497,
+      "max_seconds": 21.8246306,
+      "cv_percent": 0.6172725803035131,
+      "samples": [
+        21.75581012,
+        21.4926503,
+        21.61465186,
+        21.50365212,
+        21.8246306,
+        21.60388028,
+        21.41927497,
+        21.56948616,
+        21.71910038
+      ],
+      "calls_per_round": 1
+    },
+    "std_excluded": {
+      "median_seconds": 6.71279486,
+      "min_seconds": 6.67357692,
+      "max_seconds": 6.75561747,
+      "cv_percent": 0.5184946122608859,
+      "samples": [
+        6.75206222,
+        6.71279486,
+        6.69040987,
+        6.67385109,
+        6.75021639,
+        6.69666119,
+        6.74852825,
+        6.67357692,
+        6.75561747
+      ],
+      "calls_per_round": 1
+    },
+    "std_vs_baseline": 9.878891595402331,
+    "std_vs_full": 0.31072172095928685
+  },
+  "builds": {
+    "pytorch": 659.220857170003,
+    "torch-npu": 660.9196052000043
+  },
+  "detail_summary": {
+    "baseline": {
+      "stages_ns": {
+        "input_create_ns": 920520,
+        "fill_ns": 7916860,
+        "expected_list_ns": 2638560,
+        "expected_tensor_ns": 475111840,
+        "cleanup_ns": 10398030,
+        "tensor_assert_ns": 161769210,
+        "dtype_assert_ns": 56414860,
+        "other_ns": 4343020
+      },
+      "split_total_ns": 716909930,
+      "fill_calls": 680,
+      "groups": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 106440,
+          "fill_ns": 238850,
+          "expected_list_ns": 17100,
+          "expected_tensor_ns": 413280,
+          "cleanup_ns": 39170,
+          "tensor_assert_ns": 4023380,
+          "dtype_assert_ns": 1750910
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 23580,
+          "fill_ns": 315950,
+          "expected_list_ns": 175360,
+          "expected_tensor_ns": 28737460,
+          "cleanup_ns": 567570,
+          "tensor_assert_ns": 8006410,
+          "dtype_assert_ns": 2003280
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 34120,
+          "fill_ns": 198940,
+          "expected_list_ns": 15990,
+          "expected_tensor_ns": 396100,
+          "cleanup_ns": 33520,
+          "tensor_assert_ns": 3329020,
+          "dtype_assert_ns": 1628360
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 25730,
+          "fill_ns": 390440,
+          "expected_list_ns": 169420,
+          "expected_tensor_ns": 29039400,
+          "cleanup_ns": 557850,
+          "tensor_assert_ns": 8219130,
+          "dtype_assert_ns": 1987040
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 28650,
+          "fill_ns": 177840,
+          "expected_list_ns": 14250,
+          "expected_tensor_ns": 346870,
+          "cleanup_ns": 27380,
+          "tensor_assert_ns": 1882820,
+          "dtype_assert_ns": 1443300
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 16710,
+          "fill_ns": 207720,
+          "expected_list_ns": 115490,
+          "expected_tensor_ns": 25423140,
+          "cleanup_ns": 534690,
+          "tensor_assert_ns": 2684890,
+          "dtype_assert_ns": 1512740
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 22190,
+          "fill_ns": 174340,
+          "expected_list_ns": 14650,
+          "expected_tensor_ns": 322010,
+          "cleanup_ns": 26080,
+          "tensor_assert_ns": 1809410,
+          "dtype_assert_ns": 1408100
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 14560,
+          "fill_ns": 201300,
+          "expected_list_ns": 117500,
+          "expected_tensor_ns": 25531020,
+          "cleanup_ns": 550170,
+          "tensor_assert_ns": 2959780,
+          "dtype_assert_ns": 1542900
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 24610,
+          "fill_ns": 166710,
+          "expected_list_ns": 14290,
+          "expected_tensor_ns": 330870,
+          "cleanup_ns": 26290,
+          "tensor_assert_ns": 1813510,
+          "dtype_assert_ns": 1421320
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 15950,
+          "fill_ns": 218940,
+          "expected_list_ns": 117800,
+          "expected_tensor_ns": 25523060,
+          "cleanup_ns": 545440,
+          "tensor_assert_ns": 2796070,
+          "dtype_assert_ns": 1540510
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 21050,
+          "fill_ns": 161660,
+          "expected_list_ns": 14750,
+          "expected_tensor_ns": 302450,
+          "cleanup_ns": 25750,
+          "tensor_assert_ns": 1746410,
+          "dtype_assert_ns": 1401130
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 14300,
+          "fill_ns": 229980,
+          "expected_list_ns": 112480,
+          "expected_tensor_ns": 25112040,
+          "cleanup_ns": 541120,
+          "tensor_assert_ns": 3029260,
+          "dtype_assert_ns": 1555300
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 20830,
+          "fill_ns": 159100,
+          "expected_list_ns": 14330,
+          "expected_tensor_ns": 304220,
+          "cleanup_ns": 25690,
+          "tensor_assert_ns": 1724060,
+          "dtype_assert_ns": 1414600
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 21730,
+          "fill_ns": 310390,
+          "expected_list_ns": 120940,
+          "expected_tensor_ns": 25883480,
+          "cleanup_ns": 578000,
+          "tensor_assert_ns": 3380960,
+          "dtype_assert_ns": 1590400
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 28750,
+          "fill_ns": 201060,
+          "expected_list_ns": 19630,
+          "expected_tensor_ns": 424610,
+          "cleanup_ns": 41310,
+          "tensor_assert_ns": 4414780,
+          "dtype_assert_ns": 1773230
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 17690,
+          "fill_ns": 341360,
+          "expected_list_ns": 171850,
+          "expected_tensor_ns": 26827190,
+          "cleanup_ns": 602880,
+          "tensor_assert_ns": 11916750,
+          "dtype_assert_ns": 2025420
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 38980,
+          "fill_ns": 187390,
+          "expected_list_ns": 19880,
+          "expected_tensor_ns": 415300,
+          "cleanup_ns": 34020,
+          "tensor_assert_ns": 3811820,
+          "dtype_assert_ns": 1711830
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 16220,
+          "fill_ns": 465080,
+          "expected_list_ns": 166660,
+          "expected_tensor_ns": 26816370,
+          "cleanup_ns": 575660,
+          "tensor_assert_ns": 13528950,
+          "dtype_assert_ns": 2090610
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 30520,
+          "fill_ns": 181580,
+          "expected_list_ns": 16180,
+          "expected_tensor_ns": 369380,
+          "cleanup_ns": 29100,
+          "tensor_assert_ns": 2457610,
+          "dtype_assert_ns": 1549820
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 14530,
+          "fill_ns": 224360,
+          "expected_list_ns": 126460,
+          "expected_tensor_ns": 29142730,
+          "cleanup_ns": 572220,
+          "tensor_assert_ns": 4955280,
+          "dtype_assert_ns": 1661480
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 28980,
+          "fill_ns": 178470,
+          "expected_list_ns": 16370,
+          "expected_tensor_ns": 349880,
+          "cleanup_ns": 28660,
+          "tensor_assert_ns": 2363490,
+          "dtype_assert_ns": 1507140
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 14810,
+          "fill_ns": 214970,
+          "expected_list_ns": 119130,
+          "expected_tensor_ns": 28848230,
+          "cleanup_ns": 578780,
+          "tensor_assert_ns": 5219200,
+          "dtype_assert_ns": 1641030
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 28550,
+          "fill_ns": 183210,
+          "expected_list_ns": 16480,
+          "expected_tensor_ns": 362170,
+          "cleanup_ns": 29040,
+          "tensor_assert_ns": 2418660,
+          "dtype_assert_ns": 1489620
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 14940,
+          "fill_ns": 229230,
+          "expected_list_ns": 120600,
+          "expected_tensor_ns": 29120310,
+          "cleanup_ns": 558590,
+          "tensor_assert_ns": 4627670,
+          "dtype_assert_ns": 1651820
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 24640,
+          "fill_ns": 197350,
+          "expected_list_ns": 15770,
+          "expected_tensor_ns": 358300,
+          "cleanup_ns": 28540,
+          "tensor_assert_ns": 2387050,
+          "dtype_assert_ns": 1497100
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 15210,
+          "fill_ns": 227640,
+          "expected_list_ns": 122290,
+          "expected_tensor_ns": 28849390,
+          "cleanup_ns": 560900,
+          "tensor_assert_ns": 5476010,
+          "dtype_assert_ns": 1651800
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 24530,
+          "fill_ns": 196890,
+          "expected_list_ns": 19140,
+          "expected_tensor_ns": 402620,
+          "cleanup_ns": 35260,
+          "tensor_assert_ns": 3757770,
+          "dtype_assert_ns": 1651810
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 16860,
+          "fill_ns": 266760,
+          "expected_list_ns": 149870,
+          "expected_tensor_ns": 28931290,
+          "cleanup_ns": 563220,
+          "tensor_assert_ns": 8125340,
+          "dtype_assert_ns": 1888660
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 29110,
+          "fill_ns": 186570,
+          "expected_list_ns": 15180,
+          "expected_tensor_ns": 346990,
+          "cleanup_ns": 27560,
+          "tensor_assert_ns": 1873290,
+          "dtype_assert_ns": 1428360
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 15200,
+          "fill_ns": 261720,
+          "expected_list_ns": 115580,
+          "expected_tensor_ns": 33163170,
+          "cleanup_ns": 576250,
+          "tensor_assert_ns": 3364380,
+          "dtype_assert_ns": 1541390
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 26550,
+          "fill_ns": 200870,
+          "expected_list_ns": 18830,
+          "expected_tensor_ns": 396210,
+          "cleanup_ns": 35310,
+          "tensor_assert_ns": 3819300,
+          "dtype_assert_ns": 1652000
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 15980,
+          "fill_ns": 284280,
+          "expected_list_ns": 155560,
+          "expected_tensor_ns": 28947110,
+          "cleanup_ns": 583520,
+          "tensor_assert_ns": 9534680,
+          "dtype_assert_ns": 1886610
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 38680,
+          "fill_ns": 206910,
+          "expected_list_ns": 18350,
+          "expected_tensor_ns": 420030,
+          "cleanup_ns": 37480,
+          "tensor_assert_ns": 4244080,
+          "dtype_assert_ns": 1735760
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 17000,
+          "fill_ns": 306950,
+          "expected_list_ns": 159470,
+          "expected_tensor_ns": 26602000,
+          "cleanup_ns": 588270,
+          "tensor_assert_ns": 15502650,
+          "dtype_assert_ns": 2012810
+        }
+      ],
+      "micro_fill": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1816.5
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2867.875
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1804.325
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 4062.4
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1805.85
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2055.85
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1777.55
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2027.225
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1799.9
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2249.9
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1800.625
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2863.85
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1797.8
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 3897.75
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1788.9
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 4694.1
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1763.65
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 6174.25
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1802.1
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2033.325
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1791.2
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2029.3
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1760.425
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 1967.125
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1751.1
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 1962.575
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1742.2
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2203.075
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1774.375
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2019.675
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1745.825
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2194.15
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 1752.025
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2777.925
+        }
+      ],
+      "assertion_detail": {
+        "isclose": 88871710,
+        "all": 16962660
+      }
+    },
+    "full": {
+      "stages_ns": {
+        "input_create_ns": 5387520,
+        "fill_ns": 325356910,
+        "expected_list_ns": 4291480,
+        "expected_tensor_ns": 2248083660,
+        "cleanup_ns": 18257300,
+        "tensor_assert_ns": 18921988410,
+        "dtype_assert_ns": 84745490,
+        "other_ns": 9604640
+      },
+      "split_total_ns": 21621308930,
+      "fill_calls": 680,
+      "groups": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 362380,
+          "fill_ns": 1488370,
+          "expected_list_ns": 24770,
+          "expected_tensor_ns": 2688700,
+          "cleanup_ns": 143340,
+          "tensor_assert_ns": 35084380,
+          "dtype_assert_ns": 2247680
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 83820,
+          "fill_ns": 15459650,
+          "expected_list_ns": 303960,
+          "expected_tensor_ns": 123692910,
+          "cleanup_ns": 846170,
+          "tensor_assert_ns": 1650294170,
+          "dtype_assert_ns": 4165730
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 263510,
+          "fill_ns": 1228310,
+          "expected_list_ns": 24680,
+          "expected_tensor_ns": 2289720,
+          "cleanup_ns": 133160,
+          "tensor_assert_ns": 27624810,
+          "dtype_assert_ns": 2018530
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 98360,
+          "fill_ns": 28967830,
+          "expected_list_ns": 290020,
+          "expected_tensor_ns": 124051890,
+          "cleanup_ns": 961070,
+          "tensor_assert_ns": 1800538400,
+          "dtype_assert_ns": 3704530
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 268040,
+          "fill_ns": 1203160,
+          "expected_list_ns": 25080,
+          "expected_tensor_ns": 2178980,
+          "cleanup_ns": 115540,
+          "tensor_assert_ns": 7289050,
+          "dtype_assert_ns": 1757440
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 80290,
+          "fill_ns": 5253140,
+          "expected_list_ns": 181930,
+          "expected_tensor_ns": 129293470,
+          "cleanup_ns": 797990,
+          "tensor_assert_ns": 162245800,
+          "dtype_assert_ns": 2716180
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 146160,
+          "fill_ns": 1199910,
+          "expected_list_ns": 24290,
+          "expected_tensor_ns": 2229660,
+          "cleanup_ns": 118530,
+          "tensor_assert_ns": 7373460,
+          "dtype_assert_ns": 1784110
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 72280,
+          "fill_ns": 4697950,
+          "expected_list_ns": 154270,
+          "expected_tensor_ns": 124548060,
+          "cleanup_ns": 704350,
+          "tensor_assert_ns": 156814580,
+          "dtype_assert_ns": 2167420
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 122390,
+          "fill_ns": 1165060,
+          "expected_list_ns": 23780,
+          "expected_tensor_ns": 2166540,
+          "cleanup_ns": 115840,
+          "tensor_assert_ns": 7335160,
+          "dtype_assert_ns": 1803040
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 72580,
+          "fill_ns": 8097880,
+          "expected_list_ns": 147640,
+          "expected_tensor_ns": 125299000,
+          "cleanup_ns": 718300,
+          "tensor_assert_ns": 157390290,
+          "dtype_assert_ns": 2137420
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 173640,
+          "fill_ns": 1195650,
+          "expected_list_ns": 24080,
+          "expected_tensor_ns": 2214980,
+          "cleanup_ns": 117210,
+          "tensor_assert_ns": 7412590,
+          "dtype_assert_ns": 1825450
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 74470,
+          "fill_ns": 15216000,
+          "expected_list_ns": 162820,
+          "expected_tensor_ns": 138548650,
+          "cleanup_ns": 794460,
+          "tensor_assert_ns": 161547830,
+          "dtype_assert_ns": 2274020
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 204320,
+          "fill_ns": 1182090,
+          "expected_list_ns": 23740,
+          "expected_tensor_ns": 2174570,
+          "cleanup_ns": 116360,
+          "tensor_assert_ns": 7323320,
+          "dtype_assert_ns": 1822520
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 94850,
+          "fill_ns": 28947850,
+          "expected_list_ns": 189860,
+          "expected_tensor_ns": 135629300,
+          "cleanup_ns": 1494280,
+          "tensor_assert_ns": 164107190,
+          "dtype_assert_ns": 2622080
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 206860,
+          "fill_ns": 1350910,
+          "expected_list_ns": 24960,
+          "expected_tensor_ns": 2525060,
+          "cleanup_ns": 136180,
+          "tensor_assert_ns": 39648620,
+          "dtype_assert_ns": 2114810
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 89390,
+          "fill_ns": 46183060,
+          "expected_list_ns": 316580,
+          "expected_tensor_ns": 115960460,
+          "cleanup_ns": 2408450,
+          "tensor_assert_ns": 2169086820,
+          "dtype_assert_ns": 4083580
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 254310,
+          "fill_ns": 1266800,
+          "expected_list_ns": 25740,
+          "expected_tensor_ns": 2351540,
+          "cleanup_ns": 138790,
+          "tensor_assert_ns": 35678300,
+          "dtype_assert_ns": 2120240
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 90450,
+          "fill_ns": 89176260,
+          "expected_list_ns": 318520,
+          "expected_tensor_ns": 112644890,
+          "cleanup_ns": 892250,
+          "tensor_assert_ns": 2418115590,
+          "dtype_assert_ns": 3590780
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 262830,
+          "fill_ns": 1221720,
+          "expected_list_ns": 23950,
+          "expected_tensor_ns": 2255910,
+          "cleanup_ns": 121160,
+          "tensor_assert_ns": 12704650,
+          "dtype_assert_ns": 1927450
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 76680,
+          "fill_ns": 5186420,
+          "expected_list_ns": 206840,
+          "expected_tensor_ns": 139035760,
+          "cleanup_ns": 795710,
+          "tensor_assert_ns": 870168050,
+          "dtype_assert_ns": 2943420
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 265980,
+          "fill_ns": 1210250,
+          "expected_list_ns": 24140,
+          "expected_tensor_ns": 2224700,
+          "cleanup_ns": 121600,
+          "tensor_assert_ns": 12581180,
+          "dtype_assert_ns": 1938230
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 76190,
+          "fill_ns": 5387220,
+          "expected_list_ns": 216630,
+          "expected_tensor_ns": 139120560,
+          "cleanup_ns": 815160,
+          "tensor_assert_ns": 872900060,
+          "dtype_assert_ns": 3114220
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 269720,
+          "fill_ns": 1205300,
+          "expected_list_ns": 24590,
+          "expected_tensor_ns": 2209240,
+          "cleanup_ns": 119240,
+          "tensor_assert_ns": 12597680,
+          "dtype_assert_ns": 1871920
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 79030,
+          "fill_ns": 5170270,
+          "expected_list_ns": 199300,
+          "expected_tensor_ns": 138349830,
+          "cleanup_ns": 776530,
+          "tensor_assert_ns": 947588140,
+          "dtype_assert_ns": 2639310
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 222380,
+          "fill_ns": 1184420,
+          "expected_list_ns": 23340,
+          "expected_tensor_ns": 2205400,
+          "cleanup_ns": 119960,
+          "tensor_assert_ns": 12525930,
+          "dtype_assert_ns": 1910370
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 77260,
+          "fill_ns": 5210130,
+          "expected_list_ns": 207500,
+          "expected_tensor_ns": 138242620,
+          "cleanup_ns": 796260,
+          "tensor_assert_ns": 867515600,
+          "dtype_assert_ns": 3007640
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 273880,
+          "fill_ns": 1344610,
+          "expected_list_ns": 25700,
+          "expected_tensor_ns": 2640240,
+          "cleanup_ns": 147170,
+          "tensor_assert_ns": 34524220,
+          "dtype_assert_ns": 2128640
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 81450,
+          "fill_ns": 8707930,
+          "expected_list_ns": 257320,
+          "expected_tensor_ns": 131858870,
+          "cleanup_ns": 830930,
+          "tensor_assert_ns": 1751536340,
+          "dtype_assert_ns": 3267750
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 270690,
+          "fill_ns": 1238280,
+          "expected_list_ns": 24120,
+          "expected_tensor_ns": 2214630,
+          "cleanup_ns": 117530,
+          "tensor_assert_ns": 7384710,
+          "dtype_assert_ns": 1765360
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 79240,
+          "fill_ns": 7010510,
+          "expected_list_ns": 180570,
+          "expected_tensor_ns": 132247100,
+          "cleanup_ns": 740950,
+          "tensor_assert_ns": 158677670,
+          "dtype_assert_ns": 2124970
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 166580,
+          "fill_ns": 1298370,
+          "expected_list_ns": 25080,
+          "expected_tensor_ns": 2569570,
+          "cleanup_ns": 138620,
+          "tensor_assert_ns": 34444760,
+          "dtype_assert_ns": 2118170
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 77380,
+          "fill_ns": 8888700,
+          "expected_list_ns": 271010,
+          "expected_tensor_ns": 134019810,
+          "cleanup_ns": 855550,
+          "tensor_assert_ns": 1777365790,
+          "dtype_assert_ns": 3141910
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 270970,
+          "fill_ns": 1339120,
+          "expected_list_ns": 24940,
+          "expected_tensor_ns": 2596470,
+          "cleanup_ns": 136660,
+          "tensor_assert_ns": 39941280,
+          "dtype_assert_ns": 2100110
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 78950,
+          "fill_ns": 15397450,
+          "expected_list_ns": 279580,
+          "expected_tensor_ns": 125603200,
+          "cleanup_ns": 831810,
+          "tensor_assert_ns": 2523860070,
+          "dtype_assert_ns": 3573000
+        }
+      ],
+      "micro_fill": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 35148.8
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 727518.225
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34556.65
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 1392293.55
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 33738.625
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 202517.225
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 33543.85
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 205112.575
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34692.125
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 382784.675
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34872.425
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 719150.825
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 33854.225
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 1405315.0
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34392.475
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 2287760.225
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 35066.0
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 4466125.125
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34003.825
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 205916.675
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34192.95
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 206780.95
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34424.825
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 209436.475
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 35477.5
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 207618.4
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34668.4
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 377348.95
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34834.575
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 317883.875
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34502.425
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 381267.55
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 34814.025
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 723106.125
+        }
+      ],
+      "assertion_detail": {
+        "isclose": 18357776690,
+        "all": 459200940
+      }
+    },
+    "std_excluded": {
+      "stages_ns": {
+        "input_create_ns": 1664420,
+        "fill_ns": 82440240,
+        "expected_list_ns": 3409890,
+        "expected_tensor_ns": 1438711480,
+        "cleanup_ns": 11937980,
+        "tensor_assert_ns": 5091849640,
+        "dtype_assert_ns": 73903520,
+        "other_ns": 7049250
+      },
+      "split_total_ns": 6710940470,
+      "fill_calls": 680,
+      "groups": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 136660,
+          "fill_ns": 724290,
+          "expected_list_ns": 23100,
+          "expected_tensor_ns": 973450,
+          "cleanup_ns": 56810,
+          "tensor_assert_ns": 21739800,
+          "dtype_assert_ns": 2027880
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 32860,
+          "fill_ns": 4329140,
+          "expected_list_ns": 204110,
+          "expected_tensor_ns": 77084560,
+          "cleanup_ns": 630580,
+          "tensor_assert_ns": 317690210,
+          "dtype_assert_ns": 2724210
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 78130,
+          "fill_ns": 699910,
+          "expected_list_ns": 22600,
+          "expected_tensor_ns": 954470,
+          "cleanup_ns": 57040,
+          "tensor_assert_ns": 18502170,
+          "dtype_assert_ns": 1960510
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 39900,
+          "fill_ns": 8028750,
+          "expected_list_ns": 252160,
+          "expected_tensor_ns": 78071620,
+          "cleanup_ns": 689020,
+          "tensor_assert_ns": 361701710,
+          "dtype_assert_ns": 2962310
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 76630,
+          "fill_ns": 646020,
+          "expected_list_ns": 20480,
+          "expected_tensor_ns": 887430,
+          "cleanup_ns": 52520,
+          "tensor_assert_ns": 4477240,
+          "dtype_assert_ns": 1682950
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28380,
+          "fill_ns": 1564860,
+          "expected_list_ns": 123930,
+          "expected_tensor_ns": 86853030,
+          "cleanup_ns": 603280,
+          "tensor_assert_ns": 39541620,
+          "dtype_assert_ns": 1854200
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 48880,
+          "fill_ns": 650270,
+          "expected_list_ns": 19400,
+          "expected_tensor_ns": 886040,
+          "cleanup_ns": 52550,
+          "tensor_assert_ns": 4439390,
+          "dtype_assert_ns": 1679970
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 27790,
+          "fill_ns": 1572470,
+          "expected_list_ns": 120230,
+          "expected_tensor_ns": 87611070,
+          "cleanup_ns": 607160,
+          "tensor_assert_ns": 39329150,
+          "dtype_assert_ns": 1894090
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 49870,
+          "fill_ns": 644660,
+          "expected_list_ns": 18760,
+          "expected_tensor_ns": 895120,
+          "cleanup_ns": 53530,
+          "tensor_assert_ns": 4450480,
+          "dtype_assert_ns": 1663250
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28640,
+          "fill_ns": 2449220,
+          "expected_list_ns": 123800,
+          "expected_tensor_ns": 86855010,
+          "cleanup_ns": 620570,
+          "tensor_assert_ns": 39459860,
+          "dtype_assert_ns": 1850960
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 49700,
+          "fill_ns": 637920,
+          "expected_list_ns": 19600,
+          "expected_tensor_ns": 886440,
+          "cleanup_ns": 52710,
+          "tensor_assert_ns": 4455620,
+          "dtype_assert_ns": 1662600
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28080,
+          "fill_ns": 4224620,
+          "expected_list_ns": 120660,
+          "expected_tensor_ns": 86581460,
+          "cleanup_ns": 623130,
+          "tensor_assert_ns": 39720530,
+          "dtype_assert_ns": 1878500
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 48450,
+          "fill_ns": 651090,
+          "expected_list_ns": 19360,
+          "expected_tensor_ns": 899270,
+          "cleanup_ns": 53140,
+          "tensor_assert_ns": 4445860,
+          "dtype_assert_ns": 1684370
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 37820,
+          "fill_ns": 7788780,
+          "expected_list_ns": 123580,
+          "expected_tensor_ns": 85292900,
+          "cleanup_ns": 649240,
+          "tensor_assert_ns": 39711550,
+          "dtype_assert_ns": 1888640
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 51680,
+          "fill_ns": 697910,
+          "expected_list_ns": 21990,
+          "expected_tensor_ns": 958170,
+          "cleanup_ns": 58180,
+          "tensor_assert_ns": 24901830,
+          "dtype_assert_ns": 2003370
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 30290,
+          "fill_ns": 8059820,
+          "expected_list_ns": 252620,
+          "expected_tensor_ns": 73404230,
+          "cleanup_ns": 679100,
+          "tensor_assert_ns": 538990460,
+          "dtype_assert_ns": 2995960
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 89670,
+          "fill_ns": 703150,
+          "expected_list_ns": 23050,
+          "expected_tensor_ns": 955380,
+          "cleanup_ns": 58350,
+          "tensor_assert_ns": 22904400,
+          "dtype_assert_ns": 2031510
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 32990,
+          "fill_ns": 15349380,
+          "expected_list_ns": 273820,
+          "expected_tensor_ns": 73107050,
+          "cleanup_ns": 704310,
+          "tensor_assert_ns": 598428480,
+          "dtype_assert_ns": 3477120
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 89520,
+          "fill_ns": 665570,
+          "expected_list_ns": 21410,
+          "expected_tensor_ns": 930380,
+          "cleanup_ns": 53690,
+          "tensor_assert_ns": 8172510,
+          "dtype_assert_ns": 1797060
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 29770,
+          "fill_ns": 1638680,
+          "expected_list_ns": 150630,
+          "expected_tensor_ns": 85803850,
+          "cleanup_ns": 638250,
+          "tensor_assert_ns": 203694610,
+          "dtype_assert_ns": 2443850
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 57030,
+          "fill_ns": 656430,
+          "expected_list_ns": 20740,
+          "expected_tensor_ns": 925090,
+          "cleanup_ns": 54090,
+          "tensor_assert_ns": 8095800,
+          "dtype_assert_ns": 1794310
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28830,
+          "fill_ns": 1612010,
+          "expected_list_ns": 138080,
+          "expected_tensor_ns": 85292690,
+          "cleanup_ns": 641060,
+          "tensor_assert_ns": 177872820,
+          "dtype_assert_ns": 2200380
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 56480,
+          "fill_ns": 662740,
+          "expected_list_ns": 20720,
+          "expected_tensor_ns": 921130,
+          "cleanup_ns": 53550,
+          "tensor_assert_ns": 8167120,
+          "dtype_assert_ns": 1788610
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 29390,
+          "fill_ns": 1640360,
+          "expected_list_ns": 156310,
+          "expected_tensor_ns": 85844860,
+          "cleanup_ns": 626690,
+          "tensor_assert_ns": 329075860,
+          "dtype_assert_ns": 2442950
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 69770,
+          "fill_ns": 663840,
+          "expected_list_ns": 21660,
+          "expected_tensor_ns": 917400,
+          "cleanup_ns": 52670,
+          "tensor_assert_ns": 8089060,
+          "dtype_assert_ns": 1776050
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 29170,
+          "fill_ns": 1618280,
+          "expected_list_ns": 139450,
+          "expected_tensor_ns": 85418960,
+          "cleanup_ns": 634000,
+          "tensor_assert_ns": 177731850,
+          "dtype_assert_ns": 2304420
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 56740,
+          "fill_ns": 690000,
+          "expected_list_ns": 21520,
+          "expected_tensor_ns": 955120,
+          "cleanup_ns": 55600,
+          "tensor_assert_ns": 21669240,
+          "dtype_assert_ns": 1962230
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 31160,
+          "fill_ns": 2695560,
+          "expected_list_ns": 255380,
+          "expected_tensor_ns": 84252670,
+          "cleanup_ns": 692790,
+          "tensor_assert_ns": 464310100,
+          "dtype_assert_ns": 3590950
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 73120,
+          "fill_ns": 643570,
+          "expected_list_ns": 20770,
+          "expected_tensor_ns": 892650,
+          "cleanup_ns": 51680,
+          "tensor_assert_ns": 4447770,
+          "dtype_assert_ns": 1669880
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28430,
+          "fill_ns": 1597760,
+          "expected_list_ns": 135540,
+          "expected_tensor_ns": 95713460,
+          "cleanup_ns": 645940,
+          "tensor_assert_ns": 40059000,
+          "dtype_assert_ns": 2002820
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 55230,
+          "fill_ns": 683290,
+          "expected_list_ns": 21620,
+          "expected_tensor_ns": 961260,
+          "cleanup_ns": 55390,
+          "tensor_assert_ns": 21751360,
+          "dtype_assert_ns": 1967160
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 28450,
+          "fill_ns": 2711420,
+          "expected_list_ns": 258200,
+          "expected_tensor_ns": 84650190,
+          "cleanup_ns": 671630,
+          "tensor_assert_ns": 479416250,
+          "dtype_assert_ns": 3511360
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 20,
+          "input_create_ns": 84350,
+          "fill_ns": 691810,
+          "expected_list_ns": 23500,
+          "expected_tensor_ns": 973140,
+          "cleanup_ns": 56650,
+          "tensor_assert_ns": 25024700,
+          "dtype_assert_ns": 1991470
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 20,
+          "input_create_ns": 29240,
+          "fill_ns": 4505470,
+          "expected_list_ns": 301040,
+          "expected_tensor_ns": 83218270,
+          "cleanup_ns": 672000,
+          "tensor_assert_ns": 998426070,
+          "dtype_assert_ns": 4048820
+        }
+      ],
+      "micro_fill": [
+        {
+          "dtype": "torch.float32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23350.5
+        },
+        {
+          "dtype": "torch.float32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 201824.2
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23333.375
+        },
+        {
+          "dtype": "torch.float64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 379723.15
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23361.925
+        },
+        {
+          "dtype": "torch.uint8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 68001.975
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23321.7
+        },
+        {
+          "dtype": "torch.int8",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67836.65
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23197.625
+        },
+        {
+          "dtype": "torch.int16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 111816.975
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23282.15
+        },
+        {
+          "dtype": "torch.int32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 201827.775
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23382.95
+        },
+        {
+          "dtype": "torch.int64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 378631.675
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23353.975
+        },
+        {
+          "dtype": "torch.complex64",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 381466.4
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23402.1
+        },
+        {
+          "dtype": "torch.complex128",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 746903.5
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23298.075
+        },
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67733.4
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23379.05
+        },
+        {
+          "dtype": "torch.float8_e4m3fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67559.6
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23423.025
+        },
+        {
+          "dtype": "torch.float8_e5m2",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67514.25
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23404.05
+        },
+        {
+          "dtype": "torch.float8_e5m2fnuz",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67771.425
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 22954.975
+        },
+        {
+          "dtype": "torch.float16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 111483.6
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23192.325
+        },
+        {
+          "dtype": "torch.bool",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 67802.0
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 22924.275
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 111756.875
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 2,
+          "calls": 400,
+          "ns_per_call": 23135.925
+        },
+        {
+          "dtype": "torch.complex32",
+          "numel": 10000,
+          "calls": 400,
+          "ns_per_call": 200763.15
+        }
+      ],
+      "assertion_detail": {
+        "isclose": 4744125360,
+        "all": 263469800
+      }
+    }
+  },
+  "scenario_summary": [
+    {
+      "id": "C03_constant__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0007565235714285714,
+        "min_seconds": 0.0007147628571428572,
+        "max_seconds": 0.0008476138095238095,
+        "cv_percent": 5.338129658691014,
+        "samples": [
+          0.0007804673809523809,
+          0.0007147628571428572,
+          0.0007232988095238096,
+          0.0007615745238095239,
+          0.0008476138095238095,
+          0.0007812838095238096,
+          0.0007502521428571429,
+          0.0007565235714285714,
+          0.0007264538095238095
+        ],
+        "calls_per_round": 42
+      },
+      "full": {
+        "median_seconds": 0.007028293333333334,
+        "min_seconds": 0.006280800952380952,
+        "max_seconds": 0.008641369285714285,
+        "cv_percent": 9.304643316169187,
+        "samples": [
+          0.006280800952380952,
+          0.007086065,
+          0.008641369285714285,
+          0.006729501666666667,
+          0.007658559047619047,
+          0.006921225238095238,
+          0.0073739371428571425,
+          0.006931750952380952,
+          0.007028293333333334
+        ],
+        "calls_per_round": 42
+      },
+      "std_excluded": {
+        "median_seconds": 0.003958294285714286,
+        "min_seconds": 0.003921439761904762,
+        "max_seconds": 0.004159510238095238,
+        "cv_percent": 2.391819717900513,
+        "samples": [
+          0.004159510238095238,
+          0.0040619569047619045,
+          0.003921439761904762,
+          0.0039357090476190475,
+          0.0039865,
+          0.0041545180952380955,
+          0.003958294285714286,
+          0.003929832857142857,
+          0.003941757380952381
+        ],
+        "calls_per_round": 42
+      },
+      "std_vs_baseline": 5.232215406374837,
+      "std_vs_full": 0.5631942347854414
+    },
+    {
+      "id": "C03_diagonal__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0013862321739130435,
+        "min_seconds": 0.0012916078260869566,
+        "max_seconds": 0.001486778695652174,
+        "cv_percent": 4.6381559711573495,
+        "samples": [
+          0.001486301304347826,
+          0.0014013691304347825,
+          0.0012916078260869566,
+          0.001412833043478261,
+          0.001486778695652174,
+          0.0013862321739130435,
+          0.0013295065217391305,
+          0.0013683621739130434,
+          0.0013716552173913042
+        ],
+        "calls_per_round": 23
+      },
+      "full": {
+        "median_seconds": 0.015092851304347826,
+        "min_seconds": 0.01320472,
+        "max_seconds": 0.01907723956521739,
+        "cv_percent": 10.526248818885957,
+        "samples": [
+          0.01320472,
+          0.014658292608695653,
+          0.01907723956521739,
+          0.014214674347826087,
+          0.015328299130434783,
+          0.01475617652173913,
+          0.015333690869565217,
+          0.015462768695652175,
+          0.015092851304347826
+        ],
+        "calls_per_round": 23
+      },
+      "std_excluded": {
+        "median_seconds": 0.00837134,
+        "min_seconds": 0.008290391739130435,
+        "max_seconds": 0.00867315347826087,
+        "cv_percent": 1.7606027485670122,
+        "samples": [
+          0.008640755652173914,
+          0.008530519130434783,
+          0.008290391739130435,
+          0.008300673913043477,
+          0.008380978695652174,
+          0.00867315347826087,
+          0.00837134,
+          0.008326470869565217,
+          0.008331236086956522
+        ],
+        "calls_per_round": 23
+      },
+      "std_vs_baseline": 6.038916249050444,
+      "std_vs_full": 0.5546559646810044
+    },
+    {
+      "id": "C03_fill__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.67950891,
+        "min_seconds": 0.66109645,
+        "max_seconds": 0.70724135,
+        "cv_percent": 2.259494751261917,
+        "samples": [
+          0.69071694,
+          0.67769905,
+          0.66109645,
+          0.67427626,
+          0.67950891,
+          0.66350333,
+          0.68889902,
+          0.70724135,
+          0.69871156
+        ],
+        "calls_per_round": 1
+      },
+      "full": {
+        "median_seconds": 21.60388028,
+        "min_seconds": 21.41927497,
+        "max_seconds": 21.8246306,
+        "cv_percent": 0.6172725803035131,
+        "samples": [
+          21.75581012,
+          21.4926503,
+          21.61465186,
+          21.50365212,
+          21.8246306,
+          21.60388028,
+          21.41927497,
+          21.56948616,
+          21.71910038
+        ],
+        "calls_per_round": 1
+      },
+      "std_excluded": {
+        "median_seconds": 6.71279486,
+        "min_seconds": 6.67357692,
+        "max_seconds": 6.75561747,
+        "cv_percent": 0.5184946122608859,
+        "samples": [
+          6.75206222,
+          6.71279486,
+          6.69040987,
+          6.67385109,
+          6.75021639,
+          6.69666119,
+          6.74852825,
+          6.67357692,
+          6.75561747
+        ],
+        "calls_per_round": 1
+      },
+      "std_vs_baseline": 9.878891595402331,
+      "std_vs_full": 0.31072172095928685
+    },
+    {
+      "id": "C03_ones_zeros__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0013710713636363636,
+        "min_seconds": 0.0013282745454545454,
+        "max_seconds": 0.0014297322727272728,
+        "cv_percent": 2.5438651962034813,
+        "samples": [
+          0.001388041818181818,
+          0.0013572481818181817,
+          0.0013282745454545454,
+          0.001347514090909091,
+          0.0013697390909090908,
+          0.0014297322727272728,
+          0.0013710713636363636,
+          0.0014054036363636364,
+          0.0014274509090909091
+        ],
+        "calls_per_round": 22
+      },
+      "full": {
+        "median_seconds": 0.012274230909090909,
+        "min_seconds": 0.011729273181818182,
+        "max_seconds": 0.013795204090909091,
+        "cv_percent": 6.036291806531109,
+        "samples": [
+          0.011729273181818182,
+          0.012649295454545455,
+          0.013594215,
+          0.012003434090909091,
+          0.013795204090909091,
+          0.012615076818181819,
+          0.011913665909090909,
+          0.012274230909090909,
+          0.011864155
+        ],
+        "calls_per_round": 22
+      },
+      "std_excluded": {
+        "median_seconds": 0.007574729545454546,
+        "min_seconds": 0.007537629090909091,
+        "max_seconds": 0.00811010909090909,
+        "cv_percent": 2.3741274790533877,
+        "samples": [
+          0.007742857727272727,
+          0.0075629954545454545,
+          0.007563488181818182,
+          0.007537629090909091,
+          0.007596653636363636,
+          0.007651479545454545,
+          0.007574729545454546,
+          0.0075603477272727275,
+          0.00811010909090909
+        ],
+        "calls_per_round": 22
+      },
+      "std_vs_baseline": 5.524679273706661,
+      "std_vs_full": 0.6171245759963928
+    },
+    {
+      "id": "C04_broadcast__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.000517678,
+        "min_seconds": 0.0004796246,
+        "max_seconds": 0.0005446244,
+        "cv_percent": 4.049373971980687,
+        "samples": [
+          0.000517678,
+          0.0004996796,
+          0.0004796246,
+          0.0005133988,
+          0.0005126454,
+          0.0005381984,
+          0.0005404568,
+          0.0005446244,
+          0.0005263082
+        ],
+        "calls_per_round": 50
+      },
+      "full": {
+        "median_seconds": 0.004407269,
+        "min_seconds": 0.004109498,
+        "max_seconds": 0.0052654876,
+        "cv_percent": 8.384563350698219,
+        "samples": [
+          0.004109498,
+          0.0044290434,
+          0.0047700278,
+          0.0041509362,
+          0.0052654876,
+          0.0044321848,
+          0.004195698,
+          0.004407269,
+          0.0041871258
+        ],
+        "calls_per_round": 50
+      },
+      "std_excluded": {
+        "median_seconds": 0.0026302444,
+        "min_seconds": 0.0026169234,
+        "max_seconds": 0.002715853,
+        "cv_percent": 1.354403095356566,
+        "samples": [
+          0.0026853984,
+          0.0026251778,
+          0.0026169234,
+          0.0026255522,
+          0.0026500754,
+          0.0026881234,
+          0.0026302444,
+          0.0026256206,
+          0.002715853
+        ],
+        "calls_per_round": 50
+      },
+      "std_vs_baseline": 5.080850258268653,
+      "std_vs_full": 0.5967968826046243
+    },
+    {
+      "id": "C04_clone__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.002011418,
+        "min_seconds": 0.001928814,
+        "max_seconds": 0.002133428666666667,
+        "cv_percent": 3.1768491091505293,
+        "samples": [
+          0.0020512346666666666,
+          0.001959496,
+          0.001928814,
+          0.0019850473333333334,
+          0.002031114666666667,
+          0.0020896913333333334,
+          0.002011418,
+          0.002133428666666667,
+          0.0019907526666666665
+        ],
+        "calls_per_round": 15
+      },
+      "full": {
+        "median_seconds": 0.015090362666666668,
+        "min_seconds": 0.014101517333333334,
+        "max_seconds": 0.017366749333333334,
+        "cv_percent": 6.029970602840356,
+        "samples": [
+          0.014101517333333334,
+          0.015139932666666666,
+          0.016227802666666666,
+          0.014984611333333333,
+          0.017366749333333334,
+          0.015530791333333334,
+          0.014997573333333333,
+          0.015034862,
+          0.015090362666666668
+        ],
+        "calls_per_round": 15
+      },
+      "std_excluded": {
+        "median_seconds": 0.008982682,
+        "min_seconds": 0.008845252,
+        "max_seconds": 0.009211556666666667,
+        "cv_percent": 1.2958217179804954,
+        "samples": [
+          0.009064377333333333,
+          0.008896044,
+          0.008845252,
+          0.008982682,
+          0.009029124666666668,
+          0.009211556666666667,
+          0.008913282666666666,
+          0.008947007333333333,
+          0.009117047333333333
+        ],
+        "calls_per_round": 15
+      },
+      "std_vs_baseline": 4.465845488108389,
+      "std_vs_full": 0.5952595175092765
+    },
+    {
+      "id": "C04_transpose__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0024451866666666666,
+        "min_seconds": 0.0023016708333333333,
+        "max_seconds": 0.0025902716666666666,
+        "cv_percent": 3.8366162887766433,
+        "samples": [
+          0.0024451866666666666,
+          0.00233682,
+          0.0023016708333333333,
+          0.0024219316666666667,
+          0.0024633658333333332,
+          0.0025902716666666666,
+          0.0024898741666666666,
+          0.0025547291666666665,
+          0.0023990766666666667
+        ],
+        "calls_per_round": 12
+      },
+      "full": {
+        "median_seconds": 0.040660595,
+        "min_seconds": 0.03836112,
+        "max_seconds": 0.044211118333333334,
+        "cv_percent": 4.971806000322173,
+        "samples": [
+          0.03836112,
+          0.04173738833333333,
+          0.044211118333333334,
+          0.03898283166666667,
+          0.04327804666666667,
+          0.04274552416666667,
+          0.040660595,
+          0.0405392125,
+          0.03926795166666667
+        ],
+        "calls_per_round": 12
+      },
+      "std_excluded": {
+        "median_seconds": 0.022882486666666667,
+        "min_seconds": 0.022388914166666666,
+        "max_seconds": 0.023328676666666666,
+        "cv_percent": 1.3354092524708683,
+        "samples": [
+          0.0229303875,
+          0.022490211666666666,
+          0.022388914166666666,
+          0.023108221666666668,
+          0.022882486666666667,
+          0.022959091666666667,
+          0.0226113375,
+          0.022654395833333334,
+          0.023328676666666666
+        ],
+        "calls_per_round": 12
+      },
+      "std_vs_baseline": 9.358175790260049,
+      "std_vs_full": 0.562768121486335
+    },
+    {
+      "id": "C05_empty__cpu_float32",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0007990497142857143,
+        "min_seconds": 0.0007335668571428572,
+        "max_seconds": 0.0008597825714285715,
+        "cv_percent": 4.695704413103679,
+        "samples": [
+          0.0007868325714285715,
+          0.0007335668571428572,
+          0.0007990497142857143,
+          0.0007891322857142857,
+          0.0007992734285714285,
+          0.0008597825714285715,
+          0.0008269337142857143,
+          0.0008272085714285714,
+          0.0007609811428571429
+        ],
+        "calls_per_round": 35
+      },
+      "full": {
+        "median_seconds": 0.0030932154285714286,
+        "min_seconds": 0.002904852285714286,
+        "max_seconds": 0.0034383654285714284,
+        "cv_percent": 6.164420976907669,
+        "samples": [
+          0.0029467391428571427,
+          0.0030932154285714286,
+          0.0034383654285714284,
+          0.002904852285714286,
+          0.0032186525714285714,
+          0.003383838,
+          0.002976396857142857,
+          0.0032481308571428572,
+          0.003032991142857143
+        ],
+        "calls_per_round": 35
+      },
+      "std_excluded": {
+        "median_seconds": 0.0015070274285714285,
+        "min_seconds": 0.0014569908571428571,
+        "max_seconds": 0.0015703445714285713,
+        "cv_percent": 2.7132698393600707,
+        "samples": [
+          0.0015485025714285713,
+          0.0014617462857142857,
+          0.0014569908571428571,
+          0.0015070274285714285,
+          0.0015340608571428572,
+          0.0015703445714285713,
+          0.0014887497142857143,
+          0.0014715851428571429,
+          0.0015354437142857142
+        ],
+        "calls_per_round": 35
+      },
+      "std_vs_baseline": 1.8860246135230634,
+      "std_vs_full": 0.4872041612916157
+    },
+    {
+      "id": "C05_empty__cpu_float64",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0007911711111111111,
+        "min_seconds": 0.0007323241666666667,
+        "max_seconds": 0.0008569452777777778,
+        "cv_percent": 4.4470461258788445,
+        "samples": [
+          0.0008065072222222222,
+          0.0007323241666666667,
+          0.0008021791666666667,
+          0.0007848383333333333,
+          0.0007911711111111111,
+          0.0008569452777777778,
+          0.0007800505555555556,
+          0.0008154169444444444,
+          0.0007590019444444445
+        ],
+        "calls_per_round": 36
+      },
+      "full": {
+        "median_seconds": 0.0031998586111111112,
+        "min_seconds": 0.002891698611111111,
+        "max_seconds": 0.003391401388888889,
+        "cv_percent": 5.760454329860001,
+        "samples": [
+          0.0029189091666666665,
+          0.0031998586111111112,
+          0.003391401388888889,
+          0.002891698611111111,
+          0.0033573941666666667,
+          0.0032777830555555556,
+          0.00332975,
+          0.003175506388888889,
+          0.003086348611111111
+        ],
+        "calls_per_round": 36
+      },
+      "std_excluded": {
+        "median_seconds": 0.0014989977777777777,
+        "min_seconds": 0.0014506655555555556,
+        "max_seconds": 0.0015595444444444445,
+        "cv_percent": 2.4227934713482,
+        "samples": [
+          0.0015208597222222222,
+          0.0014633619444444444,
+          0.0014506655555555556,
+          0.0015006713888888888,
+          0.0014989977777777777,
+          0.0015595444444444445,
+          0.0014665852777777778,
+          0.0014599525,
+          0.0015197272222222222
+        ],
+        "calls_per_round": 36
+      },
+      "std_vs_baseline": 1.894656865911855,
+      "std_vs_full": 0.4684575038949203
+    },
+    {
+      "id": "C05_empty_nonrecursive__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0007752627777777778,
+        "min_seconds": 0.0007288997222222222,
+        "max_seconds": 0.0008098102777777778,
+        "cv_percent": 3.302441845840743,
+        "samples": [
+          0.0007638311111111111,
+          0.0007288997222222222,
+          0.0007752627777777778,
+          0.0007680283333333333,
+          0.0008027016666666667,
+          0.0007988333333333334,
+          0.0007881641666666666,
+          0.0008098102777777778,
+          0.0007580425
+        ],
+        "calls_per_round": 36
+      },
+      "full": {
+        "median_seconds": 0.0031081258333333335,
+        "min_seconds": 0.002918361388888889,
+        "max_seconds": 0.0032630763888888887,
+        "cv_percent": 3.7099605448129553,
+        "samples": [
+          0.002958208888888889,
+          0.0030742275,
+          0.0031476125,
+          0.002918361388888889,
+          0.0031081258333333335,
+          0.0032630763888888887,
+          0.003215567777777778,
+          0.0031449930555555554,
+          0.0030123708333333332
+        ],
+        "calls_per_round": 36
+      },
+      "std_excluded": {
+        "median_seconds": 0.0014645805555555556,
+        "min_seconds": 0.0014263722222222221,
+        "max_seconds": 0.001515818611111111,
+        "cv_percent": 2.18009905448854,
+        "samples": [
+          0.0014970825,
+          0.0014340886111111112,
+          0.0014263722222222221,
+          0.0014645805555555556,
+          0.0014957355555555555,
+          0.001515818611111111,
+          0.0014531644444444444,
+          0.0014354055555555556,
+          0.0014787283333333333
+        ],
+        "calls_per_round": 36
+      },
+      "std_vs_baseline": 1.8891408146198456,
+      "std_vs_full": 0.47121018713224194
+    },
+    {
+      "id": "C05_to__cpu",
+      "device": "cpu",
+      "baseline": {
+        "median_seconds": 0.0004758742,
+        "min_seconds": 0.0004657686,
+        "max_seconds": 0.0005149164,
+        "cv_percent": 3.5007455498699116,
+        "samples": [
+          0.0004758742,
+          0.0004665484,
+          0.0004746172,
+          0.0004730278,
+          0.0005149164,
+          0.0004832884,
+          0.0004850252,
+          0.0005047734000000001,
+          0.0004657686
+        ],
+        "calls_per_round": 50
+      },
+      "full": {
+        "median_seconds": 0.0016594222,
+        "min_seconds": 0.00155471,
+        "max_seconds": 0.0018005788,
+        "cv_percent": 5.060787881535847,
+        "samples": [
+          0.00155471,
+          0.0016528988,
+          0.0016984308,
+          0.001579442,
+          0.001735928,
+          0.0018005788,
+          0.0017159534,
+          0.0016594222,
+          0.0015655026
+        ],
+        "calls_per_round": 50
+      },
+      "std_excluded": {
+        "median_seconds": 0.0008977764,
+        "min_seconds": 0.0008850524,
+        "max_seconds": 0.0009363032,
+        "cv_percent": 2.14810235977131,
+        "samples": [
+          0.0009363032,
+          0.000888083,
+          0.0008850524,
+          0.0008977764,
+          0.0009113984,
+          0.0009230774,
+          0.0008904524,
+          0.0008889704,
+          0.0009267716
+        ],
+        "calls_per_round": 50
+      },
+      "std_vs_baseline": 1.8865834710097753,
+      "std_vs_full": 0.5410174698156984
+    },
+    {
+      "id": "C03_constant__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.002034181,
+        "min_seconds": 0.001886107,
+        "max_seconds": 0.002122631,
+        "cv_percent": 3.6745897778972747,
+        "samples": [
+          0.001967955,
+          0.002034181,
+          0.002047344,
+          0.002046759,
+          0.001980112,
+          0.001997021,
+          0.002116175,
+          0.001886107,
+          0.002122631
+        ],
+        "calls_per_round": 10
+      },
+      "full": {
+        "median_seconds": 0.006940433,
+        "min_seconds": 0.006498737,
+        "max_seconds": 0.007508967,
+        "cv_percent": 4.97548655461223,
+        "samples": [
+          0.007508967,
+          0.006498737,
+          0.006769292,
+          0.007112056,
+          0.006773344,
+          0.007372578,
+          0.006940433,
+          0.007399887,
+          0.006780507
+        ],
+        "calls_per_round": 10
+      },
+      "std_excluded": {
+        "median_seconds": 0.003220169,
+        "min_seconds": 0.003007153,
+        "max_seconds": 0.003556572,
+        "cv_percent": 5.449669941557879,
+        "samples": [
+          0.003556572,
+          0.003414851,
+          0.003109252,
+          0.003164259,
+          0.003220169,
+          0.00328393,
+          0.003262455,
+          0.003044722,
+          0.003007153
+        ],
+        "calls_per_round": 10
+      },
+      "std_vs_baseline": 1.5830297303927232,
+      "std_vs_full": 0.46397234869928144
+    },
+    {
+      "id": "C03_diagonal__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.00429016,
+        "min_seconds": 0.003701735,
+        "max_seconds": 0.00485065625,
+        "cv_percent": 8.028411337160502,
+        "samples": [
+          0.00485065625,
+          0.00387078375,
+          0.00408065375,
+          0.0044060425,
+          0.00429016,
+          0.0044232575,
+          0.00444130625,
+          0.003701735,
+          0.00418119875
+        ],
+        "calls_per_round": 8
+      },
+      "full": {
+        "median_seconds": 0.019644665,
+        "min_seconds": 0.018773045,
+        "max_seconds": 0.033028658749999995,
+        "cv_percent": 21.832369692828475,
+        "samples": [
+          0.022941305,
+          0.018773045,
+          0.019644665,
+          0.0191912175,
+          0.01911523875,
+          0.0273208225,
+          0.033028658749999995,
+          0.02145602875,
+          0.0192963975
+        ],
+        "calls_per_round": 8
+      },
+      "std_excluded": {
+        "median_seconds": 0.00829478875,
+        "min_seconds": 0.00786614375,
+        "max_seconds": 0.0095001575,
+        "cv_percent": 6.3031463658266365,
+        "samples": [
+          0.0095001575,
+          0.0089817925,
+          0.00810305375,
+          0.00820749,
+          0.00846129375,
+          0.00829478875,
+          0.00851547875,
+          0.00786614375,
+          0.00787788625
+        ],
+        "calls_per_round": 8
+      },
+      "std_vs_baseline": 1.933445081302329,
+      "std_vs_full": 0.4222412929922705
+    },
+    {
+      "id": "C03_ones_zeros__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.00356127,
+        "min_seconds": 0.0033116133333333333,
+        "max_seconds": 0.003923107777777777,
+        "cv_percent": 4.98727539551595,
+        "samples": [
+          0.00369699,
+          0.0033116133333333333,
+          0.003436058888888889,
+          0.003486466666666667,
+          0.00356127,
+          0.0036564955555555556,
+          0.003923107777777777,
+          0.0037092600000000002,
+          0.0035371
+        ],
+        "calls_per_round": 9
+      },
+      "full": {
+        "median_seconds": 0.013459005555555556,
+        "min_seconds": 0.01266652888888889,
+        "max_seconds": 0.015267765555555556,
+        "cv_percent": 6.217367571219949,
+        "samples": [
+          0.015267765555555556,
+          0.01266652888888889,
+          0.013459005555555556,
+          0.013136862222222222,
+          0.013190911111111111,
+          0.012854718888888889,
+          0.014087755555555555,
+          0.014567867777777778,
+          0.013622285555555556
+        ],
+        "calls_per_round": 9
+      },
+      "std_excluded": {
+        "median_seconds": 0.006217716666666667,
+        "min_seconds": 0.005800184444444445,
+        "max_seconds": 0.008245195555555555,
+        "cv_percent": 11.452244897575522,
+        "samples": [
+          0.0068222644444444445,
+          0.00646151,
+          0.006046834444444444,
+          0.0059724044444444445,
+          0.006217716666666667,
+          0.006145855555555556,
+          0.0062656844444444445,
+          0.008245195555555555,
+          0.005800184444444445
+        ],
+        "calls_per_round": 9
+      },
+      "std_vs_baseline": 1.7459267808019798,
+      "std_vs_full": 0.46197444833508833
+    },
+    {
+      "id": "C04_broadcast__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.00131428,
+        "min_seconds": 0.001177738,
+        "max_seconds": 0.0015717924,
+        "cv_percent": 11.508980911746553,
+        "samples": [
+          0.0014723996,
+          0.001177738,
+          0.0011988964,
+          0.00131428,
+          0.0012086436,
+          0.0014688624,
+          0.0014646156,
+          0.00118863,
+          0.0015717924
+        ],
+        "calls_per_round": 25
+      },
+      "full": {
+        "median_seconds": 0.0062101772,
+        "min_seconds": 0.0058846008,
+        "max_seconds": 0.008542386400000001,
+        "cv_percent": 13.401467216096751,
+        "samples": [
+          0.008542386400000001,
+          0.0058846008,
+          0.0063153788,
+          0.0058870068,
+          0.0059115232,
+          0.0059577404,
+          0.0070523568,
+          0.0068108804,
+          0.0062101772
+        ],
+        "calls_per_round": 25
+      },
+      "std_excluded": {
+        "median_seconds": 0.0036781196,
+        "min_seconds": 0.0033269508,
+        "max_seconds": 0.0042243328,
+        "cv_percent": 7.788320740876724,
+        "samples": [
+          0.0042243328,
+          0.003960868,
+          0.0034411496,
+          0.0034231696,
+          0.003661932,
+          0.0037138432,
+          0.0038934956,
+          0.0036781196,
+          0.0033269508
+        ],
+        "calls_per_round": 25
+      },
+      "std_vs_baseline": 2.798581428614907,
+      "std_vs_full": 0.5922728903774276
+    },
+    {
+      "id": "C05_empty_nonrecursive__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.0009155978125,
+        "min_seconds": 0.0008619278125,
+        "max_seconds": 0.0010112796875,
+        "cv_percent": 5.822413229764759,
+        "samples": [
+          0.0009818678125,
+          0.0008619278125,
+          0.0010112796875,
+          0.0009155978125,
+          0.0008845678125,
+          0.0009728378125,
+          0.00094630625,
+          0.00087809125,
+          0.00088098
+        ],
+        "calls_per_round": 32
+      },
+      "full": {
+        "median_seconds": 0.0034409765625,
+        "min_seconds": 0.0032779078125,
+        "max_seconds": 0.0039238303125,
+        "cv_percent": 5.736666524342804,
+        "samples": [
+          0.0039238303125,
+          0.00328016375,
+          0.0034870159375,
+          0.0032779078125,
+          0.0033115053125,
+          0.0034071025,
+          0.0035112728125,
+          0.0035441375,
+          0.0034409765625
+        ],
+        "calls_per_round": 32
+      },
+      "std_excluded": {
+        "median_seconds": 0.001770001875,
+        "min_seconds": 0.0015914671875,
+        "max_seconds": 0.001905404375,
+        "cv_percent": 5.569778256786323,
+        "samples": [
+          0.001905404375,
+          0.0018481203125,
+          0.001770001875,
+          0.0016447046875,
+          0.001732379375,
+          0.0017078675,
+          0.00177032125,
+          0.0018090521875,
+          0.0015914671875
+        ],
+        "calls_per_round": 32
+      },
+      "std_vs_baseline": 1.933165250981855,
+      "std_vs_full": 0.514389401627899
+    },
+    {
+      "id": "C05_to__npu",
+      "device": "npu",
+      "baseline": {
+        "median_seconds": 0.002232452857142857,
+        "min_seconds": 0.002046295,
+        "max_seconds": 0.0024319885714285715,
+        "cv_percent": 5.779966603217771,
+        "samples": [
+          0.0024319885714285715,
+          0.002046295,
+          0.0021655785714285716,
+          0.0024198685714285715,
+          0.0021827021428571427,
+          0.002393289285714286,
+          0.002239724285714286,
+          0.0022181535714285716,
+          0.002232452857142857
+        ],
+        "calls_per_round": 14
+      },
+      "full": {
+        "median_seconds": 0.007258672857142857,
+        "min_seconds": 0.0068538614285714285,
+        "max_seconds": 0.007936905,
+        "cv_percent": 5.195920654147398,
+        "samples": [
+          0.007612749285714286,
+          0.006900617142857143,
+          0.00703093,
+          0.0068538614285714285,
+          0.007258672857142857,
+          0.006955435,
+          0.007936905,
+          0.007581639285714286,
+          0.007418541428571428
+        ],
+        "calls_per_round": 14
+      },
+      "std_excluded": {
+        "median_seconds": 0.004015363571428571,
+        "min_seconds": 0.003743472142857143,
+        "max_seconds": 0.004258187857142857,
+        "cv_percent": 4.38569664864078,
+        "samples": [
+          0.004258187857142857,
+          0.004015363571428571,
+          0.003902515,
+          0.0038878385714285714,
+          0.004080502857142857,
+          0.003922324285714286,
+          0.004229353571428571,
+          0.004187444285714286,
+          0.003743472142857143
+        ],
+        "calls_per_round": 14
+      },
+      "std_vs_baseline": 1.798633085837039,
+      "std_vs_full": 0.553181504450538
+    }
+  ],
+  "trace": {
+    "functional_pass": 17,
+    "functional_fail": 5,
+    "all_no_capture_gaps": true,
+    "all_previous_api_aliases_preserved": true,
+    "mapped_cpp_by_source": {
+      "other": 486,
+      "pytorch": 2109,
+      "torch_npu": 295
+    }
+  }
+}

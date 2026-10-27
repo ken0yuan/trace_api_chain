@@ -40,6 +40,19 @@ class ReplayTests(unittest.TestCase):
         b=rebuild(e,n,CONTRACT)
         self.assertEqual(a['edges'],b['edges']);self.assertEqual(set(a['nodes']),set(b['nodes']))
 
+    def test_different_exit_callsite_keeps_function_nesting(self):
+        e,n=fixture();before=rebuild(e,n,CONTRACT)
+        n[2]['absolute_caller']=999
+        result=rebuild(e,n,CONTRACT)
+        self.assertEqual(result['edges'],before['edges'])
+        self.assertEqual(result['nodes']['n:1']['caller_address'],300)
+        self.assertEqual(result['nodes']['n:1']['exit_caller_address'],999)
+        self.assertEqual(result['gaps'],[])
+
+    def test_wrong_native_function_still_rejected(self):
+        e,n=fixture();n[2]['absolute_function']=100
+        self.reject(e,n,'native_return_stack_mismatch')
+
     def test_missing_native_enter(self):
         e,n=fixture();self.reject(e,n[1:],'native_exit_without_enter')
 

@@ -1,0 +1,19 @@
+{
+  "case": "C03_fill__cpu",
+  "failure_flags": 96,
+  "failed_segment_ordinal": 14338,
+  "function": "at::vec::DEFAULT::Vectorized<c10::BFloat16>::store(void*, long) const",
+  "definition": "aten/src/ATen/cpu/vec/vec128/vec128_bfloat16_neon.h:332",
+  "module": "libtorch_cpu.so",
+  "module_function_offset": "0x9fad0b0",
+  "entry_callsite_offset": "0xc852a14",
+  "exit_callsite_offset": "0xc82d6c8",
+  "outer_hook_enter_instruction": "0xc82d6b4",
+  "outlined_store_call_instruction": "0xc82d6c4",
+  "outlined_store_entry": "0xc6352d0",
+  "description": "The same function exits from an optimized .part.0.isra.0 helper with a different reported call site. Match top-of-stack function/window; retain entry callsite and count exit callsite variations.",
+  "original_capture": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/exclude-std-only-2026-10-27/captures/C03_fill__cpu",
+  "diagnostic_capture": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/exclude-std-only-2026-10-27/diagnostic-capture",
+  "revalidated_capture": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/exclude-std-only-2026-10-27/captures-v2/C03_fill__cpu",
+  "tests": "82 passed in 23.04s"
+}

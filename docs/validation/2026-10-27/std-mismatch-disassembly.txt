@@ -1,0 +1,355 @@
+
+/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+000000000c82d1e0 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_>:
+     c82d1e0:	d10703ff 	sub	sp, sp, #0x1c0
+     c82d1e4:	9002ab83 	adrp	x3, 11d9d000 <_ZN6google8protobuf10TextFormat7Printer11kDoNotParseE>
+     c82d1e8:	a9157bfd 	stp	x29, x30, [sp, #336]
+     c82d1ec:	910543fd 	add	x29, sp, #0x150
+     c82d1f0:	f941ac63 	ldr	x3, [x3, #856]
+     c82d1f4:	f9000be4 	str	x4, [sp, #16]
+     c82d1f8:	f90013e2 	str	x2, [sp, #32]
+     c82d1fc:	f9003fe1 	str	x1, [sp, #120]
+     c82d200:	a91653f3 	stp	x19, x20, [sp, #352]
+     c82d204:	aa1e03f3 	mov	x19, x30
+     c82d208:	d50320ff 	xpaclri
+     c82d20c:	aa1e03f4 	mov	x20, x30
+     c82d210:	a9175bf5 	stp	x21, x22, [sp, #368]
+     c82d214:	aa1e03e1 	mov	x1, x30
+     c82d218:	f0fc2515 	adrp	x21, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d21c:	a91863f7 	stp	x23, x24, [sp, #384]
+     c82d220:	911e82b5 	add	x21, x21, #0x7a0
+     c82d224:	f0fc2516 	adrp	x22, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d228:	a9196bf9 	stp	x25, x26, [sp, #400]
+     c82d22c:	f0fc2519 	adrp	x25, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d230:	91244337 	add	x23, x25, #0x910
+     c82d234:	a91a73fb 	stp	x27, x28, [sp, #416]
+     c82d238:	aa0003fb 	mov	x27, x0
+     c82d23c:	f0fc251a 	adrp	x26, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d240:	fd00dbe8 	str	d8, [sp, #432]
+     c82d244:	f9400060 	ldr	x0, [x3]
+     c82d248:	f900a7e0 	str	x0, [sp, #328]
+     c82d24c:	d2800000 	mov	x0, #0x0                   	// #0
+     c82d250:	d503201f 	nop
+     c82d254:	10fffc60 	adr	x0, c82d1e0 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_>
+     c82d258:	954ce9ae 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d25c:	91218358 	add	x24, x26, #0x860
+     c82d260:	aa1403e1 	mov	x1, x20
+     c82d264:	aa1503e0 	mov	x0, x21
+     c82d268:	954ce9aa 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d26c:	912a02d6 	add	x22, x22, #0xa80
+     c82d270:	aa1403e1 	mov	x1, x20
+     c82d274:	aa1503e0 	mov	x0, x21
+     c82d278:	f0fc2515 	adrp	x21, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d27c:	954ce9a9 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d280:	912002b5 	add	x21, x21, #0x800
+     c82d284:	aa1403e1 	mov	x1, x20
+     c82d288:	aa1503e0 	mov	x0, x21
+     c82d28c:	954ce9a1 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d290:	aa1403e1 	mov	x1, x20
+     c82d294:	aa1503e0 	mov	x0, x21
+     c82d298:	954ce9a2 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d29c:	d2800034 	mov	x20, #0x1                   	// #1
+     c82d2a0:	52800040 	mov	w0, #0x2                   	// #2
+     c82d2a4:	aa1303fe 	mov	x30, x19
+     c82d2a8:	d50320ff 	xpaclri
+     c82d2ac:	aa1e03e1 	mov	x1, x30
+     c82d2b0:	b90113e0 	str	w0, [sp, #272]
+     c82d2b4:	aa1703e0 	mov	x0, x23
+     c82d2b8:	954ce996 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d2bc:	aa1303fe 	mov	x30, x19
+     c82d2c0:	d50320ff 	xpaclri
+     c82d2c4:	aa1803e0 	mov	x0, x24
+     c82d2c8:	aa1e03e1 	mov	x1, x30
+     c82d2cc:	954ce991 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d2d0:	910443f5 	add	x21, sp, #0x110
+     c82d2d4:	aa1503e0 	mov	x0, x21
+     c82d2d8:	9612938e 	bl	4cd2110 <_ZN3c1011is_negativeIiEEbRKT_>
+     c82d2dc:	aa1303fe 	mov	x30, x19
+     c82d2e0:	d50320ff 	xpaclri
+     c82d2e4:	aa1e03e1 	mov	x1, x30
+     c82d2e8:	72001c1f 	tst	w0, #0xff
+     c82d2ec:	540004e1 	b.ne	c82d388 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x1a8>  // b.any
+     c82d2f0:	f1000e9f 	cmp	x20, #0x3
+     c82d2f4:	540004a0 	b.eq	c82d388 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x1a8>  // b.none
+     c82d2f8:	aa1803e0 	mov	x0, x24
+     c82d2fc:	954ce989 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d300:	aa1303fe 	mov	x30, x19
+     c82d304:	d50320ff 	xpaclri
+     c82d308:	aa1703e0 	mov	x0, x23
+     c82d30c:	aa1e03e1 	mov	x1, x30
+     c82d310:	954ce984 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d314:	aa1303fe 	mov	x30, x19
+     c82d318:	d50320ff 	xpaclri
+     c82d31c:	aa1603e0 	mov	x0, x22
+     c82d320:	aa1e03f5 	mov	x21, x30
+     c82d324:	aa1e03e1 	mov	x1, x30
+     c82d328:	954ce97a 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d32c:	aa1503e1 	mov	x1, x21
+     c82d330:	aa1603e0 	mov	x0, x22
+     c82d334:	954ce97b 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d338:	f0fc251c 	adrp	x28, 4cd0000 <_ZN2at8indexing8set_itemIN3c106ScalarEEEvRKNS_6TensorERKNS2_8ArrayRefINS0_11TensorIndexEEERKT_b+0x430>
+     c82d33c:	d1002360 	sub	x0, x27, #0x8
+     c82d340:	910543e1 	add	x1, sp, #0x150
+     c82d344:	8b140c22 	add	x2, x1, x20, lsl #3
+     c82d348:	9128439c 	add	x28, x28, #0xa10
+     c82d34c:	aa1503e1 	mov	x1, x21
+     c82d350:	f8747803 	ldr	x3, [x0, x20, lsl #3]
+     c82d354:	f81e0043 	stur	x3, [x2, #-32]
+     c82d358:	aa1c03e0 	mov	x0, x28
+     c82d35c:	91000694 	add	x20, x20, #0x1
+     c82d360:	954ce96c 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d364:	aa1503e1 	mov	x1, x21
+     c82d368:	aa1c03e0 	mov	x0, x28
+     c82d36c:	954ce96d 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d370:	aa1303fe 	mov	x30, x19
+     c82d374:	d50320ff 	xpaclri
+     c82d378:	aa1703e0 	mov	x0, x23
+     c82d37c:	aa1e03e1 	mov	x1, x30
+     c82d380:	954ce964 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d384:	17ffffce 	b	c82d2bc <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0xdc>
+     c82d388:	91218340 	add	x0, x26, #0x860
+     c82d38c:	954ce965 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d390:	aa1303fe 	mov	x30, x19
+     c82d394:	d50320ff 	xpaclri
+     c82d398:	91244320 	add	x0, x25, #0x910
+     c82d39c:	aa1e03e1 	mov	x1, x30
+     c82d3a0:	954ce960 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d3a4:	f94013e1 	ldr	x1, [sp, #32]
+     c82d3a8:	f100003f 	cmp	x1, #0x0
+     c82d3ac:	54002ead 	b.le	c82d980 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x7a0>
+     c82d3b0:	9104e3e0 	add	x0, sp, #0x138
+     c82d3b4:	f8617800 	ldr	x0, [x0, x1, lsl #3]
+     c82d3b8:	96356fea 	bl	5589360 <_ZN5torch10headeronly4loadIN3c108BFloat16EEET_PKS4_>
+     c82d3bc:	790113e0 	strh	w0, [sp, #136]
+     c82d3c0:	794113e1 	ldrh	w1, [sp, #136]
+     c82d3c4:	910243e0 	add	x0, sp, #0x90
+     c82d3c8:	f9002fe0 	str	x0, [sp, #88]
+     c82d3cc:	975de55d 	bl	9fa6940 <_ZN2at3vec7DEFAULT10VectorizedIN3c108BFloat16EEC1ES4_>
+     c82d3d0:	f9403fe0 	ldr	x0, [sp, #120]
+     c82d3d4:	d1003c00 	sub	x0, x0, #0xf
+     c82d3d8:	f9002be0 	str	x0, [sp, #80]
+     c82d3dc:	f100001f 	cmp	x0, #0x0
+     c82d3e0:	54002d6d 	b.le	c82d98c <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x7ac>
+     c82d3e4:	900002c0 	adrp	x0, c885000 <_ZZN2at6native7DEFAULT16VectorizedLoop2dIZZZNS0_12_GLOBAL__N_115div_true_kernelERNS_18TensorIteratorBaseEENKUlvE0_clEvENKUlvE3_clEvEUlN3c108BFloat16ES9_E_ZZZNS3_15div_true_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EESE_E0_EclEPPcPKlllENKUlmE_clEm+0x4b0>
+     c82d3e8:	91390018 	add	x24, x0, #0xe40
+     c82d3ec:	90fffd00 	adrp	x0, c7cd000 <_ZZZZN2at6native12_GLOBAL__N_110lcm_kernelERNS_18TensorIteratorBaseEENKUlvE_clEvENKUlvE3_clEvENKUlssE_clEss+0xe0>
+     c82d3f0:	91364019 	add	x25, x0, #0xd90
+     c82d3f4:	910503e0 	add	x0, sp, #0x140
+     c82d3f8:	f90037e0 	str	x0, [sp, #104]
+     c82d3fc:	910283e0 	add	x0, sp, #0xa0
+     c82d400:	d2800016 	mov	x22, #0x0                   	// #0
+     c82d404:	f90017ff 	str	xzr, [sp, #40]
+     c82d408:	f90033e0 	str	x0, [sp, #96]
+     c82d40c:	910343e0 	add	x0, sp, #0xd0
+     c82d410:	f9003be0 	str	x0, [sp, #112]
+     c82d414:	d503201f 	nop
+     c82d418:	a945a3f7 	ldp	x23, x8, [sp, #88]
+     c82d41c:	aa1603e3 	mov	x3, x22
+     c82d420:	f94013fa 	ldr	x26, [sp, #32]
+     c82d424:	f94037f4 	ldr	x20, [sp, #104]
+     c82d428:	aa1a03e2 	mov	x2, x26
+     c82d42c:	aa1703e1 	mov	x1, x23
+     c82d430:	aa1403e0 	mov	x0, x20
+     c82d434:	97feacb3 	bl	c7d8700 <_ZN2at6native7DEFAULT15dereference_vecI15function_traitsIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlNS_3vec7DEFAULT10VectorizedIN3c108BFloat16EEEE0_EEENT_9ArgsTupleEPrPcRKNSI_11result_typeEml>
+     c82d438:	f9403be8 	ldr	x8, [sp, #112]
+     c82d43c:	910022c3 	add	x3, x22, #0x8
+     c82d440:	aa1a03e2 	mov	x2, x26
+     c82d444:	aa1703e1 	mov	x1, x23
+     c82d448:	aa1403e0 	mov	x0, x20
+     c82d44c:	97feacad 	bl	c7d8700 <_ZN2at6native7DEFAULT15dereference_vecI15function_traitsIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlNS_3vec7DEFAULT10VectorizedIN3c108BFloat16EEEE0_EEENT_9ArgsTupleEPrPcRKNSI_11result_typeEml>
+     c82d450:	3dc02be0 	ldr	q0, [sp, #160]
+     c82d454:	aa1303fe 	mov	x30, x19
+     c82d458:	d50320ff 	xpaclri
+     c82d45c:	aa1803e0 	mov	x0, x24
+     c82d460:	aa1e03e1 	mov	x1, x30
+     c82d464:	3d802fe0 	str	q0, [sp, #176]
+     c82d468:	954ce92a 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d46c:	aa1303fe 	mov	x30, x19
+     c82d470:	d50320ff 	xpaclri
+     c82d474:	f9400be2 	ldr	x2, [sp, #16]
+     c82d478:	aa1e03e1 	mov	x1, x30
+     c82d47c:	aa1903e0 	mov	x0, x25
+     c82d480:	bd400048 	ldr	s8, [x2]
+     c82d484:	954ce923 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d488:	aa1303fe 	mov	x30, x19
+     c82d48c:	d50320ff 	xpaclri
+     c82d490:	90febbd4 	adrp	x20, 9fa5000 <_ZN2at3vec7DEFAULTplIlEENS1_10VectorizedIT_EERKS5_S7_+0xf0>
+     c82d494:	aa1e03e1 	mov	x1, x30
+     c82d498:	9122c280 	add	x0, x20, #0x8b0
+     c82d49c:	954ce91d 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d4a0:	4e040508 	dup	v8.4s, v8.s[0]
+     c82d4a4:	aa1303fe 	mov	x30, x19
+     c82d4a8:	d50320ff 	xpaclri
+     c82d4ac:	9122c280 	add	x0, x20, #0x8b0
+     c82d4b0:	aa1e03e1 	mov	x1, x30
+     c82d4b4:	3d803be8 	str	q8, [sp, #224]
+     c82d4b8:	954ce91a 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d4bc:	aa1503e8 	mov	x8, x21
+     c82d4c0:	9102c3e0 	add	x0, sp, #0xb0
+     c82d4c4:	976678cf 	bl	a1cb800 <_ZN2at3vec16convert_to_floatIN3c108BFloat16ELi0EEESt5tupleIJNS0_7DEFAULT10VectorizedIfEES7_EERKNS6_IT_EE>
+     c82d4c8:	f0ffea80 	adrp	x0, c580000 <_ZN2at6native7DEFAULT22make_vectorized_loop2dIZZZNS0_12_GLOBAL__N_116add_clamp_kernelERNS_14TensorIteratorERKN3c106ScalarES9_S9_ENKUlvE_clEvENKUlvE4_clEvEUlddE_ZZZNS3_16add_clamp_kernelES5_S9_S9_S9_ENKSA_clEvENKSB_clEvEUlNS_3vec7DEFAULT10VectorizedIdEESG_E0_EENS1_16VectorizedLoop2dIT_T0_EEOSJ_OSK_+0x50>
+     c82d4cc:	aa1303fe 	mov	x30, x19
+     c82d4d0:	9133001a 	add	x26, x0, #0xcc0
+     c82d4d4:	d50320ff 	xpaclri
+     c82d4d8:	aa1a03e0 	mov	x0, x26
+     c82d4dc:	aa1e03fb 	mov	x27, x30
+     c82d4e0:	aa1e03e1 	mov	x1, x30
+     c82d4e4:	910383f7 	add	x23, sp, #0xe0
+     c82d4e8:	954ce90a 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d4ec:	910483fc 	add	x28, sp, #0x120
+     c82d4f0:	aa1703e1 	mov	x1, x23
+     c82d4f4:	aa1c03e0 	mov	x0, x28
+     c82d4f8:	975de60a 	bl	9fa6d20 <_ZN2at3vec7DEFAULTmlIfEENS1_10VectorizedIT_EERKS5_S7_>
+     c82d4fc:	3d800fe0 	str	q0, [sp, #48]
+     c82d500:	910403e2 	add	x2, sp, #0x100
+     c82d504:	9103c3e3 	add	x3, sp, #0xf0
+     c82d508:	aa1b03e1 	mov	x1, x27
+     c82d50c:	aa1a03e0 	mov	x0, x26
+     c82d510:	f90003e3 	str	x3, [sp]
+     c82d514:	f9000fe2 	str	x2, [sp, #24]
+     c82d518:	954ce902 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d51c:	3dc00fe0 	ldr	q0, [sp, #48]
+     c82d520:	aa1b03e1 	mov	x1, x27
+     c82d524:	aa1a03e0 	mov	x0, x26
+     c82d528:	3d803fe0 	str	q0, [sp, #240]
+     c82d52c:	954ce8f9 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d530:	aa1703e1 	mov	x1, x23
+     c82d534:	aa1503e0 	mov	x0, x21
+     c82d538:	975de5fa 	bl	9fa6d20 <_ZN2at3vec7DEFAULTmlIfEENS1_10VectorizedIT_EERKS5_S7_>
+     c82d53c:	aa1b03e1 	mov	x1, x27
+     c82d540:	aa1a03e0 	mov	x0, x26
+     c82d544:	3d800fe0 	str	q0, [sp, #48]
+     c82d548:	954ce8f6 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d54c:	f94003e0 	ldr	x0, [sp]
+     c82d550:	f9400fe1 	ldr	x1, [sp, #24]
+     c82d554:	3dc00fe0 	ldr	q0, [sp, #48]
+     c82d558:	3d8043e0 	str	q0, [sp, #256]
+     c82d55c:	97666105 	bl	a1c5970 <_ZN2at3vec18convert_from_floatIN3c108BFloat16ELi0EEENS0_7DEFAULT10VectorizedIT_EERKNS5_IfEESA_>
+     c82d560:	aa1b03e1 	mov	x1, x27
+     c82d564:	aa1903e0 	mov	x0, x25
+     c82d568:	3d800fe0 	str	q0, [sp, #48]
+     c82d56c:	954ce8ed 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d570:	aa1b03e1 	mov	x1, x27
+     c82d574:	aa1803e0 	mov	x0, x24
+     c82d578:	954ce8ea 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d57c:	3dc037e0 	ldr	q0, [sp, #208]
+     c82d580:	aa1303fe 	mov	x30, x19
+     c82d584:	d50320ff 	xpaclri
+     c82d588:	aa1803e0 	mov	x0, x24
+     c82d58c:	aa1e03e1 	mov	x1, x30
+     c82d590:	3d8033e0 	str	q0, [sp, #192]
+     c82d594:	954ce8df 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d598:	aa1303fe 	mov	x30, x19
+     c82d59c:	d50320ff 	xpaclri
+     c82d5a0:	f9400be2 	ldr	x2, [sp, #16]
+     c82d5a4:	aa1e03e1 	mov	x1, x30
+     c82d5a8:	aa1903e0 	mov	x0, x25
+     c82d5ac:	bd400048 	ldr	s8, [x2]
+     c82d5b0:	954ce8d8 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d5b4:	aa1303fe 	mov	x30, x19
+     c82d5b8:	d50320ff 	xpaclri
+     c82d5bc:	9122c280 	add	x0, x20, #0x8b0
+     c82d5c0:	aa1e03e1 	mov	x1, x30
+     c82d5c4:	954ce8d3 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d5c8:	4e040508 	dup	v8.4s, v8.s[0]
+     c82d5cc:	aa1303fe 	mov	x30, x19
+     c82d5d0:	d50320ff 	xpaclri
+     c82d5d4:	9122c280 	add	x0, x20, #0x8b0
+     c82d5d8:	aa1e03e1 	mov	x1, x30
+     c82d5dc:	3d803be8 	str	q8, [sp, #224]
+     c82d5e0:	954ce8d0 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d5e4:	aa1503e8 	mov	x8, x21
+     c82d5e8:	910303e0 	add	x0, sp, #0xc0
+     c82d5ec:	97667885 	bl	a1cb800 <_ZN2at3vec16convert_to_floatIN3c108BFloat16ELi0EEESt5tupleIJNS0_7DEFAULT10VectorizedIfEES7_EERKNS6_IT_EE>
+     c82d5f0:	f0ffea80 	adrp	x0, c580000 <_ZN2at6native7DEFAULT22make_vectorized_loop2dIZZZNS0_12_GLOBAL__N_116add_clamp_kernelERNS_14TensorIteratorERKN3c106ScalarES9_S9_ENKUlvE_clEvENKUlvE4_clEvEUlddE_ZZZNS3_16add_clamp_kernelES5_S9_S9_S9_ENKSA_clEvENKSB_clEvEUlNS_3vec7DEFAULT10VectorizedIdEESG_E0_EENS1_16VectorizedLoop2dIT_T0_EEOSJ_OSK_+0x50>
+     c82d5f4:	aa1303fe 	mov	x30, x19
+     c82d5f8:	91330014 	add	x20, x0, #0xcc0
+     c82d5fc:	d50320ff 	xpaclri
+     c82d600:	aa1403e0 	mov	x0, x20
+     c82d604:	aa1e03fa 	mov	x26, x30
+     c82d608:	aa1e03e1 	mov	x1, x30
+     c82d60c:	954ce8c1 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d610:	aa1703e1 	mov	x1, x23
+     c82d614:	aa1c03e0 	mov	x0, x28
+     c82d618:	975de5c2 	bl	9fa6d20 <_ZN2at3vec7DEFAULTmlIfEENS1_10VectorizedIT_EERKS5_S7_>
+     c82d61c:	3d8013e0 	str	q0, [sp, #64]
+     c82d620:	aa1a03e1 	mov	x1, x26
+     c82d624:	aa1403e0 	mov	x0, x20
+     c82d628:	954ce8be 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d62c:	3dc013e0 	ldr	q0, [sp, #64]
+     c82d630:	aa1a03e1 	mov	x1, x26
+     c82d634:	aa1403e0 	mov	x0, x20
+     c82d638:	3d803fe0 	str	q0, [sp, #240]
+     c82d63c:	954ce8b5 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d640:	aa1703e1 	mov	x1, x23
+     c82d644:	aa1503e0 	mov	x0, x21
+     c82d648:	975de5b6 	bl	9fa6d20 <_ZN2at3vec7DEFAULTmlIfEENS1_10VectorizedIT_EERKS5_S7_>
+     c82d64c:	aa1a03e1 	mov	x1, x26
+     c82d650:	aa1403e0 	mov	x0, x20
+     c82d654:	3d8013e0 	str	q0, [sp, #64]
+     c82d658:	954ce8b2 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d65c:	f94003e0 	ldr	x0, [sp]
+     c82d660:	f9400fe1 	ldr	x1, [sp, #24]
+     c82d664:	3dc013e0 	ldr	q0, [sp, #64]
+     c82d668:	3d8043e0 	str	q0, [sp, #256]
+     c82d66c:	976660c1 	bl	a1c5970 <_ZN2at3vec18convert_from_floatIN3c108BFloat16ELi0EEENS0_7DEFAULT10VectorizedIT_EERKNS5_IfEESA_>
+     c82d670:	aa1a03e1 	mov	x1, x26
+     c82d674:	aa1903e0 	mov	x0, x25
+     c82d678:	3d8003e0 	str	q0, [sp]
+     c82d67c:	954ce8a9 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d680:	aa1a03e1 	mov	x1, x26
+     c82d684:	aa1803e0 	mov	x0, x24
+     c82d688:	954ce8a6 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c82d68c:	aa1303fe 	mov	x30, x19
+     c82d690:	90febc14 	adrp	x20, 9fad000 <_GLOBAL__sub_I_UfuncCPUKernel_add.cpp.DEFAULT.cpp+0x10>
+     c82d694:	d50320ff 	xpaclri
+     c82d698:	9102c294 	add	x20, x20, #0xb0
+     c82d69c:	aa1e03f7 	mov	x23, x30
+     c82d6a0:	aa1e03e1 	mov	x1, x30
+     c82d6a4:	aa1403e0 	mov	x0, x20
+     c82d6a8:	910042d6 	add	x22, x22, #0x10
+     c82d6ac:	f94017fb 	ldr	x27, [sp, #40]
+     c82d6b0:	f9409ffa 	ldr	x26, [sp, #312]
+     c82d6b4:	954ce897 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d6b8:	3dc00fe0 	ldr	q0, [sp, #48]
+     c82d6bc:	8b1b035a 	add	x26, x26, x27
+     c82d6c0:	aa1a03e0 	mov	x0, x26
+     c82d6c4:	97f81f03 	bl	c6352d0 <_ZNK2at3vec7DEFAULT10VectorizedIN3c108BFloat16EE5storeEPvl.part.0.isra.0>
+     c82d6c8:	f9409fe2 	ldr	x2, [sp, #312]
+     c82d6cc:	91004363 	add	x3, x27, #0x10
+     c82d6d0:	aa1403e0 	mov	x0, x20
+     c82d6d4:	aa1703e1 	mov	x1, x23
+     c82d6d8:	8b030054 	add	x20, x2, x3
+     c82d6dc:	91008362 	add	x2, x27, #0x20
+     c82d6e0:	f90017e2 	str	x2, [sp, #40]
+     c82d6e4:	954ce88b 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c82d6e8:	3dc003e0 	ldr	q0, [sp]
+     c82d6ec:	aa1403e0 	mov	x0, x20
+     c82d6f0:	97f81ef8 	bl	c6352d0 <_ZNK2at3vec7DEFAULT10VectorizedIN3c108BFloat16EE5storeEPvl.part.0.isra.0>
+     c82d6f4:	f9402be0 	ldr	x0, [sp, #80]
+     c82d6f8:	eb0002df 	cmp	x22, x0
+     c82d6fc:	54ffe8eb 	b.lt	c82d418 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x238>  // b.tstop
+     c82d700:	f9403fe2 	ldr	x2, [sp, #120]
+     c82d704:	eb16005f 	cmp	x2, x22
+     c82d708:	5400112d 	b.le	c82d92c <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x74c>
+     c82d70c:	d1000440 	sub	x0, x2, #0x1
+     c82d710:	d1002041 	sub	x1, x2, #0x8
+     c82d714:	cb160000 	sub	x0, x0, x22
+     c82d718:	cb160057 	sub	x23, x2, x22
+     c82d71c:	927df000 	and	x0, x0, #0xfffffffffffffff8
+     c82d720:	d37ffad8 	lsl	x24, x22, #1
+     c82d724:	8b160000 	add	x0, x0, x22
+     c82d728:	cb000020 	sub	x0, x1, x0
+     c82d72c:	f90017e0 	str	x0, [sp, #40]
+     c82d730:	b0ffef80 	adrp	x0, c61e000 <_ZN2at6native7DEFAULT23dereference_vec_partialI15function_traitsIRZZZNS0_12_GLOBAL__N_120tanh_backward_kernelERNS_18TensorIteratorBaseEENKUlvE0_clEvENKUlvE0_clEvEUlNS_3vec7DEFAULT10VectorizedIN3c108BFloat16EEESE_E0_EEENT_9ArgsTupleEPrPcRKNSI_11result_typeEmll+0xc0>
+     c82d734:	912f8019 	add	x25, x0, #0xbe0
+     c82d738:	900002c0 	adrp	x0, c885000 <_ZZN2at6native7DEFAULT16VectorizedLoop2dIZZZNS0_12_GLOBAL__N_115div_true_kernelERNS_18TensorIteratorBaseEENKUlvE0_clEvENKUlvE3_clEvEUlN3c108BFloat16ES9_E_ZZZNS3_15div_true_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EESE_E0_EclEPPcPKlllENKUlmE_clEm+0x4b0>
+     c82d73c:	9139001a 	add	x26, x0, #0xe40
+     c82d740:	14000065 	b	c82d8d4 <_ZN2at6native7DEFAULT15vectorized_loopIRZZZNS0_12_GLOBAL__N_110mul_kernelERNS_18TensorIteratorBaseEENKUlvE1_clEvENKUlvE0_clEvEUlN3c108BFloat16EE_RZZZNS3_10mul_kernelES5_ENKS6_clEvENKS7_clEvEUlNS_3vec7DEFAULT10VectorizedIS9_EEE0_EEvPPcllOT_OT0_+0x6f4>
+     c82d744:	3dc027e0 	ldr	q0, [sp, #144]
+     c82d748:	aa1303fe 	mov	x30, x19
+     c82d74c:	d50320ff 	xpaclri

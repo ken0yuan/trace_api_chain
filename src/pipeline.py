@@ -42,6 +42,11 @@ def prepare(output,mode=None):
     graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
     graph['gaps']=sorted(set(graph['gaps']+gaps))
     if graph['gaps']:graph['status']='evidence_scope_incomplete'
+    variations=(json.loads((output/'windows.json').read_text()).get('exit_callsite_variations',0) if storage=='paths'
+                else sum('exit_caller_address' in n for n in graph['nodes'].values()))
+    if variations:
+        graph['native_exit_callsite_variations']=variations
+        graph['declared_boundaries']=list(graph['declared_boundaries'])+['Entry call sites label native paths. Optimized code reported '+str(variations)+' differing exit call sites; function and window matched the top of the calling-thread stack.']
     (output/'graph.json').write_bytes(canonical(graph))
     identities={}
     for row in native:

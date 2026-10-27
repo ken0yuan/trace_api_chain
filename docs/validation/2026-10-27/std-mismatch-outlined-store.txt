@@ -1,0 +1,51 @@
+
+/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+000000000c6352d0 <_ZNK2at3vec7DEFAULT10VectorizedIN3c108BFloat16EE5storeEPvl.part.0.isra.0>:
+     c6352d0:	a9bc7bfd 	stp	x29, x30, [sp, #-64]!
+     c6352d4:	910003fd 	mov	x29, sp
+     c6352d8:	a90153f3 	stp	x19, x20, [sp, #16]
+     c6352dc:	aa1e03f3 	mov	x19, x30
+     c6352e0:	d0fecbb4 	adrp	x20, 9fab000 <_ZNK2at3vec7DEFAULT10VectorizedIiE5storeEPvl+0x20>
+     c6352e4:	d50320ff 	xpaclri
+     c6352e8:	912d0294 	add	x20, x20, #0xb40
+     c6352ec:	aa1e03e1 	mov	x1, x30
+     c6352f0:	f90013f5 	str	x21, [sp, #32]
+     c6352f4:	aa0003f5 	mov	x21, x0
+     c6352f8:	aa1403e0 	mov	x0, x20
+     c6352fc:	3d800fe0 	str	q0, [sp, #48]
+     c635300:	9554c984 	bl	11b67910 <__cyg_profile_func_enter@plt>
+     c635304:	3dc00fe0 	ldr	q0, [sp, #48]
+     c635308:	aa1303fe 	mov	x30, x19
+     c63530c:	d50320ff 	xpaclri
+     c635310:	aa1403e0 	mov	x0, x20
+     c635314:	aa1e03e1 	mov	x1, x30
+     c635318:	3d8002a0 	str	q0, [x21]
+     c63531c:	9554c981 	bl	11b67920 <__cyg_profile_func_exit@plt>
+     c635320:	aa1303fe 	mov	x30, x19
+     c635324:	d50320ff 	xpaclri
+     c635328:	aa1e03e1 	mov	x1, x30
+     c63532c:	90fecbc0 	adrp	x0, 9fad000 <_GLOBAL__sub_I_UfuncCPUKernel_add.cpp.DEFAULT.cpp+0x10>
+     c635330:	a94153f3 	ldp	x19, x20, [sp, #16]
+     c635334:	9102c000 	add	x0, x0, #0xb0
+     c635338:	f94013f5 	ldr	x21, [sp, #32]
+     c63533c:	a8c47bfd 	ldp	x29, x30, [sp], #64
+     c635340:	1554c978 	b	11b67920 <__cyg_profile_func_exit@plt>
+	...
+
+000000000c635350 <_ZNK2at3vec7DEFAULT12Vectorized16I12__Uint16x8_tN3c108BFloat16ENS1_17BlendBFloat16RegsENS1_10VectorizedIS5_EEE4map2ERKS8_PFS5_S5_S5_E>:
+     c635350:	d102c3ff 	sub	sp, sp, #0xb0
+     c635354:	9002bb43 	adrp	x3, 11d9d000 <_ZN6google8protobuf10TextFormat7Printer11kDoNotParseE>
+     c635358:	a9057bfd 	stp	x29, x30, [sp, #80]
+     c63535c:	910143fd 	add	x29, sp, #0x50
+     c635360:	f941ac64 	ldr	x4, [x3, #856]
+     c635364:	f90003e2 	str	x2, [sp]
+     c635368:	a90653f3 	stp	x19, x20, [sp, #96]
+     c63536c:	aa1e03f3 	mov	x19, x30
+     c635370:	d50320ff 	xpaclri
+     c635374:	aa1e03f4 	mov	x20, x30
+     c635378:	a9075bf5 	stp	x21, x22, [sp, #112]
+     c63537c:	aa0003f5 	mov	x21, x0

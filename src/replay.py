@@ -137,7 +137,10 @@ def rebuild(events, native, contract):
             node = nodes[stack[-1]]
             require(node['address']==address, 'native_return_stack_mismatch')
             require(node['window']==window, 'native_return_window_mismatch')
-            require(node['caller_address']==e['absolute_caller'], 'native_return_caller_mismatch')
+            # Optimized inline/outlined code can report different entry/exit
+            # call sites. Function, top-of-stack, window, PID and TID remain strict.
+            if node['caller_address']!=e['absolute_caller']:
+                node['exit_caller_address']=e['absolute_caller']
             node['returned']=e['time']; stack.pop()
         else:
             raise EvidenceError('unknown_native_event')

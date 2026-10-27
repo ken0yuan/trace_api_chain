@@ -51,6 +51,7 @@ class Bridge:
         if storage=='paths':
             self.hook.trace_paths_begin.argtypes=[ctypes.c_uint64]
             self.hook.trace_paths_event_count.restype=ctypes.c_uint64
+            self.hook.trace_paths_exit_callsite_variations.restype=ctypes.c_uint64
             self.hook.trace_paths_finish.argtypes=[ctypes.c_char_p]
         self.maps_before=Path('/proc/self/maps').read_text()
 
@@ -104,7 +105,9 @@ class Bridge:
                 try:
                     stat=os.stat(parts[5]);stamps[parts[5]]=[stat.st_size,stat.st_mtime_ns,stat.st_ino]
                 except OSError:pass
-        save(self.output/'windows.json',{'segments':self.segments,'gaps':self.gaps,'module_stamps':stamps,'native_storage':self.storage})
+        summary={'segments':self.segments,'gaps':self.gaps,'module_stamps':stamps,'native_storage':self.storage}
+        if self.storage=='paths':summary['exit_callsite_variations']=self.hook.trace_paths_exit_callsite_variations()
+        save(self.output/'windows.json',summary)
 
 class Modules:
     def __init__(self,maps,stamps):

@@ -1,0 +1,353 @@
+{
+  "excluded_definition_paths": [
+    "/usr/include/c++/11/",
+    "/usr/include/aarch64-linux-gnu/c++/11/"
+  ],
+  "components": {
+    "pytorch": {
+      "build": {
+        "variant": "instrumented",
+        "component": "pytorch",
+        "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std",
+        "command": [
+          "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python",
+          "-m",
+          "pip",
+          "install",
+          "-e",
+          ".",
+          "-v",
+          "--no-build-isolation",
+          "--no-deps",
+          "--no-index"
+        ],
+        "source_commit": "26650ac257aee280144c73a51a99a1d7a43ee161",
+        "flags": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+        "max_jobs": 128,
+        "started_at": "2026-10-27T06:49:01.952645+00:00",
+        "linker": "lld",
+        "lld_layout": "native",
+        "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+        "dvm_warning_policy": null,
+        "status": "success",
+        "load_before": [
+          484.74462890625,
+          376.12060546875,
+          195.16845703125
+        ],
+        "log": "/home/workspace-ycy/compile-performance/logs/instrumented-r9-lld22-exclude-std-pytorch.log",
+        "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+        "environment": {
+          "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r9-lld22-exclude-std/gcc",
+          "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r9-lld22-exclude-std/g++",
+          "CFLAGS": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+          "CXXFLAGS": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+          "MAX_JOBS": "128",
+          "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+          "CMAKE_GENERATOR": "Ninja",
+          "CMAKE_BUILD_TYPE": "Release",
+          "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+          "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+          "CCACHE_DISABLE": "1"
+        },
+        "pid": 1262556,
+        "elapsed_seconds": 659.220857170003,
+        "returncode": 0,
+        "load_after": [
+          105.56103515625,
+          262.1259765625,
+          262.787109375
+        ],
+        "finished_at": "2026-10-27T07:00:01.175004+00:00",
+        "compiler_invocations": 2976,
+        "invocations_with_both_flags": 2976,
+        "flags_verified": true,
+        "exclusion_flag": "-finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+        "invocations_with_exclusion": 2976,
+        "python_headers_excluded": false,
+        "pybind11_excluded": false,
+        "scope": "Exclude only GCC 11 standard-library definition paths; retain PyTorch, torch-npu, Python, pybind11 and all other third parties.",
+        "smoke_returncode": 0
+      },
+      "audited_invocations": 2976,
+      "existing_compile_outputs": 2819,
+      "all_existing_outputs_new": true,
+      "missing_temporary_outputs": 155,
+      "compiler_audit_sha256": "dec48c86aa9015dd93b483dabe49c08088c0aa6d60fd5e3f90a877db0d4f6b51"
+    },
+    "torch-npu": {
+      "build": {
+        "variant": "instrumented",
+        "component": "torch-npu",
+        "case": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std",
+        "command": [
+          "bash",
+          "ci/build.sh",
+          "--python=3.11"
+        ],
+        "source_commit": "fc51851eb378dc663d4798435110af75968ad3e3",
+        "flags": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+        "max_jobs": 128,
+        "started_at": "2026-10-27T07:00:27.203977+00:00",
+        "linker": "lld",
+        "lld_layout": "native",
+        "lld_version": "Ubuntu LLD 22.1.8 (compatible with GNU linkers)",
+        "dvm_warning_policy": "Only DVM compile calls use -Wno-error=mismatched-new-delete in both variants; diagnostics remain enabled and code generation is unchanged.",
+        "status": "success",
+        "load_before": [
+          100.5234375,
+          248.44482421875,
+          258.24658203125
+        ],
+        "log": "/home/workspace-ycy/compile-performance/logs/instrumented-r9-lld22-exclude-std-torch-npu.log",
+        "timing_scope": "clean configure + code generation + compile + link + package/install; excludes source download, dependency setup, source/env copies",
+        "environment": {
+          "CC": "/home/workspace-ycy/compile-performance/tool-wrappers-r9-lld22-exclude-std/gcc",
+          "CXX": "/home/workspace-ycy/compile-performance/tool-wrappers-r9-lld22-exclude-std/g++",
+          "CFLAGS": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+          "CXXFLAGS": "-finstrument-functions -g1 -finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+          "MAX_JOBS": "128",
+          "CMAKE_BUILD_PARALLEL_LEVEL": "128",
+          "CMAKE_GENERATOR": null,
+          "CMAKE_BUILD_TYPE": "Release",
+          "PYTHONPATH": "/home/workspace-ycy/compile-performance/build-tools:/usr/local/Ascend/cann-9.2.0/python/site-packages:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe:/usr/local/Ascend/ascend-toolkit/latest/python/site-packages:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe:",
+          "LD_LIBRARY_PATH": "/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/cann-9.2.0/lib64:/usr/local/Ascend/cann-9.2.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.2.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/lib:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/examples:/usr/local/Ascend/nnal/atb/latest/atb/cxx_abi_1/tests/atbopstest:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64:/usr/local/Ascend/ascend-toolkit/latest/tools/aml/lib64/plugin:/usr/local/Ascend/ascend-toolkit/latest/lib64:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/opskernel:/usr/local/Ascend/ascend-toolkit/latest/lib64/plugin/nnengine:/usr/local/Ascend/ascend-toolkit/latest/opp/built-in/op_impl/ai_core/tbe/op_tiling:/usr/local/python3.12.15/lib:",
+          "CCACHE_DISABLE": "1"
+        },
+        "pid": 1308511,
+        "elapsed_seconds": 660.9196052000043,
+        "returncode": 0,
+        "load_after": [
+          90.71240234375,
+          137.09716796875,
+          197.40185546875
+        ],
+        "finished_at": "2026-10-27T07:11:28.124532+00:00",
+        "compiler_invocations": 1681,
+        "invocations_with_both_flags": 1681,
+        "flags_verified": true,
+        "exclusion_flag": "-finstrument-functions-exclude-file-list=/usr/include/c++/11/,/usr/include/aarch64-linux-gnu/c++/11/",
+        "invocations_with_exclusion": 1681,
+        "python_headers_excluded": false,
+        "pybind11_excluded": false,
+        "scope": "Exclude only GCC 11 standard-library definition paths; retain PyTorch, torch-npu, Python, pybind11 and all other third parties.",
+        "smoke_returncode": 0
+      },
+      "audited_invocations": 1681,
+      "existing_compile_outputs": 1651,
+      "all_existing_outputs_new": true,
+      "missing_temporary_outputs": 26,
+      "compiler_audit_sha256": "257f41711b96e55fec807e5b720b84d24ce5c98222363ec2855254cbc9fcd9a9"
+    }
+  },
+  "libraries": [
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libaoti_custom_ops.so",
+      "file": "libaoti_custom_ops.so",
+      "bytes": 2607064,
+      "needed": [
+        "libtorch.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libbackend_with_compiler.so",
+      "file": "libbackend_with_compiler.so",
+      "bytes": 2035544,
+      "needed": [
+        "libtorch.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libc10.so",
+      "file": "libc10.so",
+      "bytes": 9362624,
+      "needed": [
+        "libnuma.so.1",
+        "libatomic.so.1",
+        "libstdc++.so.6",
+        "libm.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libjitbackend_test.so",
+      "file": "libjitbackend_test.so",
+      "bytes": 1617832,
+      "needed": [
+        "libtorch.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libshm.so",
+      "file": "libshm.so",
+      "bytes": 285320,
+      "needed": [
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libm.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch.so",
+      "file": "libtorch.so",
+      "bytes": 6520,
+      "needed": [
+        "libtorch_cpu.so"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch_cpu.so",
+      "file": "libtorch_cpu.so",
+      "bytes": 1124085472,
+      "needed": [
+        "libc10.so",
+        "libgomp.so.1",
+        "libm.so.6",
+        "libstdc++.so.6",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1",
+        "libgcc_s.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch_global_deps.so",
+      "file": "libtorch_global_deps.so",
+      "bytes": 6576,
+      "needed": [
+        "libc.so.6"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorch_python.so",
+      "file": "libtorch_python.so",
+      "bytes": 281194336,
+      "needed": [
+        "libtorch.so",
+        "libshm.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/lib/libtorchbind_test.so",
+      "file": "libtorchbind_test.so",
+      "bytes": 6447776,
+      "needed": [
+        "libtorch.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch_npu",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/lib/libnpu_profiler.so",
+      "file": "libnpu_profiler.so",
+      "bytes": 902736,
+      "needed": [
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch_npu",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/lib/libop_plugin_atb.so",
+      "file": "libop_plugin_atb.so",
+      "bytes": 9816856,
+      "needed": [
+        "libtorch_npu.so",
+        "libatb.so",
+        "libtorch_cpu.so",
+        "libascendcl.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch_npu",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/lib/libtensorpipe.so",
+      "file": "libtensorpipe.so",
+      "bytes": 19253216,
+      "needed": [
+        "libascendcl.so",
+        "libstdc++.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    },
+    {
+      "package": "torch_npu",
+      "path": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/lib/libtorch_npu.so",
+      "file": "libtorch_npu.so",
+      "bytes": 578661512,
+      "needed": [
+        "libhccl.so",
+        "libascendcl.so",
+        "libacl_op_compiler.so",
+        "libge_runner.so",
+        "libgraph.so",
+        "libtorch_python.so",
+        "libtensorpipe.so",
+        "libnpu_profiler.so",
+        "libtorch.so",
+        "libtorch_cpu.so",
+        "libc10.so",
+        "libstdc++.so.6",
+        "libm.so.6",
+        "libgcc_s.so.1",
+        "libc.so.6",
+        "ld-linux-aarch64.so.1"
+      ]
+    }
+  ],
+  "status": "passed"
+}
