@@ -135,3 +135,71 @@ def test_snapshot_cache_preserves_mutations_aliases_and_class_changes(tmp_path):
     assert any(r[1]=='item:0' for r in refs[1]['added'])
     assert {r[1] for r in refs[0]['added'] if r[0] is None}=={'root:a','root:b'}
     assert any(x['event']=='object' and x['type']['module']=='new_module' for x in events)
+
+
+def test_data_protocol_alias_does_not_break_calls_or_claim_structural_owner(tmp_path):
+    source='''from typing import Protocol, runtime_checkable
+def shared(self):
+    return 7
+@runtime_checkable
+class Interface(Protocol):
+    flag: bool
+    run = shared
+class Actual:
+    flag = True
+    run = shared
+def api():
+    return Actual().run()
+'''
+    tree,path=record(tmp_path,source,lambda m:m.api())
+    assert not tree['gaps']
+    assert all(n['returned'] for n in tree['calls'].values())
+    events=[json.loads(x) for x in (tmp_path/'events.jsonl').read_text().splitlines()]
+    aliases={a for e in events if e['event']=='call' for a in e.get('api_aliases',[])}
+    assert 'runtime:fixture_api.Actual.run' in aliases
+    assert 'runtime:fixture_api.Interface.run' not in aliases
+
+
+def test_nominal_subclass_matching_never_calls_custom_subclasscheck(tmp_path):
+    source='''class Meta(type):
+    def __subclasscheck__(cls, other):
+        raise AssertionError('collector invoked user subclass hook')
+class Parent(metaclass=Meta):
+    def run(self):
+        return 11
+class Child(Parent):
+    pass
+def api():
+    return Child().run()
+'''
+    tree,path=record(tmp_path,source,lambda m:m.api())
+    assert not tree['gaps']
+    events=[json.loads(x) for x in (tmp_path/'events.jsonl').read_text().splitlines()]
+    aliases={a for e in events if e['event']=='call' for a in e.get('api_aliases',[])}
+    assert 'runtime:fixture_api.Parent.run' in aliases
+    assert 'runtime:fixture_api.Child.run' in aliases
+
+
+def test_generators_and_python_and_c_exceptions_remain_balanced(tmp_path):
+    source='''def numbers():
+    yield 1
+    yield 2
+def fail():
+    raise ValueError('expected user exception')
+def api():
+    items=list(numbers())
+    try:
+        items.index(3)
+    except ValueError:
+        pass
+    try:
+        fail()
+    except ValueError:
+        pass
+    return items
+'''
+    tree,path=record(tmp_path,source,lambda m:m.api())
+    assert not tree['gaps']
+    assert all(n['returned'] for n in tree['calls'].values())
+    events=[json.loads(x) for x in (tmp_path/'events.jsonl').read_text().splitlines()]
+    assert any(e['event']=='return' and e['kind']=='c_exception' for e in events)

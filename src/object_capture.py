@@ -14,6 +14,7 @@ import threading
 import time
 import types
 import inspect
+import traceback
 
 
 def test_body_code(item):
@@ -116,6 +117,26 @@ class Recorder:
 
     def emit(self, event_kind, **data):
         self.file.write(json.dumps({'event':event_kind,**data},ensure_ascii=False,separators=(',',':'))+'\n')
+
+    def observe(self, phase, action, *args, **kwargs):
+        """Observation failures mark a gap; they must not consume a stack event."""
+        try:
+            return action(*args, **kwargs)
+        except Exception as exc:
+            self.collector_error(exc, phase)
+            return None
+
+    def collector_error(self, exc, phase):
+        reason='collector_error:'+type(exc).__name__
+        first=reason not in self.gaps
+        self.gaps.add(reason)
+        if first:
+            try:
+                self.emit('gap',reason=reason,phase=phase,
+                          exception_args=[x if type(x) is str else type(x).__name__ for x in exc.args],
+                          traceback=traceback.format_exc())
+            except Exception as write_error:
+                self.gaps.add('evidence_write_error:'+type(write_error).__name__)
 
     def module_source(self,namespace):
         name=namespace.get('__name__');filename=namespace.get('__file__')
@@ -269,41 +290,41 @@ class Recorder:
 
     def profile(self, frame, event, arg, external_uid=None):
         if self.busy or threading.get_ident()!=self.thread:return
-        if self.body_code is not None:
-            if frame.f_code is self.body_code and event in ('call','return'):
-                self.body_depth+=1 if event=='call' else -1
-                if event=='call':self.body_entries+=1
-                return
-            if not self.body_depth and not self.stack:return
-        if self.suppressed:
-            if event=='call':self.suppressed+=1
-            elif event=='return':
-                self.suppressed-=1
-                if not self.suppressed:
-                    if self.registry:self.registry.exclude_returned(arg)
-                    if self.native:self.native.resume_current()
-            return
-        if event=='call' and self.registry:
-            excluded=self.registry.excluded(frame)
-            if excluded:
-                if self.native:self.native.pause()
-                self.suppressed=1
-                self.emit('excluded_call',api_id=excluded,tid=threading.get_native_id(),
-                          parent=self.stack[-1]['uid'] if self.stack else None,
-                          time_ns=time.monotonic_ns(),reason='excluded_runtime_body')
-                return
         self.busy=True
         try:
+            if self.body_code is not None:
+                if frame.f_code is self.body_code and event in ('call','return'):
+                    self.body_depth+=1 if event=='call' else -1
+                    if event=='call':self.body_entries+=1
+                    return
+                if not self.body_depth and not self.stack:return
+            if self.suppressed:
+                if event=='call':self.suppressed+=1
+                elif event=='return':
+                    self.suppressed-=1
+                    if not self.suppressed:
+                        if self.registry:self.observe('excluded_return',self.registry.exclude_returned,arg)
+                        if self.native:self.observe('native_resume',self.native.resume_current)
+                return
+            if event=='call' and self.registry:
+                excluded=self.observe('api_exclusion',self.registry.excluded,frame)
+                if excluded:
+                    if self.native:self.observe('native_pause',self.native.pause)
+                    self.suppressed=1
+                    self.emit('excluded_call',api_id=excluded,tid=threading.get_native_id(),
+                              parent=self.stack[-1]['uid'] if self.stack else None,
+                              time_ns=time.monotonic_ns(),reason='excluded_runtime_body')
+                    return
             if event not in ('call','return','c_call','c_return','c_exception'):return
             if event in ('call','c_call'):
                 module=frame.f_globals.get('__name__') if event=='call' else getattr(arg,'__module__',None)
                 if event=='c_call' and not self.framework(module):
                     module=class_label(type(getattr(arg,'__self__',None))).get('module')
-                aliases=self.registry.match(frame,event,arg) if self.registry else []
+                aliases=(self.observe('api_match',self.registry.match,frame,event,arg) or []) if self.registry else []
                 if external_uid is None and not self.stack and not aliases:return
                 self.next_uid+=1;uid=external_uid if external_uid is not None else self.next_uid
                 parent=self.stack[-1]['uid'] if self.stack else None
-                definition=self.code(frame.f_code,module) if event=='call' else None
+                definition=self.observe('code_definition',self.code,frame.f_code,module) if event=='call' else None
                 name=getattr(frame.f_code,'co_qualname',frame.f_code.co_name) if event=='call' else getattr(arg,'__qualname__',getattr(arg,'__name__','native'))
                 row={'uid':uid,'parent':parent,'kind':'python' if event=='call' else 'native_boundary',
                      'tid':threading.get_native_id(),'time_ns':time.monotonic_ns(),
@@ -320,28 +341,36 @@ class Recorder:
                 self.emit('call',**row)
                 self.stack.append({**row,'frame':id(frame),'callable':id(arg) if event=='c_call' else None})
                 self.calls+=1;self.roots+=int(parent is None)
-                self.snapshot(frame,'entry' if event=='call' else 'native_entry',
-                              None if event=='call' else {'callable':arg,'receiver':getattr(arg,'__self__',None)})
+                self.observe('entry_snapshot',self.snapshot,frame,'entry' if event=='call' else 'native_entry',
+                             None if event=='call' else {'callable':arg,'receiver':getattr(arg,'__self__',None)})
                 if event=='c_call' and self.native:
-                    if getattr(self.native,'storage',None)=='paths':self.native.begin(uid,row['native_identity'],context=row['path_context'])
-                    else:self.native.begin(uid,row['native_identity'])
+                    if getattr(self.native,'storage',None)=='paths':self.observe('native_begin',self.native.begin,uid,row['native_identity'],context=row['path_context'])
+                    else:self.observe('native_begin',self.native.begin,uid,row['native_identity'])
             elif self.stack:
                 top=self.stack[-1]
                 matches=(top['kind']=='python' and event=='return' and top['frame']==id(frame)) or (
-                    top['kind']=='native_boundary' and event in ('c_return','c_exception') and top['callable']==id(arg))
+                    top['kind']=='native_boundary' and event in ('c_return','c_exception') and top['frame']==id(frame) and top['callable']==id(arg))
                 if not matches:
-                    self.gaps.add('call_return_mismatch');self.emit('gap',reason='call_return_mismatch',uid=top['uid']);return
+                    self.gaps.add('call_return_mismatch')
+                    self.emit('gap',reason='call_return_mismatch',uid=top['uid'],observed_event=event,
+                              expected_kind=top['kind'],expected_frame=top['frame'],observed_frame=id(frame),
+                              expected_callable=top['callable'],observed_callable=id(arg) if event!='return' else None)
+                    return
                 if event=='return':
-                    self.snapshot(frame,'exit');self.snapshot(frame,'return',{'return':arg})
-                elif self.native:self.native.end(top['uid'])
-                self.emit('return',uid=top['uid'],kind=event,time_ns=time.monotonic_ns())
-                self.stack.pop()
-                self.read_sites.pop(top['uid'],None)
-                self.module_operands.pop(top['uid'],None)
-                for key in [k for k in self.views if k[0]==top['uid']]:self.views.pop(key)
+                    self.observe('exit_snapshot',self.snapshot,frame,'exit')
+                    self.observe('return_snapshot',self.snapshot,frame,'return',{'return':arg})
+                elif self.native:self.observe('native_end',self.native.end,top['uid'])
+                # A real return always retires its matching frame, including when
+                # optional snapshots or native bookkeeping reported an error.
+                try:self.emit('return',uid=top['uid'],kind=event,time_ns=time.monotonic_ns())
+                finally:
+                    self.stack.pop()
+                    self.read_sites.pop(top['uid'],None)
+                    self.module_operands.pop(top['uid'],None)
+                    for key in [k for k in self.views if k[0]==top['uid']]:self.views.pop(key)
                 if not self.stack:self.file.flush()  # Preserve each completed API window, not each object event.
         except Exception as exc:
-            self.gaps.add('collector_error:'+type(exc).__name__)
+            self.collector_error(exc,'profile_'+event)
         finally:self.busy=False
 
     def trace(self, frame, event, arg):

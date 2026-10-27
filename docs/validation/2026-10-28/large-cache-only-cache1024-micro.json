@@ -1,0 +1,14 @@
+{
+  "orphan_count_covering": {
+    "seconds": 10.58895477999613,
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "full_foreign_key_check": {
+    "seconds": 80.79192504000093,
+    "rows": []
+  }
+}

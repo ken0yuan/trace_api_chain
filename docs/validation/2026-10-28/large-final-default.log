@@ -1,0 +1,19 @@
+trace-api-chain replay: resolving addresses offline
+Source mapping: libtorch_python.so (1700 addresses)
+Source mapping: python3.11 (7 addresses)
+Source mapping: libc10.so (718 addresses)
+Source mapping: libtorch_cpu.so (4040 addresses)
+Source mapping: libtorch_npu.so (3541 addresses)
+Source mapping: libtensorpipe.so (2 addresses)
+Source mapping: libascend_hal.so (22 addresses)
+Source mapping: libunified_dlog.so (7 addresses)
+Source mapping: libascend_trace.so (11 addresses)
+Source mapping: libmmpa.so (2 addresses)
+Source mapping: libtsdclient.so (4 addresses)
+Source mapping: libruntime.so (3 addresses)
+Source mapping: libnpu_profiler.so (5 addresses)
+Source mapping: libc.so.6 (1 addresses)
+Source mapping: libc_sec.so (1 addresses)
+SLOW_SQL 62.293 DELETE FROM paths WHERE NOT EXISTS (SELECT 1 FROM path_support s WHERE s.path_id=paths.id)
+SLOW_SQL 128.119 PRAGMA foreign_key_check
+BENCHMARK_DONE default 5.718155539994768 203.54550993000157

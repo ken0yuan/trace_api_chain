@@ -8,6 +8,23 @@ from trace_api_chain.pipeline import prepare
 from test_pytest_entry import launch,PRELUDE
 
 
+def test_upgrade_adds_lookup_indexes_and_preserves_existing_graph(tmp_path):
+    from trace_api_chain.database import connect
+    data=capture(tmp_path,'def test_one():\n backend.run(1)\n');db=tmp_path/'all.sqlite'
+    refresh(db,data);before=query(db,'fixture_api.Backend.run')
+    with sqlite3.connect(db) as conn:
+        for name in ('entities_source_version','slot_entities_entity','paths_parent'):
+            conn.execute('DROP INDEX IF EXISTS '+name)
+    conn=connect(db)
+    try:
+        plan=list(conn.execute("EXPLAIN QUERY PLAN SELECT s.slot_id FROM slot_entities s JOIN entities e ON e.id=s.entity_id WHERE e.path=? AND s.source_sha256 IS NOT NULL AND s.source_sha256<>?",('unknown','different')))
+        assert any('entities_source_version' in r[3] for r in plan)
+        assert any('slot_entities_entity' in r[3] for r in plan)
+        assert not conn.execute('PRAGMA foreign_key_check').fetchall()
+    finally:conn.close()
+    assert query(db,'fixture_api.Backend.run')==before
+
+
 def capture(tmp_path,body):
     out=tmp_path/'capture'
     r=launch(tmp_path,PRELUDE+body,'--callchain-out='+str(out),'--callchain-mode=objects','--callchain-namespaces=fixture_api')
@@ -123,3 +140,39 @@ def test_source_change_marks_other_test_evidence_stale(tmp_path):
     assert dict(conn.execute('SELECT id,status FROM capture_slots'))=={'first':'current','second':'stale'}
     conn.close()
     assert [e['id'] for e in query(db,'fixture_api.Backend.run')['evidence']]==['first']
+
+
+@pytest.mark.parametrize('budget',[0,-1,16385,True,'128'])
+def test_invalid_cache_budget_does_not_create_database(tmp_path,budget):
+    from trace_api_chain.database import connect
+    path=tmp_path/'invalid.sqlite'
+    with pytest.raises(ValueError,match='database_cache_mib'):
+        connect(path,cache_mib=budget)
+    assert not path.exists()
+
+
+@pytest.mark.parametrize('budget',['0','16385'])
+def test_replay_cli_rejects_invalid_budget_before_reading_capture(tmp_path,monkeypatch,capsys,budget):
+    from trace_api_chain.cli import main
+    path=tmp_path/'invalid.sqlite'
+    monkeypatch.setattr('sys.argv',['trace-api-chain','replay',str(tmp_path/'missing-capture'),'--db',str(path),'--db-cache-mib',budget])
+    with pytest.raises(SystemExit) as exc:main()
+    assert exc.value.code==2
+    assert '--db-cache-mib' in capsys.readouterr().err
+    assert not path.exists()
+
+
+def test_cleanup_removes_unreferenced_tree_and_null_identity(tmp_path):
+    data=capture(tmp_path,'def test_one():\n backend.run(1)\n')
+    path=tmp_path/'all.sqlite';refresh(path,data,slot='first')
+    with sqlite3.connect(path) as db:
+        db.execute('PRAGMA foreign_keys=ON')
+        db.execute("INSERT INTO paths(id,parent_id,edge_kind,depth) VALUES ('unused-parent',NULL,'unused',0)")
+        db.execute("INSERT INTO paths(id,parent_id,edge_kind,depth) VALUES ('unused-child','unused-parent','unused',1)")
+        db.execute("INSERT INTO paths(id,parent_id,edge_kind,depth) VALUES (NULL,NULL,'unused',0)")
+    refresh(path,data,slot='second')
+    with sqlite3.connect(path) as db:
+        assert db.execute("SELECT count(*) FROM paths WHERE edge_kind='unused'").fetchone()[0]==0
+        assert db.execute('SELECT count(*) FROM capture_slots').fetchone()[0]==2
+        assert db.execute('PRAGMA foreign_key_check').fetchall()==[]
+    assert query(path,'fixture_api.Backend.run')['nodes']

@@ -1,0 +1,657 @@
+{
+  "prepare_seconds": 6.306071539998811,
+  "refresh_seconds": 238.59881999000208,
+  "result": {
+    "test": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+    "captured_calls": 67401,
+    "canonical_entities": 3160,
+    "api_definitions": 56,
+    "normalized_paths": 90081,
+    "pending_objects": 3532,
+    "source_dependencies": 0,
+    "source_read_policy": "namespace-load/1",
+    "gaps": [],
+    "raw_evidence": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/profile-capture",
+    "graph_digest": "0bbe21ed985063d4c9031c9fdd73591c04cdbf78afd3cd55ee89a0ae309f9cae",
+    "native_storage": "paths",
+    "native_invocations": 623124,
+    "native_path_nodes": 67264,
+    "runtime_event_history_preserved": false,
+    "status": "refreshed",
+    "slot": "diagnostic-replay-profile"
+  },
+  "top_own": [
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'execute' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 100374,
+      "calls": 100374,
+      "own_seconds": 227.5889778,
+      "cumulative_seconds": 227.5889778
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/encoder.py",
+      "line": 205,
+      "name": "iterencode",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 2.8011940500000003,
+      "cumulative_seconds": 2.80120313
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'update' of '_hashlib.HASH' objects>",
+      "primitive_calls": 16627,
+      "calls": 16627,
+      "own_seconds": 2.19124718,
+      "cumulative_seconds": 2.19124718
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'executemany' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 9,
+      "calls": 9,
+      "own_seconds": 1.54429419,
+      "cumulative_seconds": 1.54429419
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/decoder.py",
+      "line": 343,
+      "name": "raw_decode",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.9431853800000001,
+      "cumulative_seconds": 0.9431853800000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.compile>",
+      "primitive_calls": 37,
+      "calls": 37,
+      "own_seconds": 0.8594178100000001,
+      "cumulative_seconds": 0.8594178100000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'readinto' of '_io.BufferedReader' objects>",
+      "primitive_calls": 17180,
+      "calls": 17180,
+      "own_seconds": 0.79456607,
+      "cumulative_seconds": 0.79456607
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/compact.py",
+      "line": 68,
+      "name": "rebuild_paths",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.4839898,
+      "cumulative_seconds": 0.73359658
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 91,
+      "name": "normalize",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.44925801000000004,
+      "cumulative_seconds": 6.188603130000001
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 141,
+      "name": "visit",
+      "primitive_calls": 67401,
+      "calls": 134766,
+      "own_seconds": 0.37638566,
+      "cumulative_seconds": 1.7974511000000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/changed_objects.py",
+      "line": 74,
+      "name": "walk",
+      "primitive_calls": 36,
+      "calls": 216170,
+      "own_seconds": 0.36763677,
+      "cumulative_seconds": 1.0234577900000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/ast.py",
+      "line": 267,
+      "name": "iter_child_nodes",
+      "primitive_calls": 433491,
+      "calls": 433491,
+      "own_seconds": 0.32492619,
+      "cumulative_seconds": 0.58397692
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method posix.lstat>",
+      "primitive_calls": 112590,
+      "calls": 112590,
+      "own_seconds": 0.29953269000000005,
+      "cumulative_seconds": 0.29953269000000005
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 131,
+      "name": "refresh",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.26637425000000003,
+      "cumulative_seconds": 238.56839206
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'splitlines' of 'str' objects>",
+      "primitive_calls": 1010,
+      "calls": 1010,
+      "own_seconds": 0.25748877000000003,
+      "cumulative_seconds": 0.25748877000000003
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/pathlib.py",
+      "line": 56,
+      "name": "parse_parts",
+      "primitive_calls": 30396,
+      "calls": 30396,
+      "own_seconds": 0.25267812,
+      "cumulative_seconds": 0.4084105
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.isinstance>",
+      "primitive_calls": 1898895,
+      "calls": 1898895,
+      "own_seconds": 0.21975356000000001,
+      "cumulative_seconds": 0.21980238000000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/pipeline.py",
+      "line": 10,
+      "name": "prepare",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.21783094,
+      "cumulative_seconds": 6.30391465
+    },
+    {
+      "file": "<frozen posixpath>",
+      "line": 418,
+      "name": "_joinrealpath",
+      "primitive_calls": 11747,
+      "calls": 11747,
+      "own_seconds": 0.21206063,
+      "cumulative_seconds": 0.8757832200000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/__init__.py",
+      "line": 183,
+      "name": "dumps",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 0.21170395,
+      "cumulative_seconds": 3.33372132
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'commit' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.20789095000000002,
+      "cumulative_seconds": 0.20789095000000002
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'get' of 'dict' objects>",
+      "primitive_calls": 1018856,
+      "calls": 1018856,
+      "own_seconds": 0.20347295,
+      "cumulative_seconds": 0.20347295
+    },
+    {
+      "file": "<frozen posixpath>",
+      "line": 71,
+      "name": "join",
+      "primitive_calls": 112614,
+      "calls": 112614,
+      "own_seconds": 0.19384821000000002,
+      "cumulative_seconds": 0.30673062
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/changed_objects.py",
+      "line": 18,
+      "name": "key",
+      "primitive_calls": 120719,
+      "calls": 120719,
+      "own_seconds": 0.18510568000000002,
+      "cumulative_seconds": 1.9296545600000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/encoder.py",
+      "line": 183,
+      "name": "encode",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 0.18164552,
+      "cumulative_seconds": 3.0684456
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/ast.py",
+      "line": 255,
+      "name": "iter_fields",
+      "primitive_calls": 569275,
+      "calls": 569275,
+      "own_seconds": 0.1540109,
+      "cumulative_seconds": 0.19402734000000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 68,
+      "name": "dwarf_definitions",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.14115545000000002,
+      "cumulative_seconds": 1.6782321
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method _hashlib.openssl_sha256>",
+      "primitive_calls": 121247,
+      "calls": 121247,
+      "own_seconds": 0.13018633000000002,
+      "cumulative_seconds": 0.13018633000000002
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/decoder.py",
+      "line": 332,
+      "name": "decode",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.12282882,
+      "cumulative_seconds": 1.1503848700000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.sorted>",
+      "primitive_calls": 7615,
+      "calls": 7615,
+      "own_seconds": 0.11351432,
+      "cumulative_seconds": 0.12735728000000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/replay.py",
+      "line": 21,
+      "name": "rebuild",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.10316548,
+      "cumulative_seconds": 0.16365502
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'poll' of 'select.poll' objects>",
+      "primitive_calls": 18,
+      "calls": 18,
+      "own_seconds": 0.09458923000000001,
+      "cumulative_seconds": 0.09458923000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'startswith' of 'str' objects>",
+      "primitive_calls": 425075,
+      "calls": 425075,
+      "own_seconds": 0.09309920000000001,
+      "cumulative_seconds": 0.09309920000000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'read' of '_io.TextIOWrapper' objects>",
+      "primitive_calls": 527,
+      "calls": 527,
+      "own_seconds": 0.09035282,
+      "cumulative_seconds": 0.12848129
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/__init__.py",
+      "line": 299,
+      "name": "loads",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.0783004,
+      "cumulative_seconds": 1.25349521
+    }
+  ],
+  "top_cumulative": [
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 131,
+      "name": "refresh",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.26637425000000003,
+      "cumulative_seconds": 238.56839206
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'execute' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 100374,
+      "calls": 100374,
+      "own_seconds": 227.5889778,
+      "cumulative_seconds": 227.5889778
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/pipeline.py",
+      "line": 10,
+      "name": "prepare",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.21783094,
+      "cumulative_seconds": 6.30391465
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 91,
+      "name": "normalize",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.44925801000000004,
+      "cumulative_seconds": 6.188603130000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/__init__.py",
+      "line": 183,
+      "name": "dumps",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 0.21170395,
+      "cumulative_seconds": 3.33372132
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/source_entities.py",
+      "line": 33,
+      "name": "load",
+      "primitive_calls": 9737,
+      "calls": 9737,
+      "own_seconds": 0.05433269,
+      "cumulative_seconds": 3.2679123100000003
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/encoder.py",
+      "line": 183,
+      "name": "encode",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 0.18164552,
+      "cumulative_seconds": 3.0684456
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/hashlib.py",
+      "line": 257,
+      "name": "file_digest",
+      "primitive_calls": 553,
+      "calls": 553,
+      "own_seconds": 0.02612155,
+      "cumulative_seconds": 3.01494287
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/symbols.py",
+      "line": 68,
+      "name": "resolve",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.07566828,
+      "cumulative_seconds": 2.9485070600000003
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/encoder.py",
+      "line": 205,
+      "name": "iterencode",
+      "primitive_calls": 127433,
+      "calls": 127433,
+      "own_seconds": 2.8011940500000003,
+      "cumulative_seconds": 2.80120313
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'update' of '_hashlib.HASH' objects>",
+      "primitive_calls": 16627,
+      "calls": 16627,
+      "own_seconds": 2.19124718,
+      "cumulative_seconds": 2.19124718
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/changed_objects.py",
+      "line": 18,
+      "name": "key",
+      "primitive_calls": 120719,
+      "calls": 120719,
+      "own_seconds": 0.18510568000000002,
+      "cumulative_seconds": 1.9296545600000001
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/changed_objects.py",
+      "line": 48,
+      "name": "index_python",
+      "primitive_calls": 36,
+      "calls": 36,
+      "own_seconds": 0.015470030000000001,
+      "cumulative_seconds": 1.9078321900000001
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 141,
+      "name": "visit",
+      "primitive_calls": 67401,
+      "calls": 134766,
+      "own_seconds": 0.37638566,
+      "cumulative_seconds": 1.7974511000000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/database.py",
+      "line": 68,
+      "name": "dwarf_definitions",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.14115545000000002,
+      "cumulative_seconds": 1.6782321
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/source_entities.py",
+      "line": 44,
+      "name": "python",
+      "primitive_calls": 85,
+      "calls": 85,
+      "own_seconds": 0.0002722,
+      "cumulative_seconds": 1.67240005
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'executemany' of 'sqlite3.Connection' objects>",
+      "primitive_calls": 9,
+      "calls": 9,
+      "own_seconds": 1.54429419,
+      "cumulative_seconds": 1.54429419
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/native.py",
+      "line": 12,
+      "name": "digest",
+      "primitive_calls": 31,
+      "calls": 31,
+      "own_seconds": 0.00022357,
+      "cumulative_seconds": 1.5337714800000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/symbols.py",
+      "line": 19,
+      "name": "sha",
+      "primitive_calls": 522,
+      "calls": 522,
+      "own_seconds": 0.0023265,
+      "cumulative_seconds": 1.4969255300000002
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/source_entities.py",
+      "line": 53,
+      "name": "instance",
+      "primitive_calls": 2483,
+      "calls": 2483,
+      "own_seconds": 0.01617152,
+      "cumulative_seconds": 1.41695035
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/pathlib.py",
+      "line": 981,
+      "name": "resolve",
+      "primitive_calls": 11747,
+      "calls": 11747,
+      "own_seconds": 0.027699090000000003,
+      "cumulative_seconds": 1.3444312
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/__init__.py",
+      "line": 299,
+      "name": "loads",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.0783004,
+      "cumulative_seconds": 1.25349521
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/decoder.py",
+      "line": 332,
+      "name": "decode",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.12282882,
+      "cumulative_seconds": 1.1503848700000001
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/changed_objects.py",
+      "line": 74,
+      "name": "walk",
+      "primitive_calls": 36,
+      "calls": 216170,
+      "own_seconds": 0.36763677,
+      "cumulative_seconds": 1.0234577900000001
+    },
+    {
+      "file": "<frozen posixpath>",
+      "line": 409,
+      "name": "realpath",
+      "primitive_calls": 11747,
+      "calls": 11747,
+      "own_seconds": 0.023473780000000003,
+      "cumulative_seconds": 1.00651555
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/pipeline.py",
+      "line": 23,
+      "name": "<listcomp>",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.0388996,
+      "cumulative_seconds": 0.9778991800000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/json/decoder.py",
+      "line": 343,
+      "name": "raw_decode",
+      "primitive_calls": 77006,
+      "calls": 77006,
+      "own_seconds": 0.9431853800000001,
+      "cumulative_seconds": 0.9431853800000001
+    },
+    {
+      "file": "<frozen posixpath>",
+      "line": 418,
+      "name": "_joinrealpath",
+      "primitive_calls": 11747,
+      "calls": 11747,
+      "own_seconds": 0.21206063,
+      "cumulative_seconds": 0.8757832200000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<built-in method builtins.compile>",
+      "primitive_calls": 37,
+      "calls": 37,
+      "own_seconds": 0.8594178100000001,
+      "cumulative_seconds": 0.8594178100000001
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/ast.py",
+      "line": 33,
+      "name": "parse",
+      "primitive_calls": 36,
+      "calls": 36,
+      "own_seconds": 0.0001239,
+      "cumulative_seconds": 0.8588817700000001
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/replay.py",
+      "line": 17,
+      "name": "canonical",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.010545200000000001,
+      "cumulative_seconds": 0.8578415800000001
+    },
+    {
+      "file": "~",
+      "line": 0,
+      "name": "<method 'readinto' of '_io.BufferedReader' objects>",
+      "primitive_calls": 17180,
+      "calls": 17180,
+      "own_seconds": 0.79456607,
+      "cumulative_seconds": 0.79456607
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/compact.py",
+      "line": 68,
+      "name": "rebuild_paths",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_seconds": 0.4839898,
+      "cumulative_seconds": 0.73359658
+    },
+    {
+      "file": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/baseline/trace_api_chain/source_entities.py",
+      "line": 126,
+      "name": "cpp",
+      "primitive_calls": 4634,
+      "calls": 4634,
+      "own_seconds": 0.05057868,
+      "cumulative_seconds": 0.72819084
+    },
+    {
+      "file": "/home/workspace-ycy/tools/python/cpython-3.11.17-linux-aarch64-gnu/lib/python3.11/ast.py",
+      "line": 267,
+      "name": "iter_child_nodes",
+      "primitive_calls": 433491,
+      "calls": 433491,
+      "own_seconds": 0.32492619,
+      "cumulative_seconds": 0.58397692
+    }
+  ]
+}

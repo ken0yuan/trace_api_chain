@@ -1,0 +1,18 @@
+{
+  "state": "complete",
+  "repaired_cases": 75,
+  "pending_replays_recovered": 6,
+  "graphs_imported": 81,
+  "relation_evidence": {
+    "tests_verified": 75,
+    "new_observations": 0,
+    "new_evidence": 5367,
+    "prior_evidence_preserved": true,
+    "completed_tests_preserved": true,
+    "foreign_key_check": "passed",
+    "integrity_check": "passed"
+  },
+  "elapsed_seconds": 1843.6483232975006,
+  "all_graph_gaps": 0,
+  "all_old_evidence_preserved": true
+}

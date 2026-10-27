@@ -10,10 +10,13 @@ def main():
     replay.add_argument('--mode',choices=('full','objects'))
     replay.add_argument('--source-root',action='append',default=[],metavar='LABEL=PATH')
     replay.add_argument('--slot',help='Explicit latest-evidence slot, only for a single input')
+    replay.add_argument('--db-cache-mib',type=int,default=4096,help='SQLite writer page-cache budget in MiB (1..16384; default: 4096)')
     listing=sub.add_parser('apis',help='List observed APIs in the database');listing.add_argument('--db',required=True)
     query=sub.add_parser('query',help='Read an API graph from SQL');query.add_argument('--db',required=True);query.add_argument('--api',required=True);query.add_argument('--out')
     render=sub.add_parser('html',help='Generate C03 solely from SQL');render.add_argument('--db',required=True);render.add_argument('--api',required=True);render.add_argument('--out',required=True)
     args=parser.parse_args()
+    if args.command=='replay' and not 1<=args.db_cache_mib<=16384:
+        parser.error('--db-cache-mib must be between 1 and 16384')
     from .database import refresh,list_apis,query as query_api,render_api
     from .native import save
     from pathlib import Path
@@ -24,7 +27,7 @@ def main():
         results=[]
         for capture in args.captures:
             data=prepare(capture,args.mode)
-            report=refresh(args.db,data,roots=roots,slot=args.slot)
+            report=refresh(args.db,data,roots=roots,slot=args.slot,cache_mib=args.db_cache_mib)
             save(Path(capture)/'replay-result.json',report);results.append(report)
         print(json.dumps(results,ensure_ascii=False,indent=2));return 0
     if args.command=='apis':report=list_apis(args.db)

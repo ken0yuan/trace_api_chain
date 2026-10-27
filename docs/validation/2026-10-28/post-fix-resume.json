@@ -1,0 +1,27 @@
+{
+  "pid": 21255,
+  "target_host": "179.163.3.2",
+  "target_container": "a9693009a26e",
+  "output": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-018-2026-10-27",
+  "started_at": 1793121840.4057765,
+  "regular_workers": 8,
+  "devices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "replay_workers": 1,
+  "trace_plugin_version": "0.3.1",
+  "api_plugin_version": "0.1.8",
+  "api_git_commit": "2d018e7602a1a157d721a26f1ef16bec6bf8da45",
+  "recovery_report": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/recovery-result.json",
+  "prior_attempted": 177,
+  "prior_dual_valid": 175,
+  "migrated_valid_not_new": 11,
+  "full_catalog": 10362
+}

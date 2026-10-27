@@ -1,0 +1,24 @@
+{
+  "prepare_seconds": 5.848286820000794,
+  "refresh_seconds": 28.240416559994628,
+  "total_seconds": 34.08870337999542,
+  "report": {
+    "test": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+    "captured_calls": 67401,
+    "canonical_entities": 3160,
+    "api_definitions": 56,
+    "normalized_paths": 90081,
+    "pending_objects": 3532,
+    "source_dependencies": 0,
+    "source_read_policy": "namespace-load/1",
+    "gaps": [],
+    "raw_evidence": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/profile-capture",
+    "graph_digest": "0bbe21ed985063d4c9031c9fdd73591c04cdbf78afd3cd55ee89a0ae309f9cae",
+    "native_storage": "paths",
+    "native_invocations": 623124,
+    "native_path_nodes": 67264,
+    "runtime_event_history_preserved": false,
+    "status": "refreshed",
+    "slot": "benchmark-equal-input"
+  }
+}

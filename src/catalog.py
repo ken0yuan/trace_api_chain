@@ -65,7 +65,11 @@ class Registry:
         if event=='call':
             candidates=self.python.get((frame.f_code,id(frame.f_globals)),[])
             owner=type(frame.f_locals.get('self'))
-            matching=[(api,cls) for api,cls in candidates if cls is None or issubclass(owner,cls)]
+            # API ownership is nominal inheritance, not structural conformance.
+            # issubclass invokes metaclass hooks and raises for data Protocols.
+            # Read type's own MRO descriptor and compare class identities only.
+            mro=type.__dict__['__mro__'].__get__(owner,type(owner))
+            matching=[(api,cls) for api,cls in candidates if cls is None or any(base is cls for base in mro)]
             return sorted({api for api,cls in matching})
         aliases=set(self.native.get(id(arg),()))
         receiver=getattr(arg,'__self__',None)

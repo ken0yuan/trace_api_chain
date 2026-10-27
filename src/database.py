@@ -42,6 +42,9 @@ CREATE INDEX IF NOT EXISTS paths_api ON paths(api_id,parent_id);
 CREATE INDEX IF NOT EXISTS paths_entity ON paths(entity_id);
 CREATE INDEX IF NOT EXISTS support_path ON path_support(path_id);
 CREATE INDEX IF NOT EXISTS api_alias_lookup ON api_aliases(alias);
+CREATE INDEX IF NOT EXISTS entities_source_version ON entities(path,source_sha256);
+CREATE INDEX IF NOT EXISTS slot_entities_entity ON slot_entities(entity_id,slot_id);
+CREATE INDEX IF NOT EXISTS paths_parent ON paths(parent_id);
 CREATE VIEW IF NOT EXISTS canonical_relations AS
  SELECT DISTINCT parent.entity_id AS src_id,child.entity_id AS dst_id,child.edge_kind
  FROM paths child JOIN paths parent ON parent.id=child.parent_id
@@ -50,7 +53,9 @@ CREATE VIEW IF NOT EXISTS canonical_relations AS
 '''
 
 
-def connect(path,readonly=False):
+def connect(path,readonly=False,cache_mib=4096):
+    if type(cache_mib) is not int or not 1<=cache_mib<=16384:
+        raise ValueError('database_cache_mib_must_be_between_1_and_16384')
     path=Path(path)
     if readonly:
         db=sqlite3.connect(path.resolve().as_uri()+'?mode=ro',uri=True)
@@ -58,6 +63,7 @@ def connect(path,readonly=False):
         path.parent.mkdir(parents=True,exist_ok=True)
         db=sqlite3.connect(path,timeout=60)
     db.row_factory=sqlite3.Row;db.execute('PRAGMA foreign_keys=ON')
+    if not readonly:db.execute('PRAGMA cache_size='+str(-cache_mib*1024))
     tables={r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     if tables and ('schema_info' not in tables or db.execute('SELECT version FROM schema_info').fetchone()[0]!=1):
         db.close();raise ValueError('incompatible_database_schema: existing legacy databases are not overwritten')
@@ -128,7 +134,7 @@ def normalize(prepared,roots=None,definitions=None):
     return source,mapping,object_map,aliases,pending,calls
 
 
-def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
+def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=4096):
     """Replace one test's contribution atomically; other API evidence is retained."""
     source,mapping,object_map,aliases,pending,calls=normalize(prepared,roots,definitions)
     graph=prepared['graph'];start=next(e for e in prepared['events'] if e['event']=='start')
@@ -194,7 +200,7 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
     if graph.get('native_storage')=='paths':
         summary.update(native_storage='paths',native_invocations=graph['native_activations'],
                        native_path_nodes=graph['native_path_nodes'],runtime_event_history_preserved=False)
-    db=connect(db_path)
+    db=connect(db_path,cache_mib=cache_mib)
     try:
         db.execute('BEGIN IMMEDIATE')
         existing=db.execute('SELECT import_digest FROM capture_slots WHERE id=?',(slot,)).fetchone()
@@ -223,7 +229,10 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None):
         db.executemany('INSERT INTO object_references VALUES(?,?,?,?,?)',[(slot,*x) for x in sorted(reference_links)])
         db.executemany('INSERT INTO source_dependencies VALUES(?,?,?,?,?)',[(slot,*x) for x in dependency_rows])
         db.executemany('INSERT INTO pending VALUES(?,?,?,?)',[(slot,*x) for x in pending])
-        db.execute('DELETE FROM paths WHERE NOT EXISTS (SELECT 1 FROM path_support s WHERE s.path_id=paths.id)')
+        # Scan the covering identity index in key order, so support lookups
+        # follow the same order instead of randomly probing the entire history.
+        # Select rowids to retain the previous cleanup semantics for NULL ids.
+        db.execute('DELETE FROM paths WHERE rowid IN (SELECT p.rowid FROM paths p WHERE NOT EXISTS (SELECT 1 FROM path_support s WHERE s.path_id=p.id) ORDER BY p.id)')
         if db.execute('PRAGMA foreign_key_check').fetchall():raise ValueError('database_foreign_key_check_failed')
         db.commit()
     except BaseException:

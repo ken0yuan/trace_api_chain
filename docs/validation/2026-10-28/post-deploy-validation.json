@@ -1,0 +1,79 @@
+{
+  "state": "passed",
+  "elapsed_seconds": 64.7342336100046,
+  "result": {
+    "nodeid": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+    "file": "test/nn/test_dropout.py",
+    "category": "core",
+    "markers": [],
+    "isolated": false,
+    "capture_scope": "calling_thread_instrumented_host_objects",
+    "id": "000112-2780d4893402",
+    "returncode": 0,
+    "elapsed_seconds": 43.766998489998514,
+    "timeout": false,
+    "execution_host": "179.163.3.2",
+    "hardware": "910B2",
+    "devices": "0",
+    "capture": {
+      "status": "captured",
+      "stage": "capture_only",
+      "mode": "full",
+      "gaps": [],
+      "native_storage": "paths",
+      "pytest_exit_code": 0,
+      "elapsed_seconds": 35.08226124999783,
+      "replay_performed": false,
+      "database_written": false,
+      "html_generated": false
+    },
+    "test_reports": [
+      {
+        "nodeid": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+        "when": "setup",
+        "outcome": "passed",
+        "duration": 0.021386429994890932
+      },
+      {
+        "nodeid": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+        "when": "call",
+        "outcome": "passed",
+        "duration": 4.661621840001317
+      },
+      {
+        "nodeid": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+        "when": "teardown",
+        "outcome": "passed",
+        "duration": 0.01681665000069188
+      }
+    ],
+    "test_body_started": true,
+    "test_body_ended": true,
+    "capture_dir": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/post-deploy-smoke/captures/000112-2780d4893402",
+    "log": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/post-deploy-smoke/logs/000112-2780d4893402.log",
+    "relations": {
+      "state": "capture_finished",
+      "updated_at": 1793121747.6891947,
+      "tests": 1,
+      "relations": 73,
+      "gaps": 0,
+      "apis_observed": 72,
+      "proves_zero_omissions": false
+    },
+    "relations_dir": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/post-deploy-smoke/relations/000112-2780d4893402",
+    "dual_capture_valid": true,
+    "replay_status": "complete",
+    "relations_merge": {
+      "returncode": 0,
+      "elapsed_seconds": 0.6663528100034455,
+      "timeout": false
+    },
+    "relations_raw_removed": true,
+    "relations_database": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/post-deploy-smoke/api-test-relations.sqlite",
+    "replay": {
+      "returncode": 0,
+      "elapsed_seconds": 20.295683719996305,
+      "timeout": false
+    }
+  }
+}

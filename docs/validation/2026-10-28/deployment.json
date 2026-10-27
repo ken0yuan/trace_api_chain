@@ -1,0 +1,20 @@
+{
+  "trace_plugin_version": "0.3.1",
+  "trace_wheel_sha256": "ff85004a04595e2a11f12f552bb2dbdcf31fb3301f17e7f9b1782664facc1dad",
+  "api_git_commit": "2d018e7602a1a157d721a26f1ef16bec6bf8da45",
+  "api_package_version": "0.1.8",
+  "frozen_runtime": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-018-2026-10-27/plugin-runtime",
+  "installed_at": 1793121623.0400112,
+  "frozen_distribution_version": "0.3.1",
+  "metadata_verified_at": 1793121706.4015498,
+  "version_label_verified_at": 1793121836.4945006,
+  "wheel_path": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/dist-release/trace_api_chain-0.3.1-py3-none-any.whl",
+  "sqlite_writer_cache_mib": 4096,
+  "replay_optimization_deployed_at": 1793123824.04879,
+  "capture_code_unchanged": true,
+  "old_replay_allowed_to_finish": true,
+  "replay_optimization_validation": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/large-db-final-benchmark/comparison.json",
+  "release_tests": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/release-regressions.json",
+  "source_bytes_normalized_to_git": true,
+  "source_normalized_at": 1793124184.1112823
+}

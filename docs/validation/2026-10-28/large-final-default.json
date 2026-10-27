@@ -1,0 +1,170 @@
+{
+  "prepare_seconds": 5.718155539994768,
+  "refresh_seconds": 203.54550993000157,
+  "total_seconds": 209.26366546999634,
+  "result": {
+    "test": "test/nn/test_dropout.py::TestDropoutNNDeviceTypePRIVATEUSE1::test_Dropout1d_npu_float64",
+    "captured_calls": 67401,
+    "canonical_entities": 3160,
+    "api_definitions": 56,
+    "normalized_paths": 90081,
+    "pending_objects": 3532,
+    "source_dependencies": 0,
+    "source_read_policy": "namespace-load/1",
+    "gaps": [],
+    "raw_evidence": "/home/workspace-ycy/compile-performance/trace-fault-2026-10-27/profile-capture",
+    "graph_digest": "0bbe21ed985063d4c9031c9fdd73591c04cdbf78afd3cd55ee89a0ae309f9cae",
+    "native_storage": "paths",
+    "native_invocations": 623124,
+    "native_path_nodes": 67264,
+    "runtime_event_history_preserved": false,
+    "status": "refreshed",
+    "slot": "diagnostic-large-final-comparison"
+  },
+  "sql_timings": [
+    {
+      "sql": "PRAGMA foreign_key_check",
+      "count": 1,
+      "seconds": 128.11873545999697,
+      "max_seconds": 128.11873545999697
+    },
+    {
+      "sql": "DELETE FROM paths WHERE NOT EXISTS (SELECT 1 FROM path_support s WHERE s.path_id=paths.id)",
+      "count": 1,
+      "seconds": 62.293433049999294,
+      "max_seconds": 62.293433049999294
+    },
+    {
+      "sql": "MANY INSERT INTO path_support VALUES(?,?)",
+      "count": 1,
+      "seconds": 3.8608684499995434,
+      "max_seconds": 3.8608684499995434
+    },
+    {
+      "sql": "INSERT OR IGNORE INTO paths VALUES(?,?,?,?,?,?)",
+      "count": 90081,
+      "seconds": 1.1964333002179046,
+      "max_seconds": 0.0022838500008219853
+    },
+    {
+      "sql": "UPDATE capture_slots SET status='stale' WHERE id<>? AND id IN (SELECT s.slot_id FROM slot_entities s JOIN entities e ON e.id=s.entity_id WHERE e.path=? AND s.source_sha256 IS NOT NULL AND s.source_sha256<>?)",
+      "count": 402,
+      "seconds": 0.7738018299060059,
+      "max_seconds": 0.02924679999705404
+    },
+    {
+      "sql": "INSERT INTO slot_entities VALUES(?,?,?)",
+      "count": 3160,
+      "seconds": 0.3367637698975159,
+      "max_seconds": 0.04259501000342425
+    },
+    {
+      "sql": "SELECT source_sha256 FROM entities WHERE id=?",
+      "count": 3160,
+      "seconds": 0.061783089804521296,
+      "max_seconds": 0.0001378699962515384
+    },
+    {
+      "sql": "INSERT INTO entities VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET path=excluded.path,name=excluded.name,source_sha256=excluded.source_sha256,status=excluded.status,detail=excluded.detail",
+      "count": 3160,
+      "seconds": 0.052006310113938525,
+      "max_seconds": 0.00021239000489003956
+    },
+    {
+      "sql": "MANY INSERT INTO pending VALUES(?,?,?,?)",
+      "count": 1,
+      "seconds": 0.020055810004123487,
+      "max_seconds": 0.020055810004123487
+    },
+    {
+      "sql": "UPDATE entities SET status='stale' WHERE path=? AND source_sha256 IS NOT NULL AND source_sha256<>?",
+      "count": 402,
+      "seconds": 0.00659105995146092,
+      "max_seconds": 5.301999772200361e-05
+    },
+    {
+      "sql": "MANY INSERT OR IGNORE INTO aliases VALUES(?,?,?)",
+      "count": 1,
+      "seconds": 0.0009508299990557134,
+      "max_seconds": 0.0009508299990557134
+    },
+    {
+      "sql": "MANY INSERT INTO api_alias_support VALUES(?,?,?)",
+      "count": 1,
+      "seconds": 0.0009363900026073679,
+      "max_seconds": 0.0009363900026073679
+    },
+    {
+      "sql": "MANY INSERT OR IGNORE INTO api_aliases VALUES(?,?)",
+      "count": 1,
+      "seconds": 0.0005109099947731011,
+      "max_seconds": 0.0005109099947731011
+    },
+    {
+      "sql": "SELECT name FROM sqlite_master WHERE type='table'",
+      "count": 1,
+      "seconds": 0.00045991999650141224,
+      "max_seconds": 0.00045991999650141224
+    },
+    {
+      "sql": "MANY INSERT OR IGNORE INTO apis VALUES(?,?)",
+      "count": 1,
+      "seconds": 0.00032840999483596534,
+      "max_seconds": 0.00032840999483596534
+    },
+    {
+      "sql": "INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)",
+      "count": 1,
+      "seconds": 0.00020873000175924972,
+      "max_seconds": 0.00020873000175924972
+    },
+    {
+      "sql": "MANY INSERT INTO observed_objects VALUES(?,?,?)",
+      "count": 1,
+      "seconds": 0.00013983999815536663,
+      "max_seconds": 0.00013983999815536663
+    },
+    {
+      "sql": "DELETE FROM capture_slots WHERE id=?",
+      "count": 1,
+      "seconds": 0.00010183999984292313,
+      "max_seconds": 0.00010183999984292313
+    },
+    {
+      "sql": "PRAGMA foreign_keys=ON",
+      "count": 1,
+      "seconds": 7.727999764028937e-05,
+      "max_seconds": 7.727999764028937e-05
+    },
+    {
+      "sql": "SELECT import_digest FROM capture_slots WHERE id=?",
+      "count": 1,
+      "seconds": 3.8019999919924885e-05,
+      "max_seconds": 3.8019999919924885e-05
+    },
+    {
+      "sql": "MANY INSERT INTO object_references VALUES(?,?,?,?,?)",
+      "count": 1,
+      "seconds": 3.5160002880729735e-05,
+      "max_seconds": 3.5160002880729735e-05
+    },
+    {
+      "sql": "SELECT version FROM schema_info",
+      "count": 1,
+      "seconds": 2.8729999030474573e-05,
+      "max_seconds": 2.8729999030474573e-05
+    },
+    {
+      "sql": "MANY INSERT INTO source_dependencies VALUES(?,?,?,?,?)",
+      "count": 1,
+      "seconds": 1.9899998733308166e-05,
+      "max_seconds": 1.9899998733308166e-05
+    },
+    {
+      "sql": "BEGIN IMMEDIATE",
+      "count": 1,
+      "seconds": 1.7120000848080963e-05,
+      "max_seconds": 1.7120000848080963e-05
+    }
+  ]
+}
