@@ -1,0 +1,261 @@
+{
+  "verified_at": 1793169398.714173,
+  "state": "running_eight_cards_verified",
+  "new_generation": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28",
+  "pid": 81468,
+  "devices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "ordinary_task_groups": [
+    {
+      "card": 2,
+      "pgid": 81613,
+      "pids": [
+        81613,
+        81691
+      ],
+      "dual_plugin_load": {
+        "id": "000002-a472274e8cef",
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81691
+      }
+    },
+    {
+      "card": 3,
+      "pgid": 81614,
+      "pids": [
+        81614,
+        81687
+      ],
+      "dual_plugin_load": {
+        "id": "000003-918355ea7499",
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81687
+      }
+    },
+    {
+      "card": 4,
+      "pgid": 83306,
+      "pids": [
+        83306,
+        83326
+      ],
+      "dual_plugin_load": {
+        "id": "000029-6d2ecde23783",
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 83326
+      }
+    },
+    {
+      "card": 6,
+      "pgid": 83137,
+      "pids": [
+        83137,
+        83150
+      ],
+      "dual_plugin_load": {
+        "id": "000027-b7125d3f0f0b",
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 83150
+      }
+    },
+    {
+      "card": 7,
+      "pgid": 83190,
+      "pids": [
+        83190,
+        83209
+      ],
+      "dual_plugin_load": {
+        "id": "000028-30fa90dc72f6",
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 83209
+      }
+    }
+  ],
+  "initial_real_jobs_all_eight_cards": [
+    {
+      "id": "000000-d433b85ec1ad",
+      "card": "0",
+      "collector_pid": 81679,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81679
+      }
+    },
+    {
+      "id": "000001-69bcf1ed6b62",
+      "card": "1",
+      "collector_pid": 81662,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81662
+      }
+    },
+    {
+      "id": "000002-a472274e8cef",
+      "card": "2",
+      "collector_pid": 81691,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81691
+      }
+    },
+    {
+      "id": "000003-918355ea7499",
+      "card": "3",
+      "collector_pid": 81687,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81687
+      }
+    },
+    {
+      "id": "000004-341a5fb3a6b2",
+      "card": "4",
+      "collector_pid": 81672,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81672
+      }
+    },
+    {
+      "id": "000005-80ac50095fc7",
+      "card": "5",
+      "collector_pid": 81681,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81681
+      }
+    },
+    {
+      "id": "000006-aa40daa94726",
+      "card": "6",
+      "collector_pid": 81642,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81642
+      }
+    },
+    {
+      "id": "000007-5928a4a599ed",
+      "card": "7",
+      "collector_pid": 81666,
+      "dual_plugin_load": {
+        "relations": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/pytest_plugin.py",
+        "callchain": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/pytest_plugin.py",
+        "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+        "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+        "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+        "pid": 81666
+      }
+    }
+  ],
+  "worker_thread_count": 8,
+  "backpressure_policy": "Queue capacity 8; producer workers may wait for the sole replay writer, so fewer than 8 live pytest groups is normal.",
+  "replay_processes": [
+    83307
+  ],
+  "single_database_writer_thread": "sqlite-replay",
+  "writer_runtime_stack": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/eight-card-runtime-stack.txt",
+  "pilot_id": "000112-2780d4893402",
+  "pilot_graph_gaps": [],
+  "pilot_graph_sha256": "6896e710992be72f0c427d5250251f89076a92785f1247b286047103522dbf29",
+  "pilot_database_slot": "current",
+  "pilot_dual_valid": true,
+  "trace_plugin_version": "0.3.2",
+  "api_plugin_version": "0.1.10",
+  "source_code_commit": "9b2463bba4778c7ee523bc44030f75ba7de40d89",
+  "api_commit": "e8fb46433ad1057a91c3421b7c0331974ee59d04",
+  "full_api_catalog_entries": 10362,
+  "new_generation_result_count": 26,
+  "new_unique_ids_vs_history": 0,
+  "status_snapshot": {
+    "stage": "running",
+    "pid": 81468,
+    "started_at": 1793168983.6979377,
+    "updated_at": 1793169379.120653,
+    "elapsed_seconds": 395.4227156639099,
+    "counters": {
+      "attempted": 26,
+      "capture_captured": 26,
+      "relations_capture_finished": 26,
+      "test_passed": 26,
+      "relations_merged_and_cleaned": 14,
+      "replay_complete": 14,
+      "dual_valid": 14
+    },
+    "last_replay": "test/nn/test_convolution.py::TestConvolutionNNDevicePRIVATEUSE1::test_ConvTranspose2d_large_output_padding_npu_float32"
+  },
+  "free_disk_gib": 2908.1627464294434,
+  "old_generation_still_stopped": true,
+  "new_entities_references_branches_retained": true
+}

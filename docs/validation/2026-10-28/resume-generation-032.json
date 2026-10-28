@@ -1,0 +1,40 @@
+{
+  "state": "running_eight_cards_verified",
+  "new_generation": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28",
+  "previous_generation": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-018-2026-10-27",
+  "started_at": 1793168983.6382024,
+  "devices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "regular_workers": 8,
+  "replay_workers": 1,
+  "trace_plugin_version": "0.3.2",
+  "api_plugin_version": "0.1.10",
+  "trace_commit": "9b2463bba4778c7ee523bc44030f75ba7de40d89",
+  "api_commit": "e8fb46433ad1057a91c3421b7c0331974ee59d04",
+  "api_count": 10362,
+  "runnable": 66505,
+  "not_runnable": 494,
+  "new_generation_initial_attempted": 0,
+  "old_generation_frozen": {
+    "attempted": 371,
+    "previously_recorded_dual_valid": 358,
+    "not_revalidated": true
+  },
+  "migrated_valid_not_new": 11,
+  "old_results_seeded": false,
+  "duplicates_only_optimization": true,
+  "deployment": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/deployment.json",
+  "acceptance": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verification-summary.json",
+  "pid": 81468,
+  "verified_at": 1793169398.714173,
+  "pilot_dual_valid": true,
+  "eight_card_verification": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/eight-card-recovery-verification.json"
+}

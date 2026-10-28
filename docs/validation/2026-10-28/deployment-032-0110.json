@@ -1,0 +1,102 @@
+{
+  "deployed_at": 1793168962.233905,
+  "new_generation": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28",
+  "trace_commit": "9b2463bba4778c7ee523bc44030f75ba7de40d89",
+  "api_commit": "e8fb46433ad1057a91c3421b7c0331974ee59d04",
+  "signature_verified_locally": true,
+  "trace_plugin_version": "0.3.2",
+  "api_package_version": "0.1.10",
+  "wheel_sha256": {
+    "trace_api_chain-0.3.2-py3-none-any.whl": "ea8bc7df18ed7b86485917dbba637648fa133d595d079d1e5bdd6f9e9c767fc9",
+    "api_test_relations-0.1.10-py3-none-any.whl": "d01d391f46f8bb5dec53bacc800b3697329c342a358dd891d27c94dd7defaf01"
+  },
+  "runtime": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime",
+  "trace_source_sha256": {
+    "__init__.py": "152523381011eb7224682920a6d47c906246aeb311602a24b3b679186a9ae3d7",
+    "catalog.py": "0d9c41750a58a87a61571909be3f4ced579a13671445c8b2fbd6dea844617958",
+    "changed_objects.py": "efbc88e1d897d45858e4798f2a1a72d76c177eb0ee61c62e0a544e13a5cf0b37",
+    "cli.py": "79f7f827c60a9759983406dc11a65e2664e1779abb161c97f282cf1a33acf9c8",
+    "compact.py": "71fa80b3c40ed8c9ffb8205d311c300312b82ee182ad6870938111c8ab3ea3ea",
+    "contract.json": "484bd09bb10ea4364ffb1a85cc74d874dda3ac8c3f1108458810612033388482",
+    "database.py": "fead78c14a7e645549a8f193034a7c9a04416d393bd0da06d9d99277b2fe6249",
+    "dwarf_lookup.c": "fd31e284ed1b921ccb012b64667c94faefd87104a002bb3e276f8cc629d0aa05",
+    "dwarf_lookup.py": "79ef404df7643873096926ca11f7fe0e11865ef17e071cbd2af188a671c1c768",
+    "frame_identity.c": "83d66151618baf7e15c9eca51ce95945d3f8339f392b887929c43aa644dd35ba",
+    "frame_identity.py": "172b2c2a3155cd540aac0071630fce57d401f549e0756af2d0270d65c00c2381",
+    "hooks.c": "3134d53c953fa369af545f04a0ff1d60e39623cdd1026a7ef906f7cbefddf184",
+    "native.py": "da0a23f0ecc5db7c78dc11bfdfe79d1c51c145d64e52967fcb940da223e169d8",
+    "object_capture.py": "af83967ed529bd7654c53d253aea2deeaf6994f87b92d07223c48bb4e6ef5671",
+    "path_capture.h": "564dbc2912a7fa21a65a0737cdaff49ea7aedc33463a868443486d9992ef20f7",
+    "pipeline.py": "bc4eee52713fca2acb3a53fba9c08b46bd49f2cdedd1b53e7aa9c9deba9c615a",
+    "presentation.py": "6868129db518f874376e010fd7f01070192530b353f4e430dfd5eafeee0bf314",
+    "pytest_plugin.py": "642b9be314d9ade8b7505bd7e3990d62585d24200b31b24b0f6912b01b37aecb",
+    "replay.py": "2032c60b9d194804c9f68ade45dc78b5b60a58697bc2dbf74659285f0c97cab2",
+    "source_entities.py": "1552d3e29de3a79d867e386a483cebe00ea5c12fd6a868689504fa06ee43e4e3",
+    "symbols.py": "4c90e0329f4cfabea69e6c91a1c00351cb17e4b50d4b75a04fb8f3adf14bd965"
+  },
+  "api_source_sha256": {
+    "__init__.py": "49c4ea7e25f1e8aa74da251392bc988efe3d66e380a61b21e4443e26bb7ef503",
+    "__main__.py": "f38fd2f2c920c29c828645e87ed64743d567aaaef7fba7a15d2c7d7f8094f91f",
+    "audit.py": "cd477eb0887358ff3ac0d5b229519efe4d2424b712142b31e93f07ca74fcc16b",
+    "catalogs/pytorch-api-ledger.json": "c086abe9b812c2c315f1c208dd25b7c83f9d5b0fe825710f25f5fb78d2a0cd48",
+    "cli.py": "71044b24c9b3b42f92e816cf074afcc48cf660331a1575c5d6728c7a236cfc0e",
+    "pytest_plugin.py": "a02bc345ec2f0dd9dd3d3a6b9611a795b4d8f6fb572bd232b6ab3d443f24152b",
+    "recovery.py": "729ddc3f69358bb1eab3177463445bea2b3c9ca273a672512824b7e8e9d06499",
+    "retention.py": "1b054434af97986dc6eaa1a0a5ce89433db7279598ee51425dcd3e6bfe19b5f8",
+    "runtime/__init__.py": "3401c98a4dc361c803db42650c6a783b36d27dd40d959b414e402762f7d80431",
+    "runtime/bootstrap/__init__.py": "3401c98a4dc361c803db42650c6a783b36d27dd40d959b414e402762f7d80431",
+    "runtime/bootstrap/sitecustomize.py": "d4942b02f6938ba74383ad18cae06e9f7fa30944496d4ef3238867f97de7e453",
+    "runtime/relation_checkpoint.py": "0f4c75c103887fff0ab1b0887d8ad0256783e27f731a8fdc9384dae679b2b7b6",
+    "runtime/relation_child_entry.py": "a0ca4cb502897f88592192e97fe8534775363ad9ac88ef30abcfd60866b6aa9a",
+    "runtime/relation_collector.py": "4f06c90d2c5532efeaedcc820d86821747beb23d0fbe3f9e72766df11d81da62",
+    "runtime/relation_context.py": "82d5e608a415556f487385017548225ef8d11d146c9c3cb4be4465d1149483a4",
+    "runtime/relation_cuda_ipc.py": "8c1c6ba3c39635cdabd25f7c6941818e64f1b06b4615a2ab62e0abcdb6bf5926",
+    "runtime/relation_guard.h": "cbf2354ad7d227b282f203c538b8a149eece9a725a71055f6cdb60225664dde3",
+    "runtime/relation_identity.c": "434948b682a8a470d61f3c0ec4ee04c953319c6bab928fad5ee96d9578d39de1",
+    "runtime/relation_launch.py": "1180d27491865a7679a8cb6b49ae435546e23792ee81bb0065d0377b0b77b5f8",
+    "runtime/relation_plugin.py": "1e8a723589d62c28d66da4c23ec94186767e8e121f7a67d06ad9036007a5c531",
+    "runtime/relation_process.py": "60f243b556349fe6898e851141399ab5833d5ddbc0a02726ed6f029cb58d8be5",
+    "settle.py": "8b2a99cd2082a8eebe9403d801c1a4e34ad1268fc5244dfb100c42dc67310a69",
+    "single_store.py": "8b650c824a5df64edaf2bad7d5a7a69ae0600e4b66678977aa7e1baf00af4bba",
+    "storage.py": "af39c3b2a69e03179ced114665e01870dc1756857b150c586fb13e5b5b5c1685"
+  },
+  "imports": {
+    "trace": {
+      "version": "0.3.2",
+      "file": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/trace_api_chain/__init__.py"
+    },
+    "api": {
+      "version": "0.1.10",
+      "file": "/home/workspace-ycy/compile-performance/pipeline-whitelist-dual-plugins-032-2026-10-28/plugin-runtime/api_test_relations/__init__.py"
+    },
+    "torch": {
+      "version": "2.16.0a0+git26650ac",
+      "file": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py"
+    },
+    "torch_npu": {
+      "version": "2.16.0a0+gitfc51851",
+      "file": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py"
+    }
+  },
+  "other_distributions_unchanged": true,
+  "installed_plugin_backup": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/installed-plugins-before-9b2463bba477.tar.gz",
+  "ledger_sha256": "c086abe9b812c2c315f1c208dd25b7c83f9d5b0fe825710f25f5fb78d2a0cd48",
+  "api_count": 10362,
+  "regular_workers": 8,
+  "devices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "replay_workers": 1,
+  "started": true,
+  "scope": "calling-thread host objects; fork continuation raw evidence preserved separately",
+  "new_entities_references_branches_retained": true,
+  "started_at": 1793168983.6382024,
+  "resume_proof": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/resume-generation.json"
+}
