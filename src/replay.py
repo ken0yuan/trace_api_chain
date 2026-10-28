@@ -22,7 +22,7 @@ def rebuild(events, native, contract):
     nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
     observations = []; references = []; source_reads = []; gaps = set(); exclusions = []
     start = None; finished = False; live_views = {}; end_summary = None
-    python_times = {}
+    python_times = {}; reference_groups = {}; live_group_views = {}; reference_scopes = {}
     excluded = set(contract['api_scope']['excluded_api_ids'])
     for seq, e in enumerate(events):
         kind = e['event']
@@ -68,15 +68,44 @@ def rebuild(events, native, contract):
             require(e['time_ns'] >= node['entered'], 'python_negative_duration')
             require(node['returned'] is None, 'duplicate_python_return')
             node['returned'] = e['time_ns']; stack.pop()
+            for scope in reference_scopes.pop(uid,()):
+                live_views.pop((uid,scope),None);live_group_views.pop((uid,scope),None)
+        elif kind == 'reference_group':
+            require(start.get('reference_policy')=='shared-adjacency-states/1','reference_group_policy_missing')
+            require(e['id'] not in reference_groups,'duplicate_reference_group')
+            require(e['parent'] is None or e['parent'] in objects,'unknown_reference_group_parent')
+            observed=set()
+            for parent,role,target in e['edges']:
+                require(parent==e['parent'] and target in objects,'unknown_object_reference')
+                edge=(parent,role,target);require(edge not in observed,'duplicate_reference_group_edge');observed.add(edge)
+            reference_groups[e['id']]=e
         elif kind == 'references':
             uid = 'p:'+str(e['uid']); require(uid in nodes, 'references_without_call')
             require(nodes[uid]['returned'] is None, 'references_after_call_return')
-            view = live_views.setdefault((uid, e['scope']), set())
-            for parent, role, target in e['added'] + e['removed']:
-                require(target in objects and (parent is None or parent in objects), 'unknown_object_reference')
-            removed = {tuple(r) for r in e['removed']}
-            require(removed <= view, 'reference_remove_without_add')
-            view.difference_update(removed); view.update(tuple(r) for r in e['added'])
+            reference_scopes.setdefault(uid,set()).add(e['scope'])
+            if 'added_groups' in e:
+                require(start.get('reference_policy')=='shared-adjacency-states/1','reference_group_policy_missing')
+                view=live_group_views.setdefault((uid,e['scope']),{})
+                added=set(e['added_groups']);removed=set(e['removed_groups'])
+                require(len(added)==len(e['added_groups']) and len(removed)==len(e['removed_groups']),'duplicate_reference_group_update')
+                require(added|removed <= reference_groups.keys(),'unknown_reference_group')
+                for state in removed:
+                    require(view.get(reference_groups[state]['parent'])==state,'reference_remove_without_add')
+                new_parents=set()
+                for state in added:
+                    parent=reference_groups[state]['parent'];previous=view.get(parent)
+                    require(previous!=state or state in removed,'reference_group_already_active')
+                    require(parent not in new_parents and (previous is None or previous in removed),'multiple_reference_states_for_parent')
+                    new_parents.add(parent)
+                for state in removed:view.pop(reference_groups[state]['parent'])
+                for state in added:view[reference_groups[state]['parent']]=state
+            else:
+                view = live_views.setdefault((uid, e['scope']), set())
+                for parent, role, target in e['added'] + e['removed']:
+                    require(target in objects and (parent is None or parent in objects), 'unknown_object_reference')
+                removed = {tuple(r) for r in e['removed']}
+                require(removed <= view, 'reference_remove_without_add')
+                view.difference_update(removed); view.update(tuple(r) for r in e['added'])
             references.append({'sequence': seq, 'observation': e})
         elif kind == 'source_read':
             uid='p:'+str(e['uid']);require(uid in nodes,'source_read_without_call')
@@ -112,7 +141,7 @@ def rebuild(events, native, contract):
     for seq, e in enumerate(native):
         window = 'p:'+str(e['py_uid']); require(window in nodes, 'native_window_missing')
         owner = nodes[window]
-        require(owner['kind']=='native_boundary', 'native_window_not_c_boundary')
+        require(owner['kind']=='native_boundary' or (owner['kind']=='python' and start.get('native_window_policy')=='python-and-c-boundaries/1'), 'native_window_not_c_boundary')
         require(e['pid']==start['pid'], 'native_pid_mismatch')
         require(e['tid']==owner['thread'], 'native_thread_mismatch')
         require(owner['entered'] <= e['time'] <= owner['returned'], 'native_event_outside_window')
@@ -149,7 +178,7 @@ def rebuild(events, native, contract):
             'run_id':start.get('run_id'),'test':start.get('nodeid'),
             'status':'evidence_scope_incomplete' if gaps else 'observed_scope_validated',
             'gaps':sorted(gaps),'nodes':nodes,'edges':edges,'definitions':definitions,
-            'object_observations':observations,'reference_observations':references,
+            'object_observations':observations,'reference_observations':references,'reference_groups':reference_groups,
             'source_reads':source_reads,'module_sources':end_summary.get('module_sources',{}),
             'source_read_policy':end_summary.get('source_read_policy'),
             'exclusions':exclusions,'native_activations':native_count,
@@ -176,3 +205,17 @@ def main():
                      'sha256':hashlib.sha256(a.out.read_bytes()).hexdigest()}))
 
 if __name__=='__main__':main()
+
+
+def added_reference_rows(graph,unique_groups=False):
+    """Read legacy deltas and shared states without expanding the saved graph."""
+    seen=set()
+    for item in graph['reference_observations']:
+        row=item['observation']
+        if 'added_groups' not in row:
+            yield row,row['added'];continue
+        for state in row['added_groups']:
+            identity=(row['uid'],state)
+            if unique_groups and identity in seen:continue
+            seen.add(identity)
+            yield row,graph['reference_groups'][state]['edges']

@@ -46,3 +46,28 @@ print(json.dumps({'result':result,'variations':h.trace_paths_exit_callsite_varia
         assert [x[2] for x in nodes]==list(range(n))
         assert all(x[1]==300 for x in nodes)  # Preserve entry call sites.
         assert s==n and all(x[1]==x[2]==1 for x in supports)
+
+
+def test_native_observer_scopes_do_not_record_tool_calls_or_remove_real_depth(tmp_path):
+    from trace_api_chain.native import build_hook
+    hook=build_hook(tmp_path);out=tmp_path/'quiet-paths.bin'
+    script="""import ctypes,sys
+h=ctypes.CDLL(sys.argv[1]);h.trace_paths_begin.argtypes=[ctypes.c_uint64]
+h.trace_paths_finish.argtypes=[ctypes.c_char_p]
+for name in ('__cyg_profile_func_enter','__cyg_profile_func_exit'):
+ getattr(h,name).argtypes=[ctypes.c_void_p,ctypes.c_void_p]
+h.trace_paths_begin(1)
+h.__cyg_profile_func_enter(100,300)
+h.trace_observer_enter();h.trace_observer_enter()
+h.__cyg_profile_func_enter(900,901);h.__cyg_profile_func_exit(900,901)
+h.trace_observer_leave();h.trace_observer_leave()
+h.__cyg_profile_func_enter(200,400);h.__cyg_profile_func_exit(200,400)
+h.__cyg_profile_func_exit(100,300)
+assert h.trace_paths_finish(sys.argv[2].encode())==0
+"""
+    env=dict(os.environ,TRACE_API_CHAIN_MAX_PATHS='128',TRACE_API_CHAIN_MAX_EVENTS='128');env.pop('LD_PRELOAD',None)
+    subprocess.run([sys.executable,'-c',script,str(hook),str(out)],env=env,check=True)
+    raw=out.read_bytes();header=struct.unpack_from('<8sQQQIIII',raw)
+    nodes=list(struct.iter_unpack('<QQII',raw[48:48+header[1]*24]))
+    assert [n[0] for n in nodes]==[100,200]
+    assert [n[2] for n in nodes]==[0,1]

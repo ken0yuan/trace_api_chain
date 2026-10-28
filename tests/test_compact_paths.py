@@ -93,6 +93,8 @@ def test_compact_path_budget_failure_is_not_complete(tmp_path):
     assert result.returncode!=0
     receipt=json.loads((cap/'capture-result.json').read_text())
     assert receipt['status']=='capture_incomplete' and receipt['gaps']
+    assert 'native_path_node_budget_exceeded' in receipt['gaps']
+    assert not any(reason.startswith('collector_error:') for reason in receipt['gaps'])
     from trace_api_chain.compact import decode_paths
     with pytest.raises(ValueError,match='native_path_capture_loss'):decode_paths(cap)
 
@@ -138,3 +140,35 @@ def test_repeated_source_object_does_not_shorten_recursive_path(tmp_path):
         assert all(b['parent_id']==a['id'] for a,b in zip(recursive,recursive[1:]))
         results.append([(n['id'],n['depth']) for n in recursive])
     assert results[0]==results[1]
+
+
+@pytest.mark.parametrize('storage',['events','paths'])
+def test_native_number_slot_without_c_profile_event_is_inside_python_window(tmp_path,storage):
+    setup_fixture(tmp_path)
+    source=C_SOURCE.replace('static PyMethodDef methods[]=',"""static PyObject *slot_add(PyObject *left,PyObject *right) { return PyLong_FromLong(42); }
+static PyType_Slot number_slots[]={{Py_tp_new,PyType_GenericNew},{Py_nb_add,slot_add},{0,NULL}};
+static PyType_Spec number_spec={"native_fixture.Number",sizeof(PyObject),0,Py_TPFLAGS_DEFAULT,number_slots};
+static PyMethodDef methods[]=""").replace('return PyModule_Create(&module);','PyObject *m=PyModule_Create(&module); PyObject *type=PyType_FromSpec(&number_spec); if(!m || !type) return NULL; PyModule_AddObject(m,"Number",type);return m;')
+    c=tmp_path/'native_fixture.c';c.write_text(source)
+    target=tmp_path/('native_fixture'+sysconfig.get_config_var('EXT_SUFFIX'))
+    subprocess.run(['gcc','-shared','-fPIC','-O0','-g1','-finstrument-functions','-I'+sysconfig.get_path('include'),str(c),'-o',str(target)],check=True)
+    (tmp_path/'fixture_api.py').write_text('import native_fixture\ndef api_a(n):\n left=native_fixture.Number();right=native_fixture.Number()\n return left+right\ndef api_b(n):return n\n')
+    (tmp_path/'test_case.py').write_text('import fixture_api\ndef test_one():\n assert fixture_api.api_a(1)==42\n assert fixture_api.api_b(2)==2\n')
+    process,cap=capture(tmp_path,'slot',storage)
+    assert process.returncode==0,process.stdout+process.stderr
+    rows=[json.loads(line) for line in (cap/'events.jsonl').read_text().splitlines()]
+    assert not any(r['event']=='call' and r['kind']=='native_boundary' for r in rows)
+    data,paths,docs=import_graph(cap,tmp_path)
+    assert data['graph']['native_activations']>0 and not data['graph']['gaps']
+    assert any(e['name']=='slot_add' for e in docs['api_a']['entities'].values())
+
+
+def test_cpython_only_native_boundaries_are_valid_empty_compiler_trace(tmp_path):
+    setup_fixture(tmp_path)
+    (tmp_path/'fixture_api.py').write_text('def api_a(n):return len([n])\ndef api_b(n):return n\n')
+    (tmp_path/'test_case.py').write_text('import fixture_api\ndef test_one():assert fixture_api.api_a(1)==1\n')
+    process,cap=capture(tmp_path,'python-only','paths')
+    assert process.returncode==0,process.stdout+process.stderr
+    from trace_api_chain.pipeline import prepare
+    data=prepare(cap)
+    assert not data['graph']['gaps'] and data['graph']['native_activations']==0

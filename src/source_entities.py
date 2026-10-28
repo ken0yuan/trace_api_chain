@@ -7,6 +7,7 @@ from .changed_objects import key, source_identity, canonical_path, decode_python
 class SourceEntities:
     def __init__(self,roots=None):
         self.roots={k:Path(v).resolve() for k,v in (roots or {}).items()};self.files={};self.entities={};self.cpp_files={};self.path_cache={}
+        self.sources_by_path={};self.container_definitions={};self.entity_templates={}
 
     def path(self,filename):
         if str(filename) not in self.path_cache:self.path_cache[str(filename)]=self.canonical_source_path(filename)
@@ -37,7 +38,9 @@ class SourceEntities:
                 p=Path(filename);data=p.read_bytes();s=p.stat();text=decode_python(data)
                 definitions=index_python(text)
                 self.files[filename]={'path':self.path(filename),'sha256':hashlib.sha256(data).hexdigest(),
-                                      'filename':filename,'content':text,'stamp':[s.st_size,s.st_mtime_ns],'definitions':definitions}
+                                      'filename':filename,'content':text,'lines':text.splitlines(),
+                                      'stamp':[s.st_size,s.st_mtime_ns],'definitions':definitions}
+                self.sources_by_path.setdefault(self.files[filename]['path'],self.files[filename])
             except (OSError,UnicodeError,SyntaxError):self.files[filename]=None
         return self.files[filename]
 
@@ -64,11 +67,22 @@ class SourceEntities:
         return None,'ambiguous_class_owner' if unique else 'class_definition_not_proven'
 
     def entity(self,source,definition,language,evidence):
-        eid=source_identity(source['path'],definition['kind'],definition['name'])
-        self.entities[eid]={'id':eid,'path':source['path'],'kind':definition['kind'],'name':definition['name'],
-                            'ordinal':definition.get('ordinal',0),'line':definition['line'],'end_line':definition['end_line'],
-                            'source_sha256':source['sha256'],'language':language,'status':'mapped','evidence':evidence,
-                            'source_text':'\n'.join(source['content'].splitlines()[definition['line']-1:definition['end_line']])}
+        identity=(source['path'],source['sha256'],definition['kind'],definition['name'],
+                  definition.get('ordinal',0),definition['line'],definition['end_line'],language,evidence)
+        template=self.entity_templates.get(identity)
+        if template is None:
+            eid=source_identity(source['path'],definition['kind'],definition['name'])
+            lines=source.get('lines')
+            if lines is None:lines=source['content'].splitlines()
+            template={'id':eid,'path':source['path'],'kind':definition['kind'],'name':definition['name'],
+                      'ordinal':definition.get('ordinal',0),'line':definition['line'],'end_line':definition['end_line'],
+                      'source_sha256':source['sha256'],'language':language,'status':'mapped','evidence':evidence,
+                      'source_text':'\n'.join(lines[definition['line']-1:definition['end_line']])}
+            self.entity_templates[identity]=template
+        eid=template['id']
+        # Keep the original last-observation evidence assignment: a later named
+        # binding may have overwritten the same lexical container meanwhile.
+        self.entities[eid]=dict(template)
         return eid
 
     def named(self,record,name=None):
@@ -86,11 +100,16 @@ class SourceEntities:
     def containers(self,eid):
         entity=self.entities[eid]
         if entity['language']!='python' or not entity['path']:return []
-        source=next((s for s in self.files.values() if s and s['path']==entity['path']),None)
+        source=self.sources_by_path.get(entity['path'])
         if source is None:return []
-        return [self.entity(source,d,'python','lexical_source_container') for d in source['definitions']
-                if (d['kind']=='module' and entity['kind']!='module') or
-                (d['kind'] in ('type','function') and entity['name'].startswith(d['name']+'.') and not d.get('ambiguous') and not d.get('declaration_only'))]
+        identity=(source['path'],source['sha256'],entity['kind'],entity['name'])
+        definitions=self.container_definitions.get(identity)
+        if definitions is None:
+            definitions=tuple(d for d in source['definitions']
+                    if (d['kind']=='module' and entity['kind']!='module') or
+                    (d['kind'] in ('type','function') and entity['name'].startswith(d['name']+'.') and not d.get('ambiguous') and not d.get('declaration_only')))
+            self.container_definitions[identity]=definitions
+        return [self.entity(source,d,'python','lexical_source_container') for d in definitions]
 
     def import_origins(self,record,name,modules,seen=None):
         """Static provenance candidates only; never claim imports prove runtime aliasing."""

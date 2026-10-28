@@ -1,0 +1,482 @@
+{
+  "checked_at_epoch": 1793158904.3629668,
+  "method": "completed replay final summary gaps + streaming SHA256 of stable graph; no in-progress graph read",
+  "stages": {
+    "verified-shared-reference-original-cases": {
+      "counts": {
+        "attempted": 13,
+        "test_passed": 12,
+        "test_failed": 0,
+        "test_skipped": 0,
+        "test_no_result": 1,
+        "captured": 11,
+        "capture_incomplete": 1,
+        "capture_failed": 1,
+        "relations_merged_cleaned": 10,
+        "replay_complete": 9,
+        "replay_pending": 2,
+        "replay_other": 2,
+        "verified_no_graph_gaps": 9
+      },
+      "results": [
+        {
+          "id": "000002-a472274e8cef",
+          "device": "5",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": true
+        },
+        {
+          "id": "000003-918355ea7499",
+          "device": "6",
+          "outcome": "passed",
+          "capture": "capture_incomplete",
+          "capture_gaps": [
+            "collector_error:RuntimeError",
+            "native_path_capture_incomplete",
+            "overflow_or_write_failure:167322"
+          ],
+          "replay": "not_eligible",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000183-7454355c79c7",
+          "device": "4",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "6a135f1ce8e74a3248ac092136ef0ff7351e667ce5fda5fd92783b3fb6118655",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 1061708280,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000187-13c0b39e1341",
+          "device": "5",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "4234ce84f67e2c33e2cc9bd7b9026b1ccfdf5bc2492b8cd61628fb4c2898cf06",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 48635463,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000188-e8485ba56493",
+          "device": "6",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "6ec6f166941748d939881639ecfc94a77cfa7f42b68e33afd4b14317a0367a66",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 54056589,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000254-9d3c835798df",
+          "device": "7",
+          "outcome": "no_result",
+          "capture": "failed",
+          "capture_gaps": null,
+          "replay": "not_eligible",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000273-6dceeb06b6f4",
+          "device": "3",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "60f8fc7479775d014414f003f15bafa5668010f462dc1d7c0881e28607094ba3",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 10484030,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000278-7d70cdbcdfef",
+          "device": "2",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "5f2ee8f31d89371e66534cefc659bb24101e23462727f90a723662536acc635b",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 779539,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000309-060d9bb5557d",
+          "device": "4",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "f1afb1884b523ed252bedba4af548c9216c9d9814b62094270c34a99484ae984",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 16607398,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000314-fb87e49b3cf6",
+          "device": "0",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "08f6fb744267434e5bcf6a8121c8d65eb348cfaec3d43abe12d9b7f9a537cc1d",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 1051394764,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000315-ed4466964be5",
+          "device": "1",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "325b61bd308f10baaf6eff967e616092bf5c43b7c56d9c531ef7e1ac9138bed4",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 1053589726,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000334-52facfcc67d5",
+          "device": "7",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "706dba7347322082ac2844c2060bd2f034d7bc0eb8fdcb9de6233b22c94dd8cb",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 30922474,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000355-dede892f6b43",
+          "device": "3",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": false
+        }
+      ],
+      "driver_tail": "d5 captured passed 63.3\nCAPTURE_FINISHED 000334-52facfcc67d5 captured [] 63.29572031000862\nREPLAY 000187-13c0b39e1341 complete 22.29\nCAPTURE 000278-7d70cdbcdfef captured passed 91.13\nCAPTURE_FINISHED 000278-7d70cdbcdfef captured [] 91.13325320000877\nREPLAY 000188-e8485ba56493 complete 19.09\nREPLAY 000309-060d9bb5557d complete 15.99\nREPLAY 000334-52facfcc67d5 complete 17.54\nREPLAY 000278-7d70cdbcdfef complete 0.97\nCAPTURE 000315-ed4466964be5 captured passed 782.88\nCAPTURE_FINISHED 000315-ed4466964be5 captured [] 782.8772087699908\nCAPTURE 000314-fb87e49b3cf6 captured passed 789.01\nCAPTURE_FINISHED 000314-fb87e49b3cf6 captured [] 789.0136100300006\nCAPTURE 000183-7454355c79c7 captured passed 760.77\nCAPTURE_FINISHED 000183-7454355c79c7 captured [] 760.7698883700068\nCAPTURE 000002-a472274e8cef captured passed 771.9\nCAPTURE_FINISHED 000002-a472274e8cef captured [] 771.9030536199862\nCAPTURE 000355-dede892f6b43 captured passed 801.92\nCAPTURE_FINISHED 000355-dede892f6b43 captured [] 801.9227524499875\nCAPTURE 000003-918355ea7499 capture_incomplete passed 1072.55\nCAPTURE_FINISHED 000003-918355ea7499 capture_incomplete ['collector_error:RuntimeError', 'native_path_capture_incomplete', 'overflow_or_write_failure:167322'] 1072.5539789600007\nREPLAY 000315-ed4466964be5 complete 573.63\nREPLAY 000314-fb87e49b3cf6 complete 383.63\nCAPTURE 000254-9d3c835798df failed no_test_result 1809.33\nCAPTURE_FINISHED 000254-9d3c835798df failed None 1809.3309158300108\nREPLAY 000183-7454355c79c7 complete 378.9\n"
+    },
+    "final-032-original-cases": {
+      "counts": {
+        "attempted": 12,
+        "test_passed": 12,
+        "test_failed": 0,
+        "test_skipped": 0,
+        "test_no_result": 0,
+        "captured": 11,
+        "capture_incomplete": 1,
+        "capture_failed": 0,
+        "relations_merged_cleaned": 7,
+        "replay_complete": 6,
+        "replay_pending": 5,
+        "replay_other": 1,
+        "verified_no_graph_gaps": 6
+      },
+      "results": [
+        {
+          "id": "000002-a472274e8cef",
+          "device": "6",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000003-918355ea7499",
+          "device": "4",
+          "outcome": "passed",
+          "capture": "capture_incomplete",
+          "capture_gaps": [
+            "collector_error:RuntimeError",
+            "native_path_capture_incomplete",
+            "overflow_or_write_failure:167324"
+          ],
+          "replay": "not_eligible",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000183-7454355c79c7",
+          "device": "2",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000187-13c0b39e1341",
+          "device": "5",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "3ed4f4854b72c8993b50ebf484154e15155836a0251449a7eb1bf3faab88c6fc",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 48635125,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000188-e8485ba56493",
+          "device": "6",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "6f9169a092f8137a65259fed25c7aff4a19424455682e226a93536082f21ad31",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 54057193,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000273-6dceeb06b6f4",
+          "device": "3",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "1e18c227e3f402fc719ef70b53d6d19dbd5fb1fe1ea2c5eae7b0c5e73f9a2e3d",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 10487904,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000278-7d70cdbcdfef",
+          "device": "2",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "675e3f9a6816fb3ce278912c5aacca7062e58143b7ac951496d018e71757fe9d",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 779235,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000309-060d9bb5557d",
+          "device": "4",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "f530f1ae6e716749159cb536a1611d5227c998c716f1c59f01e493f59d5edfcd",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 16601122,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000314-fb87e49b3cf6",
+          "device": "1",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": false
+        },
+        {
+          "id": "000315-ed4466964be5",
+          "device": "0",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": true
+        },
+        {
+          "id": "000334-52facfcc67d5",
+          "device": "3",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "complete",
+          "relations_merged_cleaned": true,
+          "graph_verification": {
+            "summary_gaps": [],
+            "summary_status": "refreshed",
+            "digest": "abc8b64e6b59a7bf8d38cc290b8ceb3946054e13d302e56eabebe9e53e1941ba",
+            "digest_matches_final_summary": true,
+            "stable": true,
+            "bytes": 30967284,
+            "valid_no_gaps": true
+          }
+        },
+        {
+          "id": "000355-dede892f6b43",
+          "device": "5",
+          "outcome": "passed",
+          "capture": "captured",
+          "capture_gaps": [],
+          "replay": "pending",
+          "relations_merged_cleaned": false
+        }
+      ],
+      "driver_tail": ".96\nCAPTURE_FINISHED 000188-e8485ba56493 captured [] 56.95699952999712\nREPLAY 000273-6dceeb06b6f4 complete 11.38\nCAPTURE 000309-060d9bb5557d captured passed 58.04\nCAPTURE_FINISHED 000309-060d9bb5557d captured [] 58.04087253000762\nREPLAY 000187-13c0b39e1341 complete 23.13\nCAPTURE 000278-7d70cdbcdfef captured passed 93.14\nCAPTURE_FINISHED 000278-7d70cdbcdfef captured [] 93.13650133999181\nREPLAY 000188-e8485ba56493 complete 19.11\nCAPTURE 000334-52facfcc67d5 captured passed 65.39\nCAPTURE_FINISHED 000334-52facfcc67d5 captured [] 65.38966878000065\nREPLAY 000309-060d9bb5557d complete 15.49\nREPLAY 000278-7d70cdbcdfef complete 0.82\nREPLAY 000334-52facfcc67d5 complete 18.93\nCAPTURE 000315-ed4466964be5 captured passed 756.03\nCAPTURE_FINISHED 000315-ed4466964be5 captured [] 756.0260170999973\nCAPTURE 000314-fb87e49b3cf6 captured passed 757.33\nCAPTURE_FINISHED 000314-fb87e49b3cf6 captured [] 757.3251726699964\nCAPTURE 000002-a472274e8cef captured passed 749.72\nCAPTURE_FINISHED 000002-a472274e8cef captured [] 749.7177841399971\nCAPTURE 000355-dede892f6b43 captured passed 754.9\nCAPTURE_FINISHED 000355-dede892f6b43 captured [] 754.9001723099936\nCAPTURE 000183-7454355c79c7 captured passed 727.16\nCAPTURE_FINISHED 000183-7454355c79c7 captured [] 727.1635248800012\nCAPTURE 000003-918355ea7499 capture_incomplete passed 961.67\nCAPTURE_FINISHED 000003-918355ea7499 capture_incomplete ['collector_error:RuntimeError', 'native_path_capture_incomplete', 'overflow_or_write_failure:167324'] 961.6660700399952\n"
+    }
+  },
+  "npu_groups": [
+    {
+      "pgid": 71099,
+      "device": "3",
+      "nodeid": "test/nn/test_pooling.py::TestPoolingNNDeviceNPU::test_fractional_max_pool3d_npu",
+      "stage": "final-032-original-cases"
+    }
+  ],
+  "writers": [
+    {
+      "pgid": 72002,
+      "stage": "final-032-original-cases",
+      "capture": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/final-032-original-cases/captures/000315-ed4466964be5",
+      "log_tail": "td/pytorch\", \"--source-root\", \"torch_npu=/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/torch-npu\"], \"devices\": \"\"}\ntrace-api-chain replay: resolving addresses offline\nSource mapping: libtorch_python.so (6806 addresses)\nSource mapping: python3.11 (19 addresses)\nSource mapping: libc10.so (644 addresses)\nSource mapping: libtorch_cpu.so (10939 addresses)\nSource mapping: libc.so.6 (1 addresses)\nSource mapping: libtorch_npu.so (1852 addresses)\nSource mapping: libtensorpipe.so (2 addresses)\nSource mapping: libascend_hal.so (22 addresses)\nSource mapping: libunified_dlog.so (7 addresses)\nSource mapping: libascend_trace.so (11 addresses)\nSource mapping: libmmpa.so (2 addresses)\nSource mapping: libtsdclient.so (4 addresses)\nSource mapping: libruntime.so (3 addresses)\nSource mapping: libnpu_profiler.so (5 addresses)\n"
+    },
+    {
+      "pgid": 72019,
+      "stage": "verified-shared-reference-original-cases",
+      "capture": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/captures/000002-a472274e8cef",
+      "log_tail": " addresses)\nSource mapping: python3.11 (24 addresses)\nSource mapping: libc10.so (891 addresses)\nSource mapping: libtorch_cpu.so (18548 addresses)\nSource mapping: libtorch_npu.so (2526 addresses)\nSource mapping: libtensorpipe.so (2 addresses)\nSource mapping: libascend_hal.so (22 addresses)\nSource mapping: libunified_dlog.so (7 addresses)\nSource mapping: libascend_trace.so (11 addresses)\nSource mapping: libmmpa.so (2 addresses)\nSource mapping: libtsdclient.so (4 addresses)\nSource mapping: libruntime.so (3 addresses)\nSource mapping: libnpu_profiler.so (5 addresses)\nSource mapping: libc.so.6 (1 addresses)\ntrace-api-chain replay: DWARF definitions libc10.so 18\ntrace-api-chain replay: DWARF definitions libtorch_cpu.so 190\ntrace-api-chain replay: DWARF definitions libtorch_python.so 6\ntrace-api-chain replay: DWARF definitions libtorch_npu.so 10\n"
+    }
+  ],
+  "pool_failure": {
+    "returncode": 2,
+    "elapsed_seconds": 1809.3309158300108,
+    "timeout": false,
+    "capture": {
+      "status": "failed",
+      "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'whitelist_trace_collect', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/nn/test_pooling.py::TestPoolingNNDeviceNPU::test_fractional_max_pool3d_npu', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/captures/000254-9d3c835798df', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '1000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/junit/000254-9d3c835798df.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/relations/000254-9d3c835798df', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999898099923 seconds",
+      "error_type": "TimeoutExpired",
+      "elapsed_seconds": 1800.515305049994,
+      "raw_evidence_preserved": true
+    },
+    "test_body_started": false,
+    "test_body_ended": false,
+    "test_reports": [],
+    "replay_status": "not_eligible",
+    "capture_result": {
+      "status": "failed",
+      "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'whitelist_trace_collect', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/nn/test_pooling.py::TestPoolingNNDeviceNPU::test_fractional_max_pool3d_npu', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/captures/000254-9d3c835798df', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '1000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/junit/000254-9d3c835798df.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/relations/000254-9d3c835798df', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999898099923 seconds",
+      "error_type": "TimeoutExpired",
+      "elapsed_seconds": 1800.515305049994,
+      "raw_evidence_preserved": true
+    },
+    "log_tail": "rator 'aten::fractional_max_pool3d_backward' is not currently supported on the NPU backend and will fall back to run on the CPU. This may have performance implications. (function npu_cpu_fallback)\ntrace-api-chain: capture failed: Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'whitelist_trace_collect', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/nn/test_pooling.py::TestPoolingNNDeviceNPU::test_fractional_max_pool3d_npu', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/captures/000254-9d3c835798df', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '1000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/junit/000254-9d3c835798df.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/verified-shared-reference-original-cases/relations/000254-9d3c835798df', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999898099923 seconds\n"
+  },
+  "formal": {
+    "stage": "stopped_resource_or_request",
+    "stop_exists": true,
+    "counts": {
+      "attempted": 371,
+      "capture_captured": 359,
+      "relations_capture_finished": 361,
+      "test_passed": 361,
+      "relations_merged_and_cleaned": 361,
+      "replay_complete": 358,
+      "dual_valid": 358,
+      "resumed_recorded": 177,
+      "resumed_valid": 175,
+      "capture_failed": 10,
+      "relations_initialized": 10,
+      "test_no_test_result": 10,
+      "dual_incomplete": 13,
+      "capture_capture_incomplete": 2,
+      "replay_failed": 1
+    }
+  },
+  "checked_finished_epoch": 1793158907.105872
+}

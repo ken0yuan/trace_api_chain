@@ -18,6 +18,9 @@ static __thread uint32_t sequence;
 static __thread int enabled, fd = -1, failed;
 static __thread uint32_t process_id, thread_id;
 static __thread int path_active;
+static __thread unsigned observer_depth;
+void trace_observer_enter(void) { observer_depth++; }
+void trace_observer_leave(void) { if(observer_depth) observer_depth--;else failed=1; }
 static void path_record_enter(void *fn, void *caller);
 static void path_record_exit(void *fn, void *caller);
 
@@ -57,8 +60,8 @@ static void record(void *function, void *caller, uint32_t kind) {
         (uint64_t)now.tv_sec * 1000000000ULL + now.tv_nsec,
         (uintptr_t)function, (uintptr_t)caller, process_id, thread_id, kind, sequence++};
 }
-void __cyg_profile_func_enter(void *fn, void *caller) { if(path_active) path_record_enter(fn,caller); else record(fn, caller, 1); }
-void __cyg_profile_func_exit(void *fn, void *caller) { if(path_active) path_record_exit(fn,caller); else record(fn, caller, 2); }
+void __cyg_profile_func_enter(void *fn, void *caller) { if(observer_depth) return; if(path_active) path_record_enter(fn,caller); else record(fn, caller, 1); }
+void __cyg_profile_func_exit(void *fn, void *caller) { if(observer_depth) return; if(path_active) path_record_exit(fn,caller); else record(fn, caller, 2); }
 
 static int write_all(const char *data, size_t count) {
     while (count) {

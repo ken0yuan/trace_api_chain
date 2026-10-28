@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import struct
 import subprocess
+import sys
 
 
 def save(path,value):path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -20,7 +21,10 @@ class LinkMap(ctypes.Structure):
 def native_identity(callable):
     try:
         get=ctypes.pythonapi.PyCFunction_GetFunction;get.argtypes=[ctypes.py_object];get.restype=ctypes.c_void_p
-        pc=get(callable);lib=ctypes.CDLL(None);info=DlInfo();link=ctypes.c_void_p()
+        identity=sys.modules.get('_relation_identity')
+        original=getattr(identity,'original_native_function',None)
+        pc=original(callable) if original else get(callable)
+        lib=ctypes.CDLL(None);info=DlInfo();link=ctypes.c_void_p()
         lib.dladdr1.argtypes=[ctypes.c_void_p,ctypes.POINTER(DlInfo),ctypes.POINTER(ctypes.c_void_p),ctypes.c_int]
         if not lib.dladdr1(pc,ctypes.byref(info),ctypes.byref(link),2):return {'status':'native_address_unresolved'}
         path=os.fsdecode(info.filename);bias=ctypes.cast(link,ctypes.POINTER(LinkMap)).contents.bias or 0
@@ -41,8 +45,11 @@ class Bridge:
     def __init__(self,output,storage='events'):
         self.output=Path(output);self.stack=[];self.active=None;self.segments=[];self.gaps=[]
         self.storage=storage
+        self.path_failed=False
         self.contexts={}
         self.hook=ctypes.CDLL(str(self.output/'compiler-hooks.so'))
+        self.observer_enter=self.hook.trace_observer_enter;self.observer_leave=self.hook.trace_observer_leave
+        for callback in (self.observer_enter,self.observer_leave):callback.argtypes=[];callback.restype=None
         self.hook.trace_index_configure.argtypes=[ctypes.c_char_p]
         self.hook.trace_index_configure.restype=ctypes.c_int
         self.hook.trace_index_stop.restype=ctypes.c_int
@@ -50,6 +57,7 @@ class Bridge:
         if self.hook.trace_index_interposed()!=1:raise RuntimeError('compiler_hook_not_interposed')
         if storage=='paths':
             self.hook.trace_paths_begin.argtypes=[ctypes.c_uint64]
+            self.hook.trace_paths_failure.restype=ctypes.c_uint
             self.hook.trace_paths_event_count.restype=ctypes.c_uint64
             self.hook.trace_paths_exit_callsite_variations.restype=ctypes.c_uint64
             self.hook.trace_paths_finish.argtypes=[ctypes.c_char_p]
@@ -64,10 +72,13 @@ class Bridge:
                 status=self.hook.trace_index_stop()
                 self.active['events']=self.hook.trace_index_event_count()
             self.active['stop_status']=status
-            if status:self.gaps.append('overflow_or_write_failure:'+str(self.active['file'] or self.active['ordinal']))
+            if status:
+                if self.storage=='paths':self.record_path_failure()
+                else:self.gaps.append('overflow_or_write_failure:'+str(self.active['file'] or self.active['ordinal']))
             self.active=None
 
     def resume_current(self):
+        if self.path_failed:return
         if self.stack and self.active is None:
             name='segment-'+str(len(self.segments)).zfill(6)+'.bin'
             segment={'uid':self.stack[-1],'file':name,'ordinal':len(self.segments)}
@@ -77,6 +88,7 @@ class Bridge:
                 result=self.hook.trace_paths_begin(int(segment['context']))
             else:result=self.hook.trace_index_configure(os.fsencode(self.output/name))
             if result:
+                if self.storage=='paths':self.record_path_failure();return
                 raise RuntimeError('native_window_open_failed')
             self.active=segment;self.segments.append(segment)
 
@@ -90,11 +102,20 @@ class Bridge:
             self.gaps.append('window_return_mismatch');return
         self.stack.pop();self.resume_current()
 
+    def record_path_failure(self):
+        flags=self.hook.trace_paths_failure();self.path_failed=True
+        reasons={1:'native_path_initialization_or_allocation_failed',2:'native_stack_depth_budget_exceeded',
+                 4:'native_path_node_budget_exceeded',8:'native_path_support_budget_exceeded',
+                 16:'native_exit_without_enter',32:'native_return_function_or_window_mismatch',64:'native_unclosed_stack'}
+        for flag,reason in reasons.items():
+            if flags & flag and reason not in self.gaps:self.gaps.append(reason)
+        if not flags and 'native_path_unknown_failure' not in self.gaps:self.gaps.append('native_path_unknown_failure')
+
     def close(self):
         self.pause()
         if self.stack:self.gaps.append('unfinished_native_windows')
         if self.storage=='paths' and self.hook.trace_paths_finish(os.fsencode(self.output/'native-paths.bin')):
-            self.gaps.append('native_path_capture_incomplete')
+            self.record_path_failure();self.gaps.append('native_path_capture_incomplete')
         after=Path('/proc/self/maps').read_text()
         (self.output/'maps-before.txt').write_text(self.maps_before)
         (self.output/'maps.txt').write_text(after)

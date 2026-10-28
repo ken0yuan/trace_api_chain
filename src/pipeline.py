@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import shutil
+import sys
 from .native import decode,digest,save
 from .replay import rebuild,canonical
 from .symbols import resolve
@@ -12,7 +13,7 @@ def prepare(output,mode=None):
     mode=mode or json.loads((output/'capture-result.json').read_text()).get('mode','full')
     storage=json.loads((output/'windows.json').read_text()).get('native_storage','events') if mode=='full' else 'events'
     reconstruct=rebuild_paths if storage=='paths' else rebuild
-    evidence=output/'evidence';manifest_path=evidence/'manifest.json'
+    evidence=output/'evidence';manifest_path=evidence/'manifest.json';graph=None
     if manifest_path.exists():
         manifest=json.loads(manifest_path.read_text())
         for name,sha in manifest['sha256'].items():
@@ -28,18 +29,33 @@ def prepare(output,mode=None):
         if mode=='full':
             native,modules,gaps=(decode_paths(output) if storage=='paths' else decode(output));gaps+=sorted(modules.gaps)
             windows=json.loads((output/'windows.json').read_text())
-            if windows['segments'] and not native:raise ValueError('no_compiler_events: instrumented target library required')
-        reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+            if windows['segments'] and not native:
+                # CPython builtins (len, append, math, ...) are outside the
+                # instrumented target libraries. An empty native trace is valid
+                # when all observed C callables belong to CPython itself.
+                def interpreter_boundary(row):
+                    module=(row.get('native_identity') or {}).get('module')
+                    if not module:return False
+                    path=Path(module).resolve()
+                    executables={Path(sys.executable).resolve(),Path(getattr(sys,'_base_executable',sys.executable)).resolve()}
+                    return path in executables or (path.is_relative_to(Path(sys.base_prefix).resolve()) and
+                        not {'site-packages','dist-packages'}.intersection(path.parts))
+                boundaries=[row for row in events if row['event']=='call' and row.get('kind')=='native_boundary']
+                if any(not interpreter_boundary(row) for row in boundaries):
+                    raise ValueError('no_compiler_events: instrumented target library required')
+        graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
         evidence.mkdir(exist_ok=True);shutil.copyfile(output/'events.jsonl',evidence/'python.jsonl')
         with (evidence/'native.jsonl').open('wb') as f:
             for row in native:f.write(canonical(row))
         raw=[output/'events.jsonl',*sorted(output.glob('segment-*.bin'))]
         if storage=='paths':raw.append(output/'native-paths.bin')
         raw += [output/name for name in ('windows.json','maps.txt','maps-before.txt','api-catalog.json','pytest-receipt.json') if (output/name).exists()]
+        observer=output/'observer-runtime'
+        if observer.exists():raw.extend(sorted(p for p in observer.rglob('*') if p.is_file()))
         manifest={'sha256':{name:digest(evidence/name) for name in ('python.jsonl','native.jsonl')},
-                  'raw_sha256':{p.name:digest(p) for p in raw},'capture_gaps':gaps,'mode':mode,'native_storage':storage}
+                  'raw_sha256':{p.relative_to(output).as_posix():digest(p) for p in raw},'capture_gaps':gaps,'mode':mode,'native_storage':storage}
         save(manifest_path,manifest)
-    graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+    if graph is None:graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
     graph['gaps']=sorted(set(graph['gaps']+gaps))
     if graph['gaps']:graph['status']='evidence_scope_incomplete'
     variations=(json.loads((output/'windows.json').read_text()).get('exit_callsite_variations',0) if storage=='paths'

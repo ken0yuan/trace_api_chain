@@ -102,3 +102,12 @@ class ReplayTests(unittest.TestCase):
         e,n=fixture();e[4]['time_ns']=9;self.reject(e,n,'python_time_order')
 
 if __name__=='__main__':unittest.main()
+
+
+def test_python_native_window_requires_explicit_collector_policy():
+    events,native=fixture();events[1]['kind']='python'
+    import pytest
+    with pytest.raises(EvidenceError,match='native_window_not_c_boundary'):rebuild(events,native,CONTRACT)
+    events[0]['native_window_policy']='python-and-c-boundaries/1'
+    graph=rebuild(events,native,CONTRACT)
+    assert graph['native_activations']==2 and not graph['gaps']

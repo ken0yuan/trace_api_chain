@@ -9,6 +9,8 @@ import types
 
 class Registry:
     def __init__(self, namespaces=('torch', 'torch_npu'),catalog_path=None):
+        from .frame_identity import adapter,native_definition
+        self.frame_function=adapter();self.native_definition=native_definition
         self.namespaces=tuple(namespaces)
         self.ledger=None;self.allowed=None
         if catalog_path:
@@ -35,14 +37,16 @@ class Registry:
                         members.update(type.__dict__['__dict__'].__get__(base,type(base)))
                     for member,descriptor in members.items():
                         if member.startswith('_') and member not in ('__init__','__call__'):continue
-                        if type(descriptor) in (staticmethod,classmethod):descriptor=descriptor.__func__
-                        self.add(path+'.'+member,descriptor,owner=value)
+                        method_owner=value
+                        if type(descriptor) is staticmethod:descriptor=descriptor.__func__;method_owner=None
+                        elif type(descriptor) is classmethod:descriptor=descriptor.__func__
+                        self.add(path+'.'+member,descriptor,owner=method_owner)
                         if member=='__init__' and self.allowed is not None and 'runtime:'+path in self.allowed:
                             self.add(path,descriptor,owner=value)
         torch=sys.modules.get('torch')
         compile_fn=vars(torch).get('compile') if torch is not None else None
         if type(compile_fn) is types.FunctionType:
-            self.excluded_bodies[(compile_fn.__code__,id(compile_fn.__globals__))]='python:torch.compile'
+            self.excluded_bodies[compile_fn]='python:torch.compile'
 
     def public_module(self,name):
         return (any(name==n or name.startswith(n+'.') for n in self.namespaces)
@@ -53,33 +57,38 @@ class Registry:
         api='runtime:'+path
         if self.allowed is not None and api not in self.allowed:return
         if type(value) is types.FunctionType:
-            self.python.setdefault((value.__code__,id(value.__globals__)),[]).append((api,owner))
+            self.python.setdefault(value,[]).append((api,owner))
         elif type(value) in (types.BuiltinFunctionType,types.BuiltinMethodType):
-            self.native.setdefault(id(value),set()).add(api);self.keep.append(value)
+            self.native.setdefault(id(value),[]).append((api,owner));self.keep.append(value)
         elif type(value) in (types.MethodDescriptorType,types.WrapperDescriptorType):
-            self.descriptors.setdefault(id(value),set()).add(api);self.keep.append(value)
+            self.descriptors.setdefault(self.native_definition(value),[]).append((api,owner));self.keep.append(value)
         else:return
         self.catalog.add(api)
 
+    @staticmethod
+    def compatible(owner,receiver):
+        if owner is None:return True
+        classes=[type(receiver)]
+        if issubclass(type(receiver),type):classes.append(receiver)
+        return any(any(base is owner for base in type.__dict__['__mro__'].__get__(cls,type(cls))) for cls in classes)
+
     def match(self,frame,event,arg):
         if event=='call':
-            candidates=self.python.get((frame.f_code,id(frame.f_globals)),[])
-            owner=type(frame.f_locals.get('self'))
-            # API ownership is nominal inheritance, not structural conformance.
-            # issubclass invokes metaclass hooks and raises for data Protocols.
-            # Read type's own MRO descriptor and compare class identities only.
-            mro=type.__dict__['__mro__'].__get__(owner,type(owner))
-            matching=[(api,cls) for api,cls in candidates if cls is None or any(base is cls for base in mro)]
-            return sorted({api for api,cls in matching})
-        aliases=set(self.native.get(id(arg),()))
+            candidates=self.python.get(self.frame_function(frame),[])
+            code=frame.f_code;receiver=None
+            if code.co_argcount:receiver=frame.f_locals.get(code.co_varnames[0])
+            elif code.co_flags & inspect.CO_VARARGS:
+                args=frame.f_locals.get(code.co_varnames[code.co_kwonlyargcount])
+                if type(args) is tuple and args:receiver=args[0]
+            return sorted({api for api,owner in candidates if self.compatible(owner,receiver)})
         receiver=getattr(arg,'__self__',None)
-        if receiver is not None:
-            descriptor=inspect.getattr_static(type(receiver),getattr(arg,'__name__',''),None)
-            aliases.update(self.descriptors.get(id(descriptor),()))
-        return sorted(aliases)
+        candidates=list(self.native.get(id(arg),()))
+        definition=self.native_definition(arg)
+        if definition is not None:candidates.extend(self.descriptors.get(definition,()))
+        return sorted({api for api,owner in candidates if self.compatible(owner,receiver)})
 
     def excluded(self,frame):
-        found=self.excluded_bodies.get((frame.f_code,id(frame.f_globals)))
+        found=self.excluded_bodies.get(self.frame_function(frame))
         if found:return found
         module=frame.f_globals.get('__name__','')
         # Compiled wrappers created before capture live in these subsystems.
@@ -90,15 +99,15 @@ class Registry:
 
     def exclude_returned(self,value):
         if type(value) is types.FunctionType:
-            self.excluded_bodies[(value.__code__,id(value.__globals__))]='python:torch.compile_runtime'
+            self.excluded_bodies[value]='python:torch.compile_runtime'
 
     def describe(self):
         return {'schema':'runtime-api-catalog/1','namespaces':self.namespaces,
                 'shared_ledger':self.ledger,
                 'ledger_python_entries_not_resolved':sorted(self.allowed-self.catalog) if self.allowed is not None else [],
                 'api_ids':sorted(self.catalog),
-                'python_identity':'code object and globals identity; compatible receiver type for methods',
-                'native_identity':'callable identity or receiver type static descriptor identity',
+                'python_identity':'exact executing function identity; compatible receiver type for methods',
+                'native_identity':'exact callable/method-definition identity and nominal receiver ownership; saved methods retain their original definition',
                 'alias_policy':'preserve all matching catalog paths; canonical id is lexicographically first',
                 'scope':'loaded public module bindings and public class methods; not a full external API ledger',
                 'exclusion':'torch.compile body, its returned callable bodies, torch._dynamo and torch._inductor subtrees'}

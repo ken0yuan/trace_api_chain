@@ -42,6 +42,8 @@ def pytest_cmdline_main(config):
     if output.exists():raise pytest.UsageError('Evidence directory already exists: '+str(output))
     output.mkdir(parents=True)
     env=dict(os.environ);env[INTERNAL]='1'
+    if config.getoption('--api-relations-out',default=None):
+        env['TRACE_API_CHAIN_OBSERVER_RUNTIME']=str(output/'observer-runtime')
     env['TRACE_API_CHAIN_MAX_EVENTS']=str(config.getoption('--callchain-max-events'))
     env['TRACE_API_CHAIN_MAX_PATHS']=str(config.getoption('--callchain-max-paths'))
     mode=config.getoption('--callchain-mode')
@@ -54,7 +56,10 @@ def pytest_cmdline_main(config):
         command=[sys.executable,'-m','pytest','-p','trace_api_chain.pytest_plugin',*config.invocation_params.args]
         print('trace-api-chain: capturing selected test once; output='+str(output),flush=True)
         process=subprocess.run(command,cwd=config.invocation_params.dir,env=env,timeout=config.getoption('--callchain-timeout'))
-        receipt=json.loads((output/'pytest-receipt.json').read_text())
+        receipt_path=output/'pytest-receipt.json'
+        if not receipt_path.exists():
+            raise RuntimeError('capture_worker_exited_before_receipt: exit_code='+str(process.returncode)+'; inspect pytest output for startup/collection failure')
+        receipt=json.loads(receipt_path.read_text())
         if not receipt.get('started') or not receipt.get('ended'):raise RuntimeError('selected_test_body_not_completed')
         report={'status':'capture_incomplete' if receipt.get('gaps') else 'captured',
                 'stage':'capture_only','mode':mode,'gaps':receipt.get('gaps',[]),
@@ -94,9 +99,13 @@ class Worker:
         registry=Registry(namespaces,catalog_path=config.getoption('--callchain-api-catalog'))
         save(self.output/'api-catalog.json',registry.describe())
         if config.getoption('--callchain-mode')=='full':self.bridge=Bridge(self.output,storage=config.getoption('--callchain-native-storage'))
+        relation=getattr(self.config,'_relation_state',{}).get('observer')
+        observers=[self]
+        if relation is not None:
+            observers.extend([relation,relation.collector,relation.registry,relation.bridge])
         self.recorder=Recorder(self.output/'events.jsonl',item.nodeid,str(item.path),namespaces=namespaces,
                                max_references=config.getoption('--callchain-max-references'),
-                               run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry)
+                               run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry,observer_roots=observers)
         self.recorder.body_code=code
         self.receipt['selected']=[item.nodeid]
         case=getattr(item,'_testcase',None)

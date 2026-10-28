@@ -51,7 +51,7 @@ class Sources:
 
 def build(events_path, resolve_native=True):
     calls={};definitions={};objects={};roots=[];detached=[];gaps=[];start={};end={};stack=[]
-    sources=Sources()
+    sources=Sources();reference_groups={}
     with open(events_path,encoding='utf-8') as stream:
         for line in stream:
             try:e=json.loads(line)
@@ -72,9 +72,12 @@ def build(events_path, resolve_native=True):
                 if stack and stack[-1]==uid:
                     stack.pop();calls[uid]['returned']=True;calls[uid]['return_time_ns']=e.get('time_ns')
                 else:gaps.append('unmatched_return:'+str(uid))
+            elif kind=='reference_group':reference_groups[e['id']]=e
             elif kind=='references' and e['uid'] in calls:
                 node=calls[e['uid']]
-                node['objects'].update(r[2] for r in e['added'])
+                added=e.get('added',[])
+                if 'added_groups' in e:added=[edge for state in e['added_groups'] for edge in reference_groups[state]['edges']]
+                node['objects'].update(r[2] for r in added)
                 node['reference_observations'].append({k:v for k,v in e.items() if k not in ('event','uid')})
             elif kind=='gap':gaps.append(e['reason'])
             elif kind=='end':end=e;gaps.extend(e['gaps'])
@@ -84,7 +87,9 @@ def build(events_path, resolve_native=True):
         if obj.get('definition') in definitions:obj['static']=definitions[obj['definition']]['static']
         elif obj.get('owner_file') and (obj.get('static_owner') or {}).get('qualname'):
             obj['static']=sources.locate({'file':obj['owner_file'],**obj['static_owner']})
-    for node in calls.values():node['objects']=sorted(node['objects'])
+    for node in calls.values():
+        node['objects']=sorted(node['objects'])
+        node['reference_groups']={state:reference_groups[state] for row in node['reference_observations'] for state in row.get('added_groups',[])}
     native=[];binary_hashes={}
     for node in calls.values():
         identity=node.get('native_identity') or {}
@@ -152,7 +157,7 @@ document.getElementById('limits').textContent=JSON.stringify({gaps:data.gaps,bou
 const chunks=new Map(),pending=new Map();
 window.__callchainChunk=(name,value)=>{chunks.set(name,value);if(pending.has(name))pending.get(name).resolve(value)};
 function loadChunk(name){if(chunks.has(name))return Promise.resolve(chunks.get(name));if(pending.has(name))return pending.get(name).promise;let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no});pending.set(name,{promise,resolve,reject});const script=document.createElement('script');script.src=name;script.onerror=()=>reject(new Error('无法加载对象证据：'+name));document.head.append(script);return promise}
-function detail(node){const d=document.createElement('details');d.className='detail';const s=document.createElement('summary');s.textContent='源码与对象';d.append(s);d.addEventListener('toggle',async()=>{if(!d.open||d.dataset.done)return;d.dataset.done='1';const p=document.createElement('pre');p.textContent='正在加载对象证据…';d.append(p);try{const chunk=await loadChunk(node.chunk),full=chunk.calls[node.uid],def=data.definitions[node.definition];p.textContent=JSON.stringify({call_id:node.uid,returned:node.returned,definition:def,static_definition:def?data.static_definitions[def.static_definition]:null,callsite:{file:node.caller_file,line:node.caller_line},native_binding:full.native_identity,native_source:full.native_source,native_callsite:full.native_callsite,transfer:full.transfer_evidence,relation:full.relation,objects:full.objects.map(id=>chunk.objects[id]),reference_observations:full.reference_observations},null,2);const owners=new Set(full.objects.map(id=>chunk.objects[id]?.static_definition).filter(Boolean));for(const id of owners){const source=data.static_definitions[id],fold=document.createElement('details'),label=document.createElement('summary'),body=document.createElement('pre');label.textContent='对象定义：'+(source.qualname||source.status);body.textContent=JSON.stringify(source,null,2);fold.append(label,body);d.append(fold)}}catch(error){p.textContent=String(error)}});return d}
+function detail(node){const d=document.createElement('details');d.className='detail';const s=document.createElement('summary');s.textContent='源码与对象';d.append(s);d.addEventListener('toggle',async()=>{if(!d.open||d.dataset.done)return;d.dataset.done='1';const p=document.createElement('pre');p.textContent='正在加载对象证据…';d.append(p);try{const chunk=await loadChunk(node.chunk),full=chunk.calls[node.uid],def=data.definitions[node.definition];p.textContent=JSON.stringify({call_id:node.uid,returned:node.returned,definition:def,static_definition:def?data.static_definitions[def.static_definition]:null,callsite:{file:node.caller_file,line:node.caller_line},native_binding:full.native_identity,native_source:full.native_source,native_callsite:full.native_callsite,transfer:full.transfer_evidence,relation:full.relation,objects:full.objects.map(id=>chunk.objects[id]),reference_observations:full.reference_observations,reference_groups:full.reference_groups},null,2);const owners=new Set(full.objects.map(id=>chunk.objects[id]?.static_definition).filter(Boolean));for(const id of owners){const source=data.static_definitions[id],fold=document.createElement('details'),label=document.createElement('summary'),body=document.createElement('pre');label.textContent='对象定义：'+(source.qualname||source.status);body.textContent=JSON.stringify(source,null,2);fold.append(label,body);d.append(fold)}}catch(error){p.textContent=String(error)}});return d}
 function render(){const q=document.getElementById('search').value.toLowerCase();const keep=new Set();function mark(id){const n=calls[id];let yes=n.name.toLowerCase().includes(q);for(const child of n.children)if(mark(child))yes=true;if(yes)keep.add(id);return yes}for(const id of [...data.roots,...data.detached])mark(id);const host=document.getElementById('tree');host.replaceChildren();function show(id,parent,depth){if(!keep.has(id))return;const n=calls[id],li=document.createElement('li'),d=document.createElement('details'),s=document.createElement('summary');s.className='fn';s.textContent=n.name+(n.kind==='native_boundary'?(n.native_expanded?' [C++ 已展开]':' [原生入口]'):n.kind==='native_external'?' [外部边界]':'')+(n.returned?'':' [未闭合]');d.open=!!q||depth<1;d.append(s,detail(n));li.append(d);parent.append(li);let filled=false;function children(){if(filled||!d.open)return;filled=true;const ul=document.createElement('ul');d.append(ul);for(const child of n.children)show(child,ul,depth+1)}d.addEventListener('toggle',children);children()}for(const id of data.roots)show(id,host,0);if(data.detached.length){const p=document.createElement('p');p.className='warning';p.textContent='以下片段缺少已验证父调用，不接入主树';host.append(p);for(const id of data.detached)show(id,host,0)}}
 document.getElementById('find').onclick=render;document.getElementById('reset').onclick=()=>{document.getElementById('search').value='';render()};document.getElementById('search').onkeydown=e=>{if(e.key==='Enter')render()};document.getElementById('search').value=new URLSearchParams(location.search).get('q')||'';render();</script></html>'''
 
@@ -174,7 +179,7 @@ def render(tree, output, page='C03'):
         encoded=json.dumps(chunk,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
         (output/chunk_name).write_text('window.__callchainChunk('+json.dumps(chunk_name)+','+encoded+');',encoding='utf-8')
         for uid,node in batch:
-            lightweight['calls'][uid]={k:v for k,v in node.items() if k not in ('objects','reference_observations','native_source','native_identity','native_caller','native_callsite','transfer_evidence')}
+            lightweight['calls'][uid]={k:v for k,v in node.items() if k not in ('objects','reference_observations','reference_groups','native_source','native_identity','native_caller','native_callsite','transfer_evidence')}
             lightweight['calls'][uid]['chunk']=chunk_name
     encoded=json.dumps(lightweight,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
     (output/(page+'.html')).write_text(PAGE.replace('__DATA__',encoded),encoding='utf-8')

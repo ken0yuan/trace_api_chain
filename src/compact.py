@@ -74,7 +74,7 @@ def rebuild_paths(events,native,contract):
         window='p:'+str(row['py_uid']);require(window in graph['nodes'],'native_window_missing')
         owner=graph['nodes'][window]
         require(owner['path_context']==row['context'],'native_path_context_owner_mismatch')
-        require(owner['kind']=='native_boundary','native_window_not_c_boundary')
+        require(owner['kind']=='native_boundary' or (owner['kind']=='python' and first.get('native_window_policy')=='python-and-c-boundaries/1'),'native_window_not_c_boundary')
         require(row['pid']==first['pid'] and row['tid']==owner['thread'],'native_path_thread_mismatch')
         require(row['entries']>0 and row['entries']==row['exits'],'native_path_unbalanced_counts')
         key=(row['py_uid'],row['node_id']);require(key not in support,'native_path_duplicate_support')

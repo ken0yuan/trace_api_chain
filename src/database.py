@@ -141,6 +141,11 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
     test_file=source.path(start['test_file']) if start.get('test_file') else graph['test']
     slot=slot or key([test_file,graph['test'],start.get('namespaces',[]),prepared['mode']])
     paths={};supports=set();api_aliases=set();api_entities={};contexts={};object_links=set();reference_links=set()
+    path_ids={};api_ids={}
+    def path_id(api,parent,entity,relation):
+        identity=(api,parent,entity,relation)
+        if identity not in path_ids:path_ids[identity]=key(list(identity))
+        return path_ids[identity]
     relations={(e['from'],e['to']):e['kind'] for e in graph['edges']}
     # Input insertion order is Python pass then native pass, not topological;
     # derive contexts recursively using only validated parent links.
@@ -148,21 +153,23 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
         if uid in contexts:return contexts[uid]
         node=graph['nodes'][uid];parent=node['parent'];current=[]
         for api,parent_path,depth in (visit(parent) if parent is not None else []):
-            relation=relations[parent,uid];pid=key([api,parent_path,mapping[uid],relation])
+            relation=relations[parent,uid];pid=path_id(api,parent_path,mapping[uid],relation)
             paths[pid]=(api,parent_path,mapping[uid],relation,depth+1);supports.add(pid)
             current.append((api,pid,depth+1))
         call=calls.get(uid[2:]) if uid.startswith('p:') else None
         names=(call or {}).get('api_aliases') or ([call['api_id']] if call and call.get('api_id') else [])
         if names:
-            api=key(['api',mapping[uid]]);api_entities[api]=mapping[uid]
+            if mapping[uid] not in api_ids:api_ids[mapping[uid]]=key(['api',mapping[uid]])
+            api=api_ids[mapping[uid]];api_entities[api]=mapping[uid]
             for name in names:api_aliases.add((api,name.removeprefix('runtime:')))
-            pid=key([api,None,mapping[uid],'api_entry']);paths[pid]=(api,None,mapping[uid],'api_entry',0);supports.add(pid)
+            pid=path_id(api,None,mapping[uid],'api_entry');paths[pid]=(api,None,mapping[uid],'api_entry',0);supports.add(pid)
             current.append((api,pid,0))
         contexts[uid]=current;return current
     for uid in graph['nodes']:visit(uid)
-    for observation in graph['reference_observations']:
-        e=observation['observation'];uid='p:'+str(e['uid'])
-        for parent,role,target in e['added']:
+    from .replay import added_reference_rows
+    for e,added in added_reference_rows(graph,unique_groups=True):
+        uid='p:'+str(e['uid'])
+        for parent,role,target in added:
             target_entity=object_map.get(target)
             if not target_entity:continue
             for api,pid,depth in contexts[uid]:
@@ -171,8 +178,9 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
                 if parent_entity:reference_links.add((pid,parent_entity,target_entity,role))
     dependencies={}
     def dependency(uid,eid,relation,evidence):
+        encoded=json.dumps(evidence,sort_keys=True,ensure_ascii=False)
         for api,pid,depth in contexts[uid]:
-            dependencies.setdefault((pid,eid,relation),set()).add(json.dumps(evidence,sort_keys=True,ensure_ascii=False))
+            dependencies.setdefault((pid,eid,relation),set()).add(encoded)
     for uid,eid in mapping.items():
         for owner in source.containers(eid):dependency(uid,owner,'defined_in',{'member':eid})
     for pid,eid in object_links:

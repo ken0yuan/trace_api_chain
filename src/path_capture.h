@@ -44,6 +44,7 @@ int trace_paths_begin(uint64_t window) {
     if(path_initialize()) return -1;
     path_window=window;path_active=1;return 0;
 }
+unsigned trace_paths_failure(void) { return (unsigned)path_failed; }
 int trace_paths_pause(void) { path_active=0;return path_failed ? -1 : 0; }
 uint64_t trace_paths_event_count(void) { return path_events; }
 uint64_t trace_paths_exit_callsite_variations(void) { return path_exit_callsite_variations; }

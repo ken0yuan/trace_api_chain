@@ -15,6 +15,7 @@ import time
 import types
 import inspect
 import traceback
+from . import __version__
 
 
 def test_body_code(item):
@@ -56,7 +57,12 @@ def class_namespace(cls):
     return type.__dict__['__dict__'].__get__(cls, type(cls))
 
 
-def instance_fields(value, plans=None):
+class NativeStorage:
+    __slots__=('descriptor','offset','kind','value_type')
+    def __init__(self,descriptor,spec):self.descriptor=descriptor;self.offset,self.kind,self.value_type=spec
+
+
+def instance_fields(value, plans=None, project_storage=False):
     """Only builtin storage descriptors; never invoke a property or repr."""
     result=[]; notes=[]
     cls=type(value)
@@ -80,7 +86,10 @@ def instance_fields(value, plans=None):
                             result.extend(('attribute:'+str(k),v) for k,v in fields.copy().items() if type(k) is str)
                     except Exception as exc: notes.append(type(exc).__name__+':__dict__')
                 elif type(descriptor) is types.MemberDescriptorType:
-                    try: result.append(('slot:'+name,descriptor.__get__(value,cls)))
+                    try:
+                        from .frame_identity import member_storage
+                        storage=member_storage(value,descriptor) if project_storage else None
+                        result.append(('slot:'+name,NativeStorage(descriptor,storage) if storage is not None else descriptor.__get__(value,cls)))
                     except AttributeError: pass
                     except Exception as exc: notes.append(type(exc).__name__+':'+name)
                 elif type(descriptor) is property:
@@ -90,7 +99,7 @@ def instance_fields(value, plans=None):
 
 
 class Recorder:
-    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None):
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=()):
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
@@ -99,16 +108,24 @@ class Recorder:
         self.namespaces=tuple(namespaces); self.max_references=max_references
         self.thread=threading.get_ident(); self.stack=[]; self.next_uid=0
         self.code_ids={}; self.object_metadata={}; self.views={}; self.busy=False
-        self.class_sources={};self.object_semantics={};self.global_loads={}
+        self.class_sources={};self.object_semantics={};self.global_loads={};self.metadata_cache={}
         self.module_sources={};self.read_sites={};self.module_operands={}
         for name,module in list(sys.modules.items()):
             if type(module) is types.ModuleType:self.module_source(vars(module))
         self.started=False; self.closed=False; self.gaps=set(); self.calls=0; self.roots=0
         self.path_contexts={}
+        self.reference_groups=collections.OrderedDict();self.reference_group_bytes=0;self.reference_group_costs={};self.next_reference_group=0
+        self.grouped_references=getattr(native,"storage",None)=="paths"
+        self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.root_states={}
         self.body_code=None;self.body_depth=0;self.body_entries=0
         self.native=native; self.registry=registry; self.suppressed=0
-        self.emit('start',schema='object_callchain/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
+        self.protected_subscription=None
+        # Exact instrumentation-owned objects only. Retain incoming workload
+        # references but never recursively observe our growing evidence store.
+        self.observer_roots={id(value):value for value in (self,native,registry,*observer_roots) if value is not None}
+        self.emit('start',schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy='shared-adjacency-states/1' if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
                   python=sys.version,scope_policy='callchain-contract/1',
+                  native_window_policy='python-and-c-boundaries/1' if native is not None else 'c-boundaries/1',
                    api_catalog=sorted(registry.catalog) if registry else [],scope='API subtrees on the selected test thread',
                   boundaries=['native function bodies require native instrumentation',
                               'other threads/processes are not attributed by this collector',
@@ -180,6 +197,21 @@ class Recorder:
 
     def metadata(self, value, labels=None):
         cls=type(value)
+        from .frame_identity import type_metadata_context
+        if labels is None:labels={}
+        contexts=labels.setdefault('metadata_contexts',{})
+        if cls not in contexts:contexts[cls]=type_metadata_context(cls)
+        context=contexts[cls]
+        extra=None
+        if cls is types.FunctionType:extra=(value.__code__,value.__module__)
+        elif cls is types.MethodType:extra=(value.__func__.__code__,value.__func__.__module__)
+        elif issubclass(cls,type):extra=type_metadata_context(value)
+        elif cls is types.ModuleType:extra=(vars(value).get('__name__'),vars(value).get('__file__'))
+        elif cls in (types.BuiltinFunctionType,types.BuiltinMethodType):extra=(value.__name__,value.__module__)
+        cacheable=context is not None and not (issubclass(cls,type) and extra is None)
+        identity=(id(value),id(cls));key=(context,extra)
+        cached=self.metadata_cache.get(identity)
+        if cacheable and cached is not None and cached[0]==key:return cached[1]
         if labels is None:label=class_label(cls)
         else:
             if cls not in labels:labels[cls]=class_label(cls)
@@ -205,7 +237,7 @@ class Recorder:
         # Exported classes can have __module__ rewritten (e.g. torch.Tensor).
         # Their own Python methods retain the actual defining source path.
         owner_class=value if result['kind']=='class' else cls if result['kind']=='instance' else None
-        class_key=(id(owner_class),owner.get('module'),owner.get('qualname')) if owner_class is not None else None
+        class_key=(id(owner_class),owner.get('module'),owner.get('qualname'),extra if result['kind']=='class' else context) if owner_class is not None else None
         if class_key in self.class_sources:
             result.update(self.class_sources[class_key])
         elif owner_class is not None and owner.get('module')!='builtins':
@@ -235,61 +267,208 @@ class Recorder:
             result['id']=token+':'+hashlib.sha256(json.dumps(semantic,sort_keys=True).encode()).hexdigest()[:16]
             self.object_semantics[token]=(semantic,result['id'])
         token=result['id']
-        return token,result
+        answer=(token,result)
+        if cacheable:
+            if len(self.metadata_cache)>=100000:self.metadata_cache.clear()
+            self.metadata_cache[identity]=(key,answer)
+        return answer
 
     def snapshot(self, frame, phase, values=None):
-        if not self.stack: return
+        if not self.stack:return
         if values is None:
-            if os.path.realpath(frame.f_code.co_filename)==self.test_file: return
+            if os.path.realpath(frame.f_code.co_filename)==self.test_file:return
             values=frame.f_locals.copy()
-        uid=self.stack[-1]['uid']
-        # No fixed nesting depth or 32-element container cutoff. An explicit
-        # work budget stops pathological graphs and is emitted as a gap.
-        queue=collections.deque((None,'root:'+name,value) for name,value in values.items())
-        refs=[]; seen=set(); notes=set(); count=0; metadata={};labels={};plans={}
+        from .frame_identity import graph_signature,flat_sequence_signature
+        roots=[];groups={};notes=set();local={};count=len(values)
+        self._snapshot_known_nodes=set();self._snapshot_current_groups=groups;self._snapshot_current_notes=notes
+        for name,value in values.items():
+            identity=(id(value),id(type(value)))
+            chunk=local.get(identity)
+            if chunk is None:
+                flat=flat_sequence_signature(value)
+                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots)
+                chunk=self.snapshot_cache.get(signature) if signature is not None else None
+                if chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
+                    chunk=None  # Earlier first-visit observations own this snapshot's state.
+                if chunk is None:
+                    chunk=self.snapshot_root(value)
+                    if signature is not None and chunk[4] and 'reference_budget_exceeded' not in chunk[2]:
+                        self.snapshot_cache[signature]=chunk
+                        size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
+                        size+=sum(len(edges)*96+128 for edges in chunk[1].values())+len(chunk[3])*40+256
+                        self.snapshot_cache_bytes-=self.snapshot_cache_costs.get(signature,0)
+                        self.snapshot_cache_costs[signature]=size;self.snapshot_cache_bytes+=size
+                        while len(self.snapshot_cache)>4096 or self.snapshot_cache_bytes>128*1024*1024:
+                            previous,_=self.snapshot_cache.popitem(last=False)
+                            self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(previous)
+                            old_identity=previous[0] if type(previous) is tuple else None
+                            if old_identity is not None and self.root_states.get(old_identity)==previous:self.root_states.pop(old_identity,None)
+                else:self.snapshot_cache.move_to_end(signature)
+                if signature is not None and signature in self.snapshot_cache:self.root_states[identity]=signature
+                if len(self.root_states)>4096:self.root_states.clear()
+                local[identity]=chunk
+            root,adjacency,unread,nodes,complete=chunk
+            self._snapshot_known_nodes.update(nodes)
+            roots.append((None,'root:'+name,root));notes.update(unread)
+            for parent,edges in adjacency.items():
+                if parent not in groups:
+                    count+=len(edges)
+                    if count>self.max_references:
+                        notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
+                    groups[parent]=edges
+                elif groups[parent] is not edges and groups[parent]!=edges:
+                    notes.add('snapshot_inconsistent_reference_state');self.gaps.add('snapshot_inconsistent_reference_state')
+            if 'reference_budget_exceeded' in notes:break
+        self.publish_snapshot(self.stack[-1]['uid'],phase,values,frozenset(roots),groups,notes)
+
+    def snapshot_root(self,value):
+        # Cache by reference root, not the whole frame: a changing loop counter
+        # must not invalidate an unchanged registry reachable from another local.
+        queue=collections.deque([(None,None,value)]);groups={};seen=set();notes=set();count=0
+        metadata={};labels={};plans={};root=None;nodes=set();complete=True
+        shared=getattr(self,'_snapshot_known_nodes',set())
         while queue:
             parent,name,value=queue.popleft();count+=1
             if count>self.max_references:
                 notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
-            # A shared object can be reached through many aliases in a single
-            # snapshot. No user code runs here, so resolve its metadata once.
             identity=(id(value),id(type(value)))
+            candidate=self.root_states.get(identity) if parent is not None else None
+            prior=self.snapshot_cache.get(candidate) if candidate is not None else None
+            if prior is not None and prior[3].isdisjoint(shared) and sum(len(edges) for edges in prior[1].values())>=32:
+                from .frame_identity import graph_signature,flat_sequence_signature
+                flat=flat_sequence_signature(value)
+                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots)
+                if signature==candidate and not any(target in groups and groups[target]!=edges for target,edges in prior[1].items()):
+                    target,adjacency,unread,observed,complete=prior
+                    groups.setdefault(parent,set()).add((parent,name,target));groups.update((node,set(edges)) for node,edges in adjacency.items())
+                    seen.update(observed);nodes.update(observed);shared.update(observed);notes.update(unread)
+                    count+=sum(len(edges) for edges in adjacency.values())
+                    if count>self.max_references:
+                        notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
+                    continue
             if identity not in metadata:metadata[identity]=self.metadata(value,labels)
             token,meta=metadata[identity]
-            refs.append((parent,name,token))
+            if parent is None:root=token
+            else:groups.setdefault(parent,set()).add((parent,name,token))
             if self.object_metadata.get(token)!=meta:
                 self.object_metadata[token]=meta;self.emit('object',**meta)
             if token in seen:continue
             seen.add(token);typ=type(value);children=[]
-            if typ in (list,tuple): children=[('item:'+str(i),v) for i,v in enumerate(value)]
+            if typ not in (str,bytes,int,float,complex,bool,type(None),types.CodeType):
+                if token in shared:
+                    # Borrow the first observed state of shared descendants from
+                    # this same snapshot, rather than rereading builtin getters
+                    # or discarding a reusable root merely because it aliases.
+                    pending=[token];borrowed=set()
+                    current=getattr(self,'_snapshot_current_groups',{})
+                    while pending:
+                        target=pending.pop()
+                        if target in borrowed:continue
+                        borrowed.add(target);nodes.add(target)
+                        edges=current.get(target)
+                        if edges is not None:
+                            groups[target]=set(edges);count+=len(edges)
+                            pending.extend(edge[2] for edge in edges)
+                    # Every borrowed descendant was already observed, including
+                    # those reachable through another alias queued below. Keep
+                    # those alias edges, but do not traverse/count the subtree
+                    # again merely because its interior node is another root.
+                    seen.update(borrowed)
+                    notes.update(getattr(self,'_snapshot_current_notes',()))
+                    if count>self.max_references:
+                        notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded')
+                    continue
+                shared.add(token);nodes.add(token)
+            if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:
+                notes.add('observer_state_not_traversed');continue
+            if typ in (list,tuple):children=[('item:'+str(i),v) for i,v in enumerate(value)]
             elif typ is dict:
-                for i,(k,v) in enumerate(value.copy().items()):
-                    children.extend((('key:'+str(i),k),('value:'+str(i),v)))
-            elif typ in (set,frozenset): children=[('member:'+str(id(v)),v) for v in value.copy()]
-            elif typ is types.MethodType: children=[('receiver',value.__self__),('function',value.__func__)]
+                for i,(k,v) in enumerate(value.copy().items()):children.extend((('key:'+str(i),k),('value:'+str(i),v)))
+            elif typ in (set,frozenset):children=[('member:'+str(id(v)),v) for v in value.copy()]
+            elif typ is types.MethodType:children=[('receiver',value.__self__),('function',value.__func__)]
             elif typ is types.FunctionType:
                 children=[('default:'+str(i),v) for i,v in enumerate(value.__defaults__ or ())]
                 children.extend(('keyword_default:'+k,v) for k,v in (value.__kwdefaults__ or {}).items())
                 for name,cell in zip(value.__code__.co_freevars,value.__closure__ or ()):
-                    try: children.append(('closure:'+name,cell.cell_contents))
-                    except ValueError: pass
+                    try:children.append(('closure:'+name,cell.cell_contents))
+                    except ValueError:pass
             elif typ in (types.BuiltinFunctionType,types.BuiltinMethodType):
                 if value.__self__ is not None:children=[('receiver',value.__self__)]
             elif typ not in (str,bytes,int,float,complex,bool,type(None),types.ModuleType,types.CodeType) and not issubclass(type(value),type):
-                children,unread=instance_fields(value,plans);notes.update(unread)
-                if not children and label_is_extension(meta): notes.add('opaque_storage:'+meta['type'].get('qualname','unknown'))
-            queue.extend((token,name,v) for name,v in children)
+                children,unread=instance_fields(value,plans,project_storage=True);notes.update(unread)
+                if not children and label_is_extension(meta):notes.add('opaque_storage:'+meta['type'].get('qualname','unknown'))
+            for name,child in children:
+                if type(child) is NativeStorage:
+                    count+=1
+                    if count>self.max_references:
+                        notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
+                    field=self.storage_metadata(token,child)
+                    groups.setdefault(token,set()).add((token,name,field))
+                else:queue.append((token,name,child))
+        return root,{parent:frozenset(edges) for parent,edges in groups.items()},frozenset(notes),frozenset(nodes),complete
+
+    def storage_metadata(self,owner,storage):
+        descriptor=storage.descriptor
+        declaration={'owner':class_label(descriptor.__objclass__),'name':descriptor.__name__,
+                     'byte_offset':storage.offset,'c_member_type':storage.kind}
+        semantic={'kind':'storage_member','type':class_label(storage.value_type),'owner':owner,
+                  'identity':'native_storage_projection','declaration':declaration}
+        token='member:'+owner+':'+str(id(descriptor))+':'+hashlib.sha256(json.dumps(semantic,sort_keys=True).encode()).hexdigest()[:16]
+        meta={'id':token,**semantic}
+        if self.object_metadata.get(token)!=meta:self.object_metadata[token]=meta;self.emit('object',**meta)
+        return token
+
+    def publish_snapshot(self,uid,phase,values,current,groups,notes):
+        if self.grouped_references:return self.publish_grouped_snapshot(uid,phase,values,current,groups,notes)
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
-        key=(uid,scope);current=set(refs);previous=self.views.get(key,set())
-        added=current-previous;removed=previous-current
+        key=(uid,scope)
+        previous,old_groups=self.views.get(key,(set(),{}))
+        if current is previous and groups is old_groups and not notes:return
+        added=set(current-previous);removed=set(previous-current)
+        for token in groups.keys() | old_groups.keys():
+            now=groups.get(token,frozenset());old=old_groups.get(token,frozenset())
+            if now is old:continue
+            added.update(now-old);removed.update(old-now)
+        # An edge can move between the ordinary and flat-sequence representation.
+        unchanged=added & removed;added.difference_update(unchanged);removed.difference_update(unchanged)
         if added or removed or notes:
             self.emit('references',uid=uid,phase=phase,scope=scope,
                       added=sorted(added,key=lambda r:(r[0] or '',r[1],r[2])),
                       removed=sorted(removed,key=lambda r:(r[0] or '',r[1],r[2])),notes=sorted(notes))
-        self.views[key]=current
+        self.views[key]=(current,groups)
+
+    def publish_grouped_snapshot(self,uid,phase,values,current,groups,notes):
+        scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
+        key=(uid,scope);previous,old_groups,old_ids,old_notes=self.views.get(key,(frozenset(),{}, {},None))
+        if current==previous and groups==old_groups:
+            if frozenset(notes)!=old_notes:self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=[],removed_groups=[],notes=sorted(notes))
+            self.views[key]=(current,groups,old_ids,frozenset(notes));return
+        states={};source={None:current,**groups}
+        for parent,edges in source.items():
+            before=previous if parent is None else old_groups.get(parent)
+            if parent in old_ids and (before is edges or (before is not None and before==edges)):
+                states[parent]=old_ids[parent];continue
+            identity=(parent,edges);state=self.reference_groups.get(identity)
+            if state is None:
+                self.next_reference_group+=1;state='references:'+str(self.next_reference_group)
+                self.emit('reference_group',id=state,parent=parent,edges=sorted(edges,key=lambda r:(r[0] or '',r[1],r[2])))
+                self.reference_groups[identity]=state
+                size=128+len(edges)*96;self.reference_group_bytes+=size;self.reference_group_costs[identity]=size
+                while len(self.reference_groups)>100000 or self.reference_group_bytes>128*1024*1024:
+                    expired,_=self.reference_groups.popitem(last=False)
+                    self.reference_group_bytes-=self.reference_group_costs.pop(expired)
+            else:self.reference_groups.move_to_end(identity)
+            states[parent]=state
+        added=sorted(set(states.values())-set(old_ids.values()));removed=sorted(set(old_ids.values())-set(states.values()))
+        if added or removed or frozenset(notes)!=old_notes:
+            self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=added,removed_groups=removed,notes=sorted(notes))
+        self.views[key]=(current,groups,states,frozenset(notes))
 
     def profile(self, frame, event, arg, external_uid=None):
         if self.busy or threading.get_ident()!=self.thread:return
+        quiet_enter=getattr(self.native,'observer_enter',None) if self.protected_subscription is None else None
+        quiet_leave=getattr(self.native,'observer_leave',None) if quiet_enter else None
+        if quiet_enter:quiet_enter()
         self.busy=True
         try:
             if self.body_code is not None:
@@ -343,9 +522,9 @@ class Recorder:
                 self.calls+=1;self.roots+=int(parent is None)
                 self.observe('entry_snapshot',self.snapshot,frame,'entry' if event=='call' else 'native_entry',
                              None if event=='call' else {'callable':arg,'receiver':getattr(arg,'__self__',None)})
-                if event=='c_call' and self.native:
-                    if getattr(self.native,'storage',None)=='paths':self.observe('native_begin',self.native.begin,uid,row['native_identity'],context=row['path_context'])
-                    else:self.observe('native_begin',self.native.begin,uid,row['native_identity'])
+                if self.native:
+                    if getattr(self.native,'storage',None)=='paths':self.observe('native_begin',self.native.begin,uid,row.get('native_identity'),context=row['path_context'])
+                    else:self.observe('native_begin',self.native.begin,uid,row.get('native_identity'))
             elif self.stack:
                 top=self.stack[-1]
                 matches=(top['kind']=='python' and event=='return' and top['frame']==id(frame)) or (
@@ -359,7 +538,7 @@ class Recorder:
                 if event=='return':
                     self.observe('exit_snapshot',self.snapshot,frame,'exit')
                     self.observe('return_snapshot',self.snapshot,frame,'return',{'return':arg})
-                elif self.native:self.observe('native_end',self.native.end,top['uid'])
+                if self.native:self.observe('native_end',self.native.end,top['uid'])
                 # A real return always retires its matching frame, including when
                 # optional snapshots or native bookkeeping reported an error.
                 try:self.emit('return',uid=top['uid'],kind=event,time_ns=time.monotonic_ns())
@@ -371,9 +550,19 @@ class Recorder:
                 if not self.stack:self.file.flush()  # Preserve each completed API window, not each object event.
         except Exception as exc:
             self.collector_error(exc,'profile_'+event)
-        finally:self.busy=False
+        finally:
+            self.busy=False
+            if quiet_leave:quiet_leave()
 
-    def trace(self, frame, event, arg):
+    def trace(self,frame,event,arg):
+        quiet_enter=getattr(self.native,'observer_enter',None) if self.protected_subscription is None else None
+        quiet_leave=getattr(self.native,'observer_leave',None) if quiet_enter else None
+        if quiet_enter:quiet_enter()
+        try:return self.trace_event(frame,event,arg)
+        finally:
+            if quiet_leave:quiet_leave()
+
+    def trace_event(self, frame, event, arg):
         if self.suppressed or threading.get_ident()!=self.thread:return None
         if self.body_code is not None and not self.body_depth and not self.stack:return None
         if event=='call' and not self.stack and not self.framework(frame.f_globals.get('__name__')):return None
@@ -420,12 +609,24 @@ class Recorder:
 
     def begin(self):
         self.old_profile=sys.getprofile();self.old_trace=sys.gettrace()
+        identity=sys.modules.get('_relation_identity')
+        if identity is not None and getattr(identity,'protected_observer_available',lambda:False)():
+            self.protected_subscription=(identity,identity.attach_callchain_observer(self.profile,self.trace))
+            self.started=True
+            return
         if self.old_profile or self.old_trace:raise RuntimeError('existing Python profiling/tracing hook; cannot silently replace it')
         self.started=True
         sys.setprofile(self.profile);sys.settrace(self.trace)
 
     def end(self, external_hooks=False):
-        if not external_hooks:
+        if self.protected_subscription is not None:
+            identity,token=self.protected_subscription
+            try:
+                if not identity.guard_intact():self.gaps.add('hook_replaced')
+                identity.detach_callchain_observer(token)
+            except RuntimeError:self.gaps.add('hook_replaced')
+            self.protected_subscription=None
+        elif not external_hooks:
             if sys.getprofile()!=self.profile or sys.gettrace()!=self.trace:self.gaps.add('hook_replaced')
             sys.setprofile(self.old_profile);sys.settrace(self.old_trace)
         if self.stack:self.gaps.add('unclosed_calls')
@@ -435,6 +636,7 @@ class Recorder:
                   gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
                   source_read_policy='namespace-load/1')
         self.file.close()
+        self.observer_roots.clear()
 
 
 def label_is_extension(meta):

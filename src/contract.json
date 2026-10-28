@@ -53,13 +53,17 @@
       "property_custom_getattribute_repr": "never execute for observation; record boundary",
       "scalar_payload": "not required",
       "native_extension_internal_storage": "opaque boundary",
+      "observer_owned_state": "retain references to exact registered observer objects; do not recursively enumerate instrumentation state or its growing evidence caches",
       "cycles": "visit identity once per snapshot; retain every observed alias edge",
-      "budget_exhaustion": "emit reference_budget_exceeded; never claim observation_complete"
+      "budget_exhaustion": "emit reference_budget_exceeded; never claim observation_complete",
+      "unboxed_native_members": "retain declared native storage field as storage_member; do not manufacture Python scalar object identities from C values"
     },
     "unobserved_ephemeral_values": "outside snapshot contract; no synthetic object node",
     "missing_call_target_parent_or_return": "invalid callchain evidence, independent of object snapshots",
     "storage": "preserve each observed object identity and reference delta; no importance classifier",
-    "native_argument_and_return_values": "not available from CPython profile events in the current collector"
+    "native_argument_and_return_values": "not available from CPython profile events in the current collector",
+    "reuse": "full observed-reference signatures and current-snapshot first-visit state; type/source context validated; mutations invalidate; no object or edge discarded by importance",
+    "reference_storage": "legacy per-view deltas or explicitly declared shared-adjacency-states/1; define each exact parent adjacency once and preserve each call view update by state id; validate every object, state and removal"
   },
   "edges": {
     "python_parent": "must equal active stack top on the same thread",
@@ -68,6 +72,7 @@
     "direct_machine_call": "never infer from nesting; requires separate transfer evidence",
     "unmatched_exit_or_window": "reject reconstruction, preserve inputs"
   },
+  "native_window_policy": "Python and C boundary owners are allowed; Python owners require an explicit python-and-c-boundaries/1 collector receipt, with unchanged thread, timestamp and matched native stack checks",
   "source_mapping": "annotation only; cannot add, remove or reparent invocations",
   "replay": "canonical JSON, stable IDs from input sequence, no clock/randomness/network/LLM",
   "limits": [

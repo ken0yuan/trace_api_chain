@@ -96,3 +96,32 @@ def test_test_failure_preserved_with_evidence(tmp_path):
     assert result.returncode==1,result.stdout+result.stderr
     assert json.loads((out/'pytest-receipt.json').read_text())['pytest_exit_code']==1
     assert not (out/'tree/C03.html').exists()
+
+
+def test_worker_startup_failure_reports_exit_code_instead_of_missing_receipt(tmp_path):
+    (tmp_path/'conftest.py').write_text("import os\ndef pytest_configure(config):\n if os.environ.get('TRACE_API_CHAIN_INTERNAL')=='1':raise RuntimeError('worker startup failed')\n")
+    out=tmp_path/'capture'
+    result=launch(tmp_path,'def test_one():pass\n','--callchain-out='+str(out),'--callchain-mode=objects')
+    assert result.returncode!=0
+    report=json.loads((out/'capture-result.json').read_text())
+    assert report['error_type']=='RuntimeError'
+    assert 'capture_worker_exited_before_receipt: exit_code=3' in report['error']
+    assert 'worker startup failed' in result.stdout+result.stderr
+
+
+def test_first_replay_reuses_the_validated_graph_and_frozen_inputs_stay_checked(tmp_path,monkeypatch):
+    import pytest
+    import trace_api_chain.pipeline as pipeline
+    out=tmp_path/'capture'
+    result=launch(tmp_path,PRELUDE+'def test_one():\n m.api(1)\n','--callchain-out='+str(out),'--callchain-mode=objects','--callchain-namespaces=fixture_api')
+    assert result.returncode==0,result.stdout+result.stderr
+    original=pipeline.rebuild;calls=[]
+    def observed(*args):calls.append(1);return original(*args)
+    monkeypatch.setattr(pipeline,'rebuild',observed)
+    first=pipeline.prepare(out,'objects')['graph']
+    assert len(calls)==1
+    second=pipeline.prepare(out,'objects')['graph']
+    assert first==second and len(calls)==2
+    with (out/'evidence/python.jsonl').open('a') as stream:stream.write('\n')
+    with pytest.raises(ValueError,match='frozen_evidence_changed'):pipeline.prepare(out,'objects')
+    assert len(calls)==2
