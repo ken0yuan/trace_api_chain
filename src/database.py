@@ -134,8 +134,8 @@ def normalize(prepared,roots=None,definitions=None):
     return source,mapping,object_map,aliases,pending,calls
 
 
-def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=4096):
-    """Replace one test's contribution atomically; other API evidence is retained."""
+def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
+    """Compute one complete contribution without opening any database."""
     source,mapping,object_map,aliases,pending,calls=normalize(prepared,roots,definitions)
     graph=prepared['graph'];start=next(e for e in prepared['events'] if e['event']=='start')
     test_file=source.path(start['test_file']) if start.get('test_file') else graph['test']
@@ -208,6 +208,24 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
     if graph.get('native_storage')=='paths':
         summary.update(native_storage='paths',native_invocations=graph['native_activations'],
                        native_path_nodes=graph['native_path_nodes'],runtime_event_history_preserved=False)
+    return {'schema':'callchain_refresh_plan/1','policy':policy,'slot':slot,
+            'input_digest':input_digest,'import_digest':import_digest,'summary':summary,
+            'entities':source.entities,'aliases':sorted(aliases),'api_entities':api_entities,
+            'api_aliases':sorted(api_aliases),
+            'paths':[(pid,*value) for pid,value in sorted(paths.items(),key=lambda x:x[1][4])],
+            'supports':sorted(supports),'object_links':sorted(object_links),
+            'reference_links':sorted(reference_links),'dependency_rows':dependency_rows,'pending':pending}
+
+
+def commit_refresh(db_path,plan,cache_mib=4096):
+    """Only the final single-writer stage opens and changes the SQL database."""
+    if plan.get('schema')!='callchain_refresh_plan/1':raise ValueError('unsupported_refresh_plan')
+    policy=[digest(Path(__file__)),digest(Path(__file__).with_name('source_entities.py')),digest(Path(__file__).with_name('changed_objects.py'))]
+    if plan.get('policy')!=policy:raise ValueError('refresh_plan_policy_changed')
+    slot=plan['slot'];summary=plan['summary'];input_digest=plan['input_digest'];import_digest=plan['import_digest']
+    entities=plan['entities'];aliases=plan['aliases'];api_entities=plan['api_entities'];api_aliases=plan['api_aliases']
+    paths=plan['paths'];supports=plan['supports'];object_links=plan['object_links'];reference_links=plan['reference_links']
+    dependency_rows=plan['dependency_rows'];pending=plan['pending']
     db=connect(db_path,cache_mib=cache_mib)
     try:
         db.execute('BEGIN IMMEDIATE')
@@ -215,12 +233,12 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
         if existing and existing[0]==import_digest:
             db.rollback();return {**summary,'status':'unchanged','slot':slot}
         db.execute('DELETE FROM capture_slots WHERE id=?',(slot,))
-        db.execute('INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)',(slot,graph['test'],input_digest,import_digest,str(prepared['output']),'partial' if graph['gaps'] else 'current',json.dumps(summary,ensure_ascii=False)))
-        versions={(e['path'],e['source_sha256']) for e in source.entities.values() if e['path'] and e['source_sha256']}
+        db.execute('INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)',(slot,summary['test'],input_digest,import_digest,summary['raw_evidence'],'partial' if summary['gaps'] else 'current',json.dumps(summary,ensure_ascii=False)))
+        versions={(e['path'],e['source_sha256']) for e in entities.values() if e['path'] and e['source_sha256']}
         for path,sha in versions:
             db.execute("UPDATE capture_slots SET status='stale' WHERE id<>? AND id IN (SELECT s.slot_id FROM slot_entities s JOIN entities e ON e.id=s.entity_id WHERE e.path=? AND s.source_sha256 IS NOT NULL AND s.source_sha256<>?)",(slot,path,sha))
             db.execute("UPDATE entities SET status='stale' WHERE path=? AND source_sha256 IS NOT NULL AND source_sha256<>?",(path,sha))
-        for eid,e in source.entities.items():
+        for eid,e in entities.items():
             old=db.execute('SELECT source_sha256 FROM entities WHERE id=?',(eid,)).fetchone()
             if old and old[0] and e['source_sha256'] and old[0]!=e['source_sha256']:
                 db.execute("UPDATE capture_slots SET status='stale' WHERE id<>? AND id IN (SELECT slot_id FROM slot_entities WHERE entity_id=?)",(slot,eid))
@@ -231,7 +249,7 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
         db.executemany('INSERT OR IGNORE INTO apis VALUES(?,?)',sorted(api_entities.items()))
         db.executemany('INSERT OR IGNORE INTO api_aliases VALUES(?,?)',sorted(api_aliases))
         db.executemany('INSERT INTO api_alias_support VALUES(?,?,?)',[(slot,*x) for x in sorted(api_aliases)])
-        for pid,value in sorted(paths.items(),key=lambda x:x[1][4]):db.execute('INSERT OR IGNORE INTO paths VALUES(?,?,?,?,?,?)',(pid,*value))
+        for value in paths:db.execute('INSERT OR IGNORE INTO paths VALUES(?,?,?,?,?,?)',value)
         db.executemany('INSERT INTO path_support VALUES(?,?)',[(slot,p) for p in sorted(supports)])
         db.executemany('INSERT INTO observed_objects VALUES(?,?,?)',[(slot,*x) for x in sorted(object_links)])
         db.executemany('INSERT INTO object_references VALUES(?,?,?,?,?)',[(slot,*x) for x in sorted(reference_links)])
@@ -247,6 +265,11 @@ def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=409
         db.rollback();raise
     finally:db.close()
     return {**summary,'status':'refreshed','slot':slot}
+
+
+def refresh(db_path,prepared,roots=None,slot=None,definitions=None,cache_mib=4096):
+    """Compatibility entry point: prepare then atomically commit one test."""
+    return commit_refresh(db_path,prepare_refresh(prepared,roots,slot,definitions),cache_mib)
 
 
 def list_apis(db_path):

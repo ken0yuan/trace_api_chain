@@ -11,15 +11,28 @@ def main():
     replay.add_argument('--source-root',action='append',default=[],metavar='LABEL=PATH')
     replay.add_argument('--slot',help='Explicit latest-evidence slot, only for a single input')
     replay.add_argument('--db-cache-mib',type=int,default=4096,help='SQLite writer page-cache budget in MiB (1..16384; default: 4096)')
+    organize=sub.add_parser('prepare',help='Build a complete durable contribution without opening the database')
+    organize.add_argument('capture');organize.add_argument('--out',required=True)
+    organize.add_argument('--mode',choices=('full','objects'));organize.add_argument('--source-root',action='append',default=[])
+    organize.add_argument('--slot')
+    commit=sub.add_parser('commit',help='Verify and atomically commit a prepared contribution; single writer')
+    commit.add_argument('plan');commit.add_argument('--db',required=True)
+    commit.add_argument('--db-cache-mib',type=int,default=4096)
     listing=sub.add_parser('apis',help='List observed APIs in the database');listing.add_argument('--db',required=True)
     query=sub.add_parser('query',help='Read an API graph from SQL');query.add_argument('--db',required=True);query.add_argument('--api',required=True);query.add_argument('--out')
     render=sub.add_parser('html',help='Generate C03 solely from SQL');render.add_argument('--db',required=True);render.add_argument('--api',required=True);render.add_argument('--out',required=True)
     args=parser.parse_args()
-    if args.command=='replay' and not 1<=args.db_cache_mib<=16384:
+    if args.command in ('replay','commit') and not 1<=args.db_cache_mib<=16384:
         parser.error('--db-cache-mib must be between 1 and 16384')
     from .database import refresh,list_apis,query as query_api,render_api
     from .native import save
     from pathlib import Path
+    if args.command in ('prepare','commit'):
+        from .staged import prepare_file,commit_file
+        if args.command=='prepare':
+            report=prepare_file(args.capture,args.out,args.mode,dict(p.split('=',1) for p in args.source_root) or None,args.slot)
+        else:report=commit_file(args.db,args.plan,args.db_cache_mib)
+        print(json.dumps(report,ensure_ascii=False,indent=2));return 0
     if args.command=='replay':
         from .pipeline import prepare
         if args.slot and len(args.captures)!=1:parser.error('--slot requires one capture')
