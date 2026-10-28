@@ -84,6 +84,7 @@ def pytest_configure(config):
 
 class Worker:
     def __init__(self,config):
+        self.owner_pid=os.getpid()
         self.config=config;self.output=Path(config.getoption('--callchain-out')).resolve()
         self.recorder=None;self.bridge=None
         self.receipt={'started':False,'ended':False,'reports':[],'selected':[]}
@@ -123,12 +124,20 @@ class Worker:
                                        'duration':report.duration})
 
     def pytest_sessionfinish(self,session,exitstatus):
+        if os.getpid()!=self.owner_pid:
+            if not self.recorder or (self.recorder.closed and self.recorder.fragment_pid!=os.getpid()):return
+            self.recorder.redirect_fork_fragment()
+            self.output=self.recorder.capture_path.parent
+            self.receipt['fork_fragment']=True
         if self.bridge:self.bridge.close()
         if self.recorder and not self.recorder.closed:
             if self.recorder.started:self.recorder.end()
             else:
                 self.recorder.emit('end',calls=0,roots=0,objects=0,gaps=['test_body_not_recorded'],all_objects_complete=False)
                 self.recorder.file.close()
+        if self.recorder:
+            self.receipt['fork_fragments']=[str(path.parent) for path in sorted((self.output/'fork-fragments').glob('*/fork-fragment.json'))]
+            self.receipt['fork_fragments_validated']=False
         self.receipt['pytest_exit_code']=int(exitstatus)
         self.receipt['gaps']=sorted(set((list(self.recorder.gaps) if self.recorder else [])+
                                       (self.bridge.gaps if self.bridge else [])))

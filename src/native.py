@@ -52,6 +52,7 @@ class Bridge:
         for callback in (self.observer_enter,self.observer_leave):callback.argtypes=[];callback.restype=None
         self.hook.trace_index_configure.argtypes=[ctypes.c_char_p]
         self.hook.trace_index_configure.restype=ctypes.c_int
+        self.hook.trace_index_fork_output.argtypes=[ctypes.c_char_p];self.hook.trace_index_fork_output.restype=ctypes.c_int
         self.hook.trace_index_stop.restype=ctypes.c_int
         self.hook.trace_index_event_count.restype=ctypes.c_size_t
         if self.hook.trace_index_interposed()!=1:raise RuntimeError('compiler_hook_not_interposed')
@@ -101,6 +102,20 @@ class Bridge:
         if not self.stack or self.stack[-1]!=uid:
             self.gaps.append('window_return_mismatch');return
         self.stack.pop();self.resume_current()
+
+    def redirect_fork_fragment(self,output):
+        previous=self.output;output=Path(output)
+        active_file=(self.active or {}).get('file')
+        if self.storage=='events':
+            for segment in self.segments:
+                filename=segment.get('file')
+                if segment is self.active or not filename:continue
+                target=output/filename
+                if not target.exists():target.symlink_to(previous/filename)
+        if self.hook.trace_index_fork_output(os.fsencode(output/active_file) if active_file else None):
+            self.gaps.append('fork_native_output_redirect_failed')
+        self.output=output
+        if 'fork_continuation_not_validated' not in self.gaps:self.gaps.append('fork_continuation_not_validated')
 
     def record_path_failure(self):
         flags=self.hook.trace_paths_failure();self.path_failed=True

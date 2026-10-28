@@ -382,3 +382,74 @@ def test_in_place_method_code_replacement_refreshes_class_and_instance_sources(t
     def rows(path):return [row for line in path.read_text().splitlines() if (row:=json.loads(line))['event'] in ('object','references')]
     assert rows(tmp_path/'optimized-method-code.jsonl')==rows(tmp_path/'reference-method-code.jsonl')
     assert not optimized.gaps and not reference.gaps
+
+
+def test_storage_plans_keep_each_instances_fields_and_rebuild_after_type_changes(tmp_path,monkeypatch):
+    class Base:
+        __slots__=('slot','hidden','__dict__')
+    class Item(Base):
+        __slots__=('extra',)
+        @property
+        def hidden(self):raise AssertionError('a shadowing property was evaluated')
+    # Most Tensor type attributes are not instance storage descriptors. Reusing
+    # their selection must not reuse any of the 686 instances' actual values.
+    for index in range(256):setattr(Item,'unused_'+str(index),index)
+    shared={'children':[1]};items=[]
+    for index in range(686):
+        value=Item();value.slot=[shared,index];value.extra=None;value.link=shared
+        vars(Base)['hidden'].__set__(value,object());items.append(value)
+    values={'jacobians':[items,list(reversed(items))]}
+    optimized=Recorder(tmp_path/'optimized-field-plans.jsonl','test::one',tmp_path/'test.py')
+    reference=Recorder(tmp_path/'reference-field-plans.jsonl','test::one',tmp_path/'test.py')
+    optimized.stack=[{'uid':1}];reference.stack=[{'uid':1}]
+    previous=None
+    def snapshot():
+        nonlocal previous
+        current=identity.graph_signature(values,100000,{})
+        assert isinstance(current,bytes)
+        if previous is not None:assert current!=previous
+        previous=current
+        optimized.snapshot(sys._getframe(),'locals',values)
+        with monkeypatch.context() as patch:
+            patch.setattr(identity,'flat_sequence_signature',lambda value:None)
+            patch.setattr(identity,'graph_signature',lambda *args:None)
+            reference.snapshot(sys._getframe(),'locals',values)
+    snapshot()
+    items[321].slot={'new_instance_field':[object()]};snapshot()
+    shared['children'].append(object());snapshot()
+    del items[10].extra;snapshot()
+    items[20].new_attribute=items[321];snapshot()
+    Item.alias=vars(Base)['slot'];snapshot()
+    del Item.alias;snapshot()
+    for recorder in (optimized,reference):recorder.file.close()
+    def rows(path):return [row for line in path.read_text().splitlines() if (row:=json.loads(line))['event']=='references']
+    assert rows(tmp_path/'optimized-field-plans.jsonl')==rows(tmp_path/'reference-field-plans.jsonl')
+    assert not optimized.gaps and not reference.gaps
+
+
+def test_storage_plan_keys_do_not_invoke_user_metaclass_hash_or_equality():
+    class Meta(type):
+        def __hash__(cls):raise AssertionError('metaclass hash was invoked')
+        def __eq__(cls,other):raise AssertionError('metaclass equality was invoked')
+    class Item(metaclass=Meta):
+        __slots__=('slot','__dict__')
+    items=[]
+    for index in range(686):
+        item=Item();item.slot=[index];item.attribute=None;items.append(item)
+    first=identity.graph_signature({'items':items},100000,{})
+    assert isinstance(first,bytes)
+    items[685].attribute=object()
+    assert first!=identity.graph_signature({'items':items},100000,{})
+
+
+def test_storage_plan_descriptors_do_not_keep_types_alive_after_validation():
+    import gc,weakref
+    def validate_temporary_type():
+        class Temporary:
+            __slots__=('slot','__dict__')
+        values=[Temporary() for _ in range(8)]
+        for value in values:value.slot=None;value.attribute=[]
+        assert isinstance(identity.graph_signature({'values':values},100000,{}),bytes)
+        return weakref.ref(Temporary)
+    reference=validate_temporary_type();gc.collect()
+    assert reference() is None

@@ -15,6 +15,16 @@ import time
 import types
 import inspect
 import traceback
+import weakref
+
+_ACTIVE_RECORDERS=weakref.WeakSet()
+_FORK_CALLBACK_READY=False
+_PROCESS_EXIT=os._exit
+
+def _redirect_inherited_recorders():
+    for recorder in list(_ACTIVE_RECORDERS):
+        if recorder.started and not recorder.closed:recorder.redirect_fork_fragment()
+
 from . import __version__
 
 
@@ -103,6 +113,8 @@ class Recorder:
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
+        self.capture_path=Path(path).resolve();self.owner_pid=os.getpid();self.fragment_pid=None
+        self.fork_inherited_protected=False
         self.file=open(path,'w',encoding='utf-8',buffering=1024*1024)
         self.nodeid=nodeid; self.test_file=os.path.realpath(test_file)
         self.namespaces=tuple(namespaces); self.max_references=max_references
@@ -122,7 +134,7 @@ class Recorder:
         self.protected_subscription=None
         # Exact instrumentation-owned objects only. Retain incoming workload
         # references but never recursively observe our growing evidence store.
-        self.observer_roots={id(value):value for value in (self,native,registry,*observer_roots) if value is not None}
+        self.observer_roots={id(value):value for value in (self,native,registry,_ACTIVE_RECORDERS,*observer_roots) if value is not None}
         self.emit('start',schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy='shared-adjacency-states/1' if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
                   python=sys.version,scope_policy='callchain-contract/1',
                   native_window_policy='python-and-c-boundaries/1' if native is not None else 'c-boundaries/1',
@@ -131,6 +143,37 @@ class Recorder:
                               'other threads/processes are not attributed by this collector',
                               'unbound temporaries and opaque extension storage are not enumerated',
                               'address identity is local to observations; reuse is not lifetime proof'])
+
+    def redirect_fork_fragment(self):
+        """Keep inherited child observations separate; never overwrite parent proof."""
+        pid=os.getpid()
+        if pid==self.owner_pid or pid==self.fragment_pid:return
+        parent_path=self.capture_path;parent_pid=self.fragment_pid or self.owner_pid
+        output=parent_path.parent/'fork-fragments'/str(pid)
+        output.mkdir(parents=True,exist_ok=True)
+        if not output.resolve().is_relative_to(parent_path.parent):raise RuntimeError('fork fragment path escapes parent capture')
+        target=output/'events.jsonl'
+        descriptor=os.open(target,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+        try:
+            # The pending bytes are an inherited copy, not new parent evidence.
+            # Redirect before close/flush, then line-buffer child-only records so
+            # os._exit cannot flush them into or discard the parent's stream.
+            os.dup2(descriptor,self.file.fileno());self.file.close()
+        finally:os.close(descriptor)
+        self.file=open(target,'a',encoding='utf-8',buffering=1)
+        self.capture_path=target;self.fragment_pid=pid
+        self.fork_inherited_protected=self.protected_subscription is not None
+        self.protected_subscription=None
+        if self.native is not None:
+            self.native.redirect_fork_fragment(output)
+        self.gaps.add('fork_continuation_not_validated')
+        manifest={'state':'retained_unvalidated_fork_continuation','writer_pid':pid,'parent_writer_pid':parent_pid,
+            'selected_owner_pid':self.owner_pid,'parent_evidence':str(parent_path),
+            'inherited_uids':[row['uid'] for row in self.stack],
+            'inherited_buffers_and_context_retained':True,'parent_outputs_modified':False,
+            'scope':'separate raw fragment, never a validated parent or child callchain; other processes remain outside parent calling-thread scope'}
+        (output/'fork-fragment.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+        self.emit('gap',reason='fork_continuation_not_validated',writer_pid=pid,parent_writer_pid=parent_pid)
 
     def emit(self, event_kind, **data):
         self.file.write(json.dumps({'event':event_kind,**data},ensure_ascii=False,separators=(',',':'))+'\n')
@@ -467,6 +510,10 @@ class Recorder:
 
     def profile(self, frame, event, arg, external_uid=None):
         if self.busy or threading.get_ident()!=self.thread:return
+        if os.getpid()!=self.owner_pid:self.redirect_fork_fragment()
+        if self.fragment_pid==os.getpid() and event=='c_call' and arg is _PROCESS_EXIT:
+            if self.native is not None:self.native.close()
+            self.file.flush()
         quiet_enter=getattr(self.native,'observer_enter',None) if self.protected_subscription is None else None
         quiet_leave=getattr(self.native,'observer_leave',None) if quiet_enter else None
         if quiet_enter:quiet_enter()
@@ -556,6 +603,7 @@ class Recorder:
             if quiet_leave:quiet_leave()
 
     def trace(self,frame,event,arg):
+        if os.getpid()!=self.owner_pid:self.redirect_fork_fragment()
         quiet_enter=getattr(self.native,'observer_enter',None) if self.protected_subscription is None else None
         quiet_leave=getattr(self.native,'observer_leave',None) if quiet_enter else None
         if quiet_enter:quiet_enter()
@@ -609,6 +657,10 @@ class Recorder:
         return self.trace
 
     def begin(self):
+        global _FORK_CALLBACK_READY
+        _ACTIVE_RECORDERS.add(self)
+        if hasattr(os,'register_at_fork') and not _FORK_CALLBACK_READY:
+            os.register_at_fork(after_in_child=_redirect_inherited_recorders);_FORK_CALLBACK_READY=True
         self.old_profile=sys.getprofile();self.old_trace=sys.gettrace()
         identity=sys.modules.get('_relation_identity')
         if identity is not None and getattr(identity,'protected_observer_available',lambda:False)():
@@ -620,7 +672,15 @@ class Recorder:
         sys.setprofile(self.profile);sys.settrace(self.trace)
 
     def end(self, external_hooks=False):
-        if self.protected_subscription is not None:
+        if os.getpid()!=self.owner_pid:self.redirect_fork_fragment()
+        if self.fragment_pid==os.getpid():
+            # A parent guard token is not valid against a newly bootstrapped
+            # relation observer in the child. Never detach somebody else's hook.
+            if not self.fork_inherited_protected:
+                if sys.getprofile()==self.profile:sys.setprofile(self.old_profile)
+                if sys.gettrace()==self.trace:sys.settrace(self.old_trace)
+            self.protected_subscription=None
+        elif self.protected_subscription is not None:
             identity,token=self.protected_subscription
             try:
                 if not identity.guard_intact():self.gaps.add('hook_replaced')
@@ -637,7 +697,7 @@ class Recorder:
                   gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
                   source_read_policy='namespace-load/1')
         self.file.close()
-        self.observer_roots.clear()
+        self.observer_roots.clear();_ACTIVE_RECORDERS.discard(self)
 
 
 def label_is_extension(meta):

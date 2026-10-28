@@ -51,6 +51,18 @@ int trace_index_configure(const char *path) {
     return 0;
 }
 
+/* A fork has a private buffer but inherits the parent's open description.
+ * Redirect that descriptor before any child stop/flush can modify the parent. */
+int trace_index_fork_output(const char *path) {
+    process_id=(uint32_t)getpid();thread_id=(uint32_t)syscall(SYS_gettid);
+    if(fd<0) return 0;
+    int inherited=fd;fd=-1;
+    int replacement=path ? open(path,O_WRONLY|O_CREAT|O_EXCL,0600) : -1;
+    close(inherited);
+    if(replacement<0) {enabled=0;failed=1;return -1;}
+    fd=replacement;return 0;
+}
+
 static void record(void *function, void *caller, uint32_t kind) {
     if (!enabled) return;
     if (used >= capacity) { failed = 1; return; }

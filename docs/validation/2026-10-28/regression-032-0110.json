@@ -1,8 +1,8 @@
 {
   "trace_api_chain": {
     "version": "0.3.2",
-    "passed": 152,
-    "candidate": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/release-candidate-032-0110-final-safety"
+    "passed": 164,
+    "candidate": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/release-candidate-032-0110-complete-isolation"
   },
   "test_api": {
     "version": "0.1.10",
@@ -12,6 +12,6 @@
     "standalone_without_trace_and_torch": true,
     "git_commit": "e8fb464"
   },
-  "acceptance": "NPU 11 original cases validated; logging node capacity and pooling timeout resource reruns still in progress. Replay strict equality verified.",
+  "acceptance": "All 13 unique original cases now have passed pytest bodies, gap-free captures and replay graphs, SHA256-matched committed slots, and merged/cleaned relation evidence. Cases used their recorded immutable diagnostic runtimes; final candidate source matches the 164-regression runtime. Formal generation remains unstarted at commit time.",
   "constraint": "preserve every new entity, relationship and branch; only reuse proven duplicate state or computation"
 }

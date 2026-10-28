@@ -52,7 +52,7 @@ static PyObject *flat_sequence_signature(PyObject *self,PyObject *value) {
 typedef struct GraphSignature {
     char *bytes;Py_ssize_t size,capacity;
     PyObject **queue;Py_ssize_t used,queued,queue_capacity,budget,references;
-    PyObject *seen,*types,*boundaries;
+    PyObject *seen,*types,*boundaries,*field_plans;
     int supported;
 } GraphSignature;
 static getter standard_dict_getters[4];
@@ -206,18 +206,45 @@ static PyObject *member_storage(PyObject *self,PyObject *args) {
     if (!projection) Py_RETURN_NONE;
     return Py_BuildValue("niO",field->d_member->offset,field->d_member->type,(PyObject *)projection);
 }
-static int signature_fields(GraphSignature *g,PyObject *value) {
-    PyTypeObject *type=Py_TYPE(value);PyObject *names=PySet_New(NULL);
-    if (!names) return -1;
-    int result=0;
-    for (Py_ssize_t i=0;g->supported && !result && i<PyTuple_GET_SIZE(type->tp_mro);i++) {
-        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(type->tp_mro,i);
+static int signature_field_plan_valid(PyObject *entry,PyTypeObject *type) {
+    PyObject *mro=PyTuple_GET_ITEM(entry,0),*versions=PyTuple_GET_ITEM(entry,1);
+    if (type->tp_mro!=mro) return 0;
+    for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(mro);i++) {
+        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(mro,i);
+        if (!PyDict_CheckExact(base->tp_dict) ||
+            ((PyDictObject *)base->tp_dict)->ma_version_tag!=PyLong_AsUnsignedLongLong(PyTuple_GET_ITEM(versions,i))) return 0;
+    }
+    return 1;
+}
+static PyObject *signature_field_plan(GraphSignature *g,PyTypeObject *type) {
+    /* A plan belongs only to this graph_signature call. It stores descriptors,
+     * never instance values: all real dict/slot references are still read for
+     * every instance below. Integer keys avoid metaclass __hash__ callbacks. */
+    PyObject *key=PyLong_FromVoidPtr(type),*names=NULL,*members=NULL,*plan=NULL,*mro=NULL,*versions=NULL,*entry=NULL;
+    if (!key) return NULL;
+    PyObject *cached=PyDict_GetItem(g->field_plans,key);
+    if (cached && signature_field_plan_valid(cached,type)) {Py_DECREF(key);return Py_NewRef(PyTuple_GET_ITEM(cached,2));}
+    if (!type->tp_mro || !PyTuple_CheckExact(type->tp_mro)) {g->supported=0;goto done;}
+    mro=Py_NewRef(type->tp_mro);versions=PyTuple_New(PyTuple_GET_SIZE(mro));
+    if (!versions) goto done;
+    for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(mro);i++) {
+        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(mro,i);
+        if (!PyDict_CheckExact(base->tp_dict)) {g->supported=0;goto done;}
+        PyObject *version=PyLong_FromUnsignedLongLong(((PyDictObject *)base->tp_dict)->ma_version_tag);
+        if (!version) goto done;
+        PyTuple_SET_ITEM(versions,i,version);
+    }
+    names=PySet_New(NULL);members=PyList_New(0);
+    if (!names || !members) goto done;
+    for (Py_ssize_t i=0;g->supported && i<PyTuple_GET_SIZE(mro);i++) {
+        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(mro,i);
         Py_ssize_t pos=0;PyObject *name,*descriptor;
-        while (g->supported && !result && PyDict_Next(base->tp_dict,&pos,&name,&descriptor)) {
+        while (g->supported && PyDict_Next(base->tp_dict,&pos,&name,&descriptor)) {
             if (!PyUnicode_CheckExact(name)) {g->supported=0;break;}
             int known=PySet_Contains(names,name);
-            if (known<0 || (!known && PySet_Add(names,name)<0)) {result=-1;break;}
+            if (known<0 || (!known && PySet_Add(names,name)<0)) goto done;
             if (known) continue;
+            int selected=0;
             if (Py_IS_TYPE(descriptor,&PyGetSetDescr_Type) && PyUnicode_CompareWithASCIIString(name,"__dict__")==0) {
                 if (!PyType_IsSubtype(type,PyDescr_TYPE(descriptor))) {g->supported=0;break;}
                 PyGetSetDescrObject *getset=(PyGetSetDescrObject *)descriptor;
@@ -225,6 +252,39 @@ static int signature_fields(GraphSignature *g,PyObject *value) {
                 for (int j=0;j<standard_dict_getter_count;j++)
                     if (getset->d_getset->get==standard_dict_getters[j]) recognized=1;
                 if (!recognized) {g->supported=0;break;}
+                selected=1;
+            } else if (Py_IS_TYPE(descriptor,&PyMemberDescr_Type)) {
+                if (!PyType_IsSubtype(type,PyDescr_TYPE(descriptor))) {g->supported=0;break;}
+                selected=1;
+            }
+            if (selected) {
+                PyObject *member=PyTuple_Pack(2,name,descriptor);
+                if (!member) goto done;
+                int status=PyList_Append(members,member);Py_DECREF(member);
+                if (status<0) goto done;
+            }
+        }
+    }
+    if (g->supported) {
+        plan=PyList_AsTuple(members);
+        if (plan) entry=PyTuple_Pack(3,mro,versions,plan);
+        if (!entry || PyDict_SetItem(g->field_plans,key,entry)<0) Py_CLEAR(plan);
+        else if (!signature_field_plan_valid(entry,type)) {g->supported=0;Py_CLEAR(plan);}
+    }
+done:
+    Py_DECREF(key);Py_XDECREF(names);Py_XDECREF(members);Py_XDECREF(mro);Py_XDECREF(versions);Py_XDECREF(entry);return plan;
+}
+static int signature_fields(GraphSignature *g,PyObject *value) {
+    PyTypeObject *type=Py_TYPE(value);PyObject *plan=signature_field_plan(g,type);
+    if (!plan) return PyErr_Occurred() ? -1 : 0;
+    int result=0;
+    for (Py_ssize_t i=0;g->supported && !result && i<PyTuple_GET_SIZE(plan);i++) {
+        PyObject *member=PyTuple_GET_ITEM(plan,i);
+        PyObject *name=PyTuple_GET_ITEM(member,0),*descriptor=PyTuple_GET_ITEM(member,1);
+        /* Keep the per-instance owner check as well as the plan's check: no
+         * descriptor offset is ever applied to an unrelated current value. */
+        if (!PyType_IsSubtype(Py_TYPE(value),PyDescr_TYPE(descriptor))) {g->supported=0;break;}
+        if (Py_IS_TYPE(descriptor,&PyGetSetDescr_Type)) {
                 PyObject *fields=Py_TYPE(descriptor)->tp_descr_get(descriptor,value,(PyObject *)type);
                 if (!fields) {PyErr_Clear();g->supported=0;break;}
                 if (!PyDict_CheckExact(fields)) {Py_DECREF(fields);g->supported=0;break;}
@@ -235,11 +295,7 @@ static int signature_fields(GraphSignature *g,PyObject *value) {
                     if (signature_text(g,key)<0 || signature_push(g,child)<0) result=-1;
                 }
                 Py_DECREF(fields);
-            } else if (Py_IS_TYPE(descriptor,&PyMemberDescr_Type)) {
-                /* A Python class can expose a storage descriptor copied from
-                 * an unrelated class. Its offset is not valid for this value;
-                 * the ordinary descriptor would reject it before reading. */
-                if (!PyType_IsSubtype(type,PyDescr_TYPE(descriptor))) {g->supported=0;break;}
+        } else {
                 PyMemberDef *member=((PyMemberDescrObject *)descriptor)->d_member;
                 if (member->type==T_OBJECT || member->type==T_OBJECT_EX) {
                     PyObject *child=*(PyObject **)((char *)value+member->offset);
@@ -251,10 +307,9 @@ static int signature_fields(GraphSignature *g,PyObject *value) {
                         signature_number(g,member->offset)<0 || signature_number(g,(uintptr_t)projection)<0 ||
                         signature_type(g,PyDescr_TYPE(descriptor))<0) result=-1;
                 }
-            }
         }
     }
-    Py_DECREF(names);return result;
+    Py_DECREF(plan);return result;
 }
 static int signature_node(GraphSignature *g,PyObject *value) {
     PyTypeObject *type=Py_TYPE(value);
@@ -315,14 +370,14 @@ static PyObject *configure_dict_getter(PyObject *self,PyObject *descriptor) {
 static PyObject *graph_signature(PyObject *self,PyObject *args) {
     PyObject *roots,*boundaries;Py_ssize_t budget;
     if (!PyArg_ParseTuple(args,"O!nO!",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries)) return NULL;
-    GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.seen=PySet_New(NULL);g.types=PySet_New(NULL);
+    GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.seen=PySet_New(NULL);g.types=PySet_New(NULL);g.field_plans=PyDict_New();
     PyObject *result=NULL;Py_ssize_t pos=0;PyObject *name,*value;
     PyObject *metadata_context=leaf_metadata_context();
     if (!metadata_context) goto done;
     if (metadata_context==Py_None) {Py_DECREF(metadata_context);result=Py_NewRef(Py_None);goto done;}
     int context_status=signature_write(&g,PyBytes_AS_STRING(metadata_context),PyBytes_GET_SIZE(metadata_context));
     Py_DECREF(metadata_context);if (context_status<0) goto done;
-    if (!g.seen || !g.types || signature_number(&g,PyDict_Size(roots))<0) goto done;
+    if (!g.seen || !g.types || !g.field_plans || signature_number(&g,PyDict_Size(roots))<0) goto done;
     while (g.supported && PyDict_Next(roots,&pos,&name,&value))
         if (signature_text(&g,name)<0 || signature_push(&g,value)<0) goto done;
     while (g.supported && g.used<g.queued) {
@@ -335,7 +390,7 @@ static PyObject *graph_signature(PyObject *self,PyObject *args) {
     result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
 done:
     for (Py_ssize_t i=0;i<g.queued;i++) Py_DECREF(g.queue[i]);
-    PyMem_Free(g.queue);PyMem_Free(g.bytes);Py_XDECREF(g.seen);Py_XDECREF(g.types);
+    PyMem_Free(g.queue);PyMem_Free(g.bytes);Py_XDECREF(g.seen);Py_XDECREF(g.types);Py_XDECREF(g.field_plans);
     return result;
 }
 static PyObject *native_definition(PyObject *self,PyObject *value) {

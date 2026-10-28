@@ -1,0 +1,294 @@
+{
+  "baseline_commit": "c90b81264177632c5507c8bb822c16746135dbe6",
+  "before_sha256": "c7238ae5478f345dff55e1898c99283f22de53fa643b76da4495e85d17469288",
+  "after_sha256": "83d66151618baf7e15c9eca51ce95945d3f8339f392b887929c43aa644dd35ba",
+  "results": [
+    {
+      "order": "old-first",
+      "instances": 686,
+      "list_aliases": 2,
+      "irrelevant_class_attributes": 512,
+      "equivalence_checks": [
+        {
+          "label": "initial",
+          "budget": 100000,
+          "bytes": 190642,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 0,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 1,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 100,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 1000,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 10000,
+          "bytes": 190642,
+          "identical": true
+        },
+        {
+          "label": "per_instance_slot_changed",
+          "budget": 100000,
+          "bytes": 190714,
+          "identical": true
+        },
+        {
+          "label": "nested_shared_child_changed",
+          "budget": 100000,
+          "bytes": 190730,
+          "identical": true
+        },
+        {
+          "label": "missing_slot",
+          "budget": 100000,
+          "bytes": 190722,
+          "identical": true
+        },
+        {
+          "label": "per_instance_dict_changed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "descriptor_added",
+          "budget": 100000,
+          "bytes": 210653,
+          "identical": true
+        },
+        {
+          "label": "descriptor_removed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "mro_changed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "python_method_added",
+          "budget": 100000,
+          "bytes": 190835,
+          "identical": true
+        },
+        {
+          "label": "method_code_replaced_in_place",
+          "budget": 100000,
+          "bytes": 190834,
+          "identical": true
+        },
+        {
+          "label": "foreign_descriptor_rejected",
+          "budget": 100000,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "after_foreign_descriptor_removed",
+          "budget": 100000,
+          "bytes": 190834,
+          "identical": true
+        },
+        {
+          "label": "metaclass_callbacks_not_called",
+          "budget": 100000,
+          "bytes": 249321,
+          "identical": true
+        }
+      ],
+      "benchmark_iterations_per_round": 20,
+      "benchmark_rounds": 6,
+      "cpu_seconds_per_round": {
+        "old": [
+          0.35873229999999995,
+          0.35865747000000003,
+          0.35859514000000003,
+          0.35828106999999987,
+          0.3573416399999998,
+          0.35825035000000005
+        ],
+        "new": [
+          0.026076300000000052,
+          0.02597415999999997,
+          0.02604602999999983,
+          0.02599726999999996,
+          0.02604335000000013,
+          0.02604249999999997
+        ]
+      },
+      "median_cpu_seconds": {
+        "old": 0.35843810499999995,
+        "new": 0.02604292500000005
+      },
+      "speedup": 13.763358186532399,
+      "microbenchmark_only": true
+    },
+    {
+      "order": "new-first",
+      "instances": 686,
+      "list_aliases": 2,
+      "irrelevant_class_attributes": 512,
+      "equivalence_checks": [
+        {
+          "label": "initial",
+          "budget": 100000,
+          "bytes": 190642,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 0,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 1,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 100,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 1000,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "same_reference_budget",
+          "budget": 10000,
+          "bytes": 190642,
+          "identical": true
+        },
+        {
+          "label": "per_instance_slot_changed",
+          "budget": 100000,
+          "bytes": 190714,
+          "identical": true
+        },
+        {
+          "label": "nested_shared_child_changed",
+          "budget": 100000,
+          "bytes": 190730,
+          "identical": true
+        },
+        {
+          "label": "missing_slot",
+          "budget": 100000,
+          "bytes": 190722,
+          "identical": true
+        },
+        {
+          "label": "per_instance_dict_changed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "descriptor_added",
+          "budget": 100000,
+          "bytes": 210653,
+          "identical": true
+        },
+        {
+          "label": "descriptor_removed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "mro_changed",
+          "budget": 100000,
+          "bytes": 190759,
+          "identical": true
+        },
+        {
+          "label": "python_method_added",
+          "budget": 100000,
+          "bytes": 190835,
+          "identical": true
+        },
+        {
+          "label": "method_code_replaced_in_place",
+          "budget": 100000,
+          "bytes": 190834,
+          "identical": true
+        },
+        {
+          "label": "foreign_descriptor_rejected",
+          "budget": 100000,
+          "bytes": null,
+          "identical": true
+        },
+        {
+          "label": "after_foreign_descriptor_removed",
+          "budget": 100000,
+          "bytes": 190834,
+          "identical": true
+        },
+        {
+          "label": "metaclass_callbacks_not_called",
+          "budget": 100000,
+          "bytes": 249321,
+          "identical": true
+        }
+      ],
+      "benchmark_iterations_per_round": 20,
+      "benchmark_rounds": 6,
+      "cpu_seconds_per_round": {
+        "old": [
+          0.35543108,
+          0.35483319,
+          0.3557043000000002,
+          0.35509616,
+          0.3546078100000001,
+          0.35600277999999985
+        ],
+        "new": [
+          0.026182760000000083,
+          0.026055350000000033,
+          0.026042719999999964,
+          0.025985860000000027,
+          0.026116220000000023,
+          0.026074139999999968
+        ]
+      },
+      "median_cpu_seconds": {
+        "old": 0.35526362,
+        "new": 0.026064745
+      },
+      "speedup": 13.630043954007606,
+      "microbenchmark_only": true
+    }
+  ],
+  "focused_tests_returncode": 0,
+  "focused_tests_output": ".........................                                                [100%]\n25 passed in 1.84s\n",
+  "scope": "temporary CPU-only process; no running pooling task or runtime modified; no joint regressions"
+}
