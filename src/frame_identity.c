@@ -112,6 +112,38 @@ static int signature_namespace(GraphSignature *g,PyObject *namespace) {
     if (!PyDict_CheckExact(namespace)) {g->supported=0;return 0;}
     return signature_number(g,((PyDictObject *)namespace)->ma_version_tag);
 }
+static PyObject *exact_class_function(GraphSignature *g,PyObject *member) {
+    if (Py_IS_TYPE(member,&PyFunction_Type)) return member;
+    if (!Py_IS_TYPE(member,&PyStaticMethod_Type) && !Py_IS_TYPE(member,&PyClassMethod_Type)) return NULL;
+    /* Read only the builtin wrapper's stored function. Calling __get__ or a
+     * user-defined __getattribute__ here would change the observed workload. */
+    PyObject *descriptor=PyDict_GetItemString(Py_TYPE(member)->tp_dict,"__func__");
+    if (!descriptor || !Py_IS_TYPE(descriptor,&PyMemberDescr_Type) ||
+        !PyType_IsSubtype(Py_TYPE(member),PyDescr_TYPE(descriptor))) {g->supported=0;return NULL;}
+    PyMemberDef *field=((PyMemberDescrObject *)descriptor)->d_member;
+    if (field->type!=T_OBJECT && field->type!=T_OBJECT_EX) {g->supported=0;return NULL;}
+    PyObject *function=*(PyObject **)((char *)member+field->offset);
+    return function && Py_IS_TYPE(function,&PyFunction_Type) ? function : NULL;
+}
+static int signature_class_functions(GraphSignature *g,PyObject *namespace) {
+    Py_ssize_t count=0,pos=0;PyObject *name,*member;
+    while (g->supported && PyDict_Next(namespace,&pos,&name,&member))
+        if (exact_class_function(g,member)) count++;
+    if (!g->supported || signature_number(g,count)<0) return PyErr_Occurred() ? -1 : 0;
+    pos=0;
+    while (g->supported && PyDict_Next(namespace,&pos,&name,&member)) {
+        PyObject *function=exact_class_function(g,member);
+        if (!function) continue;
+        PyCodeObject *code=(PyCodeObject *)((PyFunctionObject *)function)->func_code;
+        /* Replacing function.__code__ leaves the class dictionary version
+         * unchanged. Source coordinates also prevent a recycled code address
+         * from making a different source definition look unchanged. */
+        if (signature_text(g,name)<0 || signature_number(g,(uintptr_t)function)<0 ||
+            signature_number(g,(uintptr_t)code)<0 || signature_text(g,code->co_filename)<0 ||
+            signature_number(g,code->co_firstlineno)<0 || signature_text(g,code->co_qualname)<0) return -1;
+    }
+    return 0;
+}
 static int signature_type(GraphSignature *g,PyTypeObject *type) {
     PyObject *key=PyLong_FromVoidPtr(type);
     if (!key) return -1;
@@ -126,7 +158,9 @@ static int signature_type(GraphSignature *g,PyTypeObject *type) {
     if (!type->tp_mro || !PyTuple_CheckExact(type->tp_mro)) {g->supported=0;return 0;}
     for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(type->tp_mro);i++) {
         PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(type->tp_mro,i);
-        if (signature_namespace(g,base->tp_dict)<0) return -1;
+        if (signature_namespace(g,base->tp_dict)<0 ||
+            (g->supported && signature_class_functions(g,base->tp_dict)<0)) return -1;
+        if (!g->supported) return 0;
     }
     if (type->tp_flags & Py_TPFLAGS_HEAPTYPE) {
         PyObject *name=PyDict_GetItemString(type->tp_dict,"__module__");

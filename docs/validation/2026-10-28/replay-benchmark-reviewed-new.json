@@ -1,0 +1,202 @@
+{
+  "round": "strict_private_warm_cache_round",
+  "stage": "new",
+  "returncode": 0,
+  "timeout": false,
+  "elapsed_seconds": 219.65489745140076,
+  "runtime": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/release-candidate-032-0110-reviewed-replay/runtime",
+  "runtime_versions": {
+    "trace_api_chain": "0.3.2",
+    "api_test_relations": "0.1.10"
+  },
+  "code_files_sha256": {
+    "__init__.py": "152523381011eb7224682920a6d47c906246aeb311602a24b3b679186a9ae3d7",
+    "catalog.py": "0d9c41750a58a87a61571909be3f4ced579a13671445c8b2fbd6dea844617958",
+    "changed_objects.py": "efbc88e1d897d45858e4798f2a1a72d76c177eb0ee61c62e0a544e13a5cf0b37",
+    "cli.py": "79f7f827c60a9759983406dc11a65e2664e1779abb161c97f282cf1a33acf9c8",
+    "compact.py": "71fa80b3c40ed8c9ffb8205d311c300312b82ee182ad6870938111c8ab3ea3ea",
+    "contract.json": "484bd09bb10ea4364ffb1a85cc74d874dda3ac8c3f1108458810612033388482",
+    "database.py": "fead78c14a7e645549a8f193034a7c9a04416d393bd0da06d9d99277b2fe6249",
+    "dwarf_lookup.c": "fd31e284ed1b921ccb012b64667c94faefd87104a002bb3e276f8cc629d0aa05",
+    "dwarf_lookup.py": "79ef404df7643873096926ca11f7fe0e11865ef17e071cbd2af188a671c1c768",
+    "frame_identity.c": "607b6a225ec22b083173dc17f2e3f39016acee34c0bc7f93f659716897675a0b",
+    "frame_identity.py": "172b2c2a3155cd540aac0071630fce57d401f549e0756af2d0270d65c00c2381",
+    "hooks.c": "93c624a2f5fa5d6e3e0565ea2aa1f3701bf11fa48a9928b1c54061937a6639bb",
+    "native.py": "3635ff0427b6781b2185fc6a50dbb101e6cf3a284bad71d34dbca1499cbda775",
+    "object_capture.py": "ee0c591121cf52cdf72f584ef07f826e1de57a415e3f4a20538cbc09c235c5d8",
+    "path_capture.h": "564dbc2912a7fa21a65a0737cdaff49ea7aedc33463a868443486d9992ef20f7",
+    "pipeline.py": "bc4eee52713fca2acb3a53fba9c08b46bd49f2cdedd1b53e7aa9c9deba9c615a",
+    "presentation.py": "6868129db518f874376e010fd7f01070192530b353f4e430dfd5eafeee0bf314",
+    "pytest_plugin.py": "42cc60e0ec50d6a079121be6e735ebb8202fa2a872f62578ad43b5ba8790fcf3",
+    "replay.py": "2032c60b9d194804c9f68ade45dc78b5b60a58697bc2dbf74659285f0c97cab2",
+    "source_entities.py": "1552d3e29de3a79d867e386a483cebe00ea5c12fd6a868689504fa06ee43e4e3",
+    "symbols.py": "4c90e0329f4cfabea69e6c91a1c00351cb17e4b50d4b75a04fb8f3adf14bd965"
+  },
+  "code_bundle_sha256": "fa7498f22113f54f2abc3e5f9b34e17f114b34b28cd08468dd4259d684d0684b",
+  "starting_cache_sha256": "ff043e13a01597117e1349228fca6e316c1ea326b1e99017efb0b76db15be5be",
+  "cache_content_changes": {},
+  "graph_sha256": "325b61bd308f10baaf6eff967e616092bf5c43b7c56d9c531ef7e1ac9138bed4",
+  "schema_sha256": "fdbfdd9e3deeaa4709508866c50557fd4745728595f044a6666a85ab66243d87",
+  "tables": {
+    "aliases": {
+      "columns": [
+        "entity_id",
+        "alias",
+        "origin"
+      ],
+      "rows": 3911,
+      "semantic_sha256": "630a2e3330ff9cb7af565d9823253e3d918aa18e9f56ad0f219ba7c94cfa5f00",
+      "raw_sha256": "768143102218b9515ebd5d9d7132c8d9625c30426e32d42cd982d53204cbbf8d"
+    },
+    "api_alias_support": {
+      "columns": [
+        "slot_id",
+        "api_id",
+        "alias"
+      ],
+      "rows": 9,
+      "semantic_sha256": "2e7e6874d416d4bea4be639a1b1d0e69ab4eb7c923c99303634955ba5e94d69c",
+      "raw_sha256": "8c039dfd626c9c8a60c0f53f94247c3a508b96ff4c3f6948595dc436a442b95f"
+    },
+    "api_aliases": {
+      "columns": [
+        "api_id",
+        "alias"
+      ],
+      "rows": 9,
+      "semantic_sha256": "1ff8dbc955264ff0b2e239d97506be0e7ed9814799f1ec7b6d63c4e0eb84b64f",
+      "raw_sha256": "cdd3fdd967a8e2a77442227163f96a5332daf8edc1ad86d577d08e09b49aebb1"
+    },
+    "apis": {
+      "columns": [
+        "id",
+        "entity_id"
+      ],
+      "rows": 9,
+      "semantic_sha256": "91a4b4e6eba47679020e489e765aac511bc086d4cdeb950e98ed3848791cbd8a",
+      "raw_sha256": "f15e1fa74f07fc7903647c3fd90dca8f871ea55c0823a6adddbb24ca48358a47"
+    },
+    "capture_slots": {
+      "columns": [
+        "id",
+        "test",
+        "input_digest",
+        "import_digest",
+        "evidence_directory",
+        "status",
+        "summary"
+      ],
+      "rows": 1,
+      "semantic_sha256": "538a1add6f909d4ecfa052bda037e18d91979c3d69744e8bafd475f992b39b3c",
+      "raw_sha256": "2aa5627bf49e4f8f215fd5ad685707df525e54d8b57703ae488bd518f6892689"
+    },
+    "entities": {
+      "columns": [
+        "id",
+        "path",
+        "kind",
+        "name",
+        "source_sha256",
+        "language",
+        "status",
+        "detail"
+      ],
+      "rows": 12010,
+      "semantic_sha256": "298c4c377c398ab8973f4bbaf2b1e5aba7ec41492038a89f9286ab0d167038eb",
+      "raw_sha256": "86744de30acbefeb4b8995d3a3f10517cd13d9033904678610607c6f6963669b"
+    },
+    "object_references": {
+      "columns": [
+        "slot_id",
+        "owner_path",
+        "source_entity",
+        "target_entity",
+        "role"
+      ],
+      "rows": 55494,
+      "semantic_sha256": "e9326eb57d6d9eb9df37e2f88ed1cb545dc8c1a60629fd24b720ba4c5b300f83",
+      "raw_sha256": "a1e113c69f17431c20b3265ab1ecee09c7c08d5fc1df77d4d854198333bb390e"
+    },
+    "observed_objects": {
+      "columns": [
+        "slot_id",
+        "path_id",
+        "entity_id"
+      ],
+      "rows": 88300,
+      "semantic_sha256": "c5185f232a7719fada6bccefc9ef99275890f44afb284eecc3f64fd41bcbc906",
+      "raw_sha256": "d0fa6b12773ecc6c50c6a1f41dc2f60f3468a5c95b1ee58d57ff7f0c143c3a75"
+    },
+    "path_support": {
+      "columns": [
+        "slot_id",
+        "path_id"
+      ],
+      "rows": 834949,
+      "semantic_sha256": "8c97fa86e339fd278ab258c0bff7fa6b8a2e80bfebbcd3a2c5ab56c8503f5d36",
+      "raw_sha256": "521ebbf7792b43bd7a761886e993a2097809bb9e61f1283ae8b9447a004d86f5"
+    },
+    "paths": {
+      "columns": [
+        "id",
+        "api_id",
+        "parent_id",
+        "entity_id",
+        "edge_kind",
+        "depth"
+      ],
+      "rows": 834949,
+      "semantic_sha256": "445b7ec671c928e80a63fd9732a59006c71930e33f5274dfed04216e2411d4bd",
+      "raw_sha256": "2bb5b26f774561ebb7c623881bd0c693afb57ec31566df1a6e205ac5bf0feacc"
+    },
+    "pending": {
+      "columns": [
+        "slot_id",
+        "observation",
+        "reason",
+        "detail"
+      ],
+      "rows": 281225,
+      "semantic_sha256": "9e1861a749302a2981d13aa9eded05129c0849425cbf8bd6f2559fc64d1f5d3f",
+      "raw_sha256": "512ee135bc028097e39bb1f867315827bd941474c5f5e7cd0eee860547ce6b5d"
+    },
+    "schema_info": {
+      "columns": [
+        "version"
+      ],
+      "rows": 1,
+      "semantic_sha256": "05f6b3c4493dd0beb045668961358cc9bb7956636b927a00e12ad121580756f1",
+      "raw_sha256": "7ac7de662012d459115fee275a8de995454d3fbb530bb7da80746ae5b5f9c537"
+    },
+    "slot_entities": {
+      "columns": [
+        "slot_id",
+        "entity_id",
+        "source_sha256"
+      ],
+      "rows": 12010,
+      "semantic_sha256": "077621a0864b362d37692ef5a943d172c9250a8095058bd162cc0a32174a3242",
+      "raw_sha256": "b52cacc7c53f131a0e02fa2928f8ef999f92c2b8dbe5c1ed76b4562c3eda69d1"
+    },
+    "source_dependencies": {
+      "columns": [
+        "slot_id",
+        "path_id",
+        "entity_id",
+        "relation",
+        "evidence"
+      ],
+      "rows": 15887,
+      "semantic_sha256": "7056486b96ee2999afc030532cccda64f19568f14eeafcce6a9f2f5d90114a3a",
+      "raw_sha256": "0dd803fd545fad0321e1e408ceb784b39bf176d577f6182c4783ab2882ea93a6"
+    }
+  },
+  "log": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/replay-benchmark-reviewed-private-cache/new.log",
+  "frozen_manifest_sha256": "8c015ca86222b15c6bc64f1a717046a2e08cca97fb28fd3890b2506b5032919a",
+  "ignored_explanatory_fields": [
+    "capture_slots.import_digest",
+    "capture_slots.evidence_directory",
+    "capture_slots.summary.raw_evidence",
+    "capture_slots.summary.graph_digest"
+  ]
+}

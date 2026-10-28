@@ -1,6 +1,7 @@
 import json
 import sys
 from types import SimpleNamespace
+import pytest
 
 from trace_api_chain.object_capture import Recorder
 import trace_api_chain.frame_identity as identity
@@ -331,3 +332,53 @@ def test_foreign_builtin_dict_descriptor_uses_ordinary_observation_boundary():
     assert identity.graph_signature({'value':value},100000,{}) is None
     fields,notes=instance_fields(value,project_storage=True)
     assert fields==[] and 'TypeError:__dict__' in notes
+
+
+@pytest.mark.parametrize('binding',['method','staticmethod','classmethod'])
+@pytest.mark.parametrize('module_name',['method_source_fixture',42])
+def test_in_place_method_code_replacement_refreshes_class_and_instance_sources(tmp_path,monkeypatch,binding,module_name):
+    original_file=tmp_path/'original_method_source.py'
+    replacement_file=tmp_path/'replacement_method_source.py'
+    original_file.write_text('class Box:\n def method(self):return 1\n')
+    replacement_file.write_text('def replacement(self):return 2\n')
+    namespace={'__name__':'method_source_fixture'}
+    exec(compile(original_file.read_text(),str(original_file),'exec'),namespace)
+    Box=namespace['Box'];Box.__module__=module_name
+    function=vars(Box)['method']
+    if binding=='staticmethod':Box.method=staticmethod(function)
+    elif binding=='classmethod':Box.method=classmethod(function)
+    value=Box();values={'class':Box,'instance':value}
+    before_context=identity.type_metadata_context(Box)
+    before_signature=identity.graph_signature(values,100000,{})
+    optimized=Recorder(tmp_path/'optimized-method-code.jsonl','test::one',tmp_path/'test.py')
+    reference=Recorder(tmp_path/'reference-method-code.jsonl','test::one',tmp_path/'test.py')
+    optimized.stack=[{'uid':1}];reference.stack=[{'uid':1}]
+    def snapshot():
+        optimized.snapshot(sys._getframe(),'locals',values)
+        with monkeypatch.context() as patch:
+            patch.setattr(identity,'flat_sequence_signature',lambda value:None)
+            patch.setattr(identity,'graph_signature',lambda *args:None)
+            reference.metadata_cache.clear();reference.class_sources.clear()
+            reference.snapshot(sys._getframe(),'locals',values)
+    snapshot()
+    before_class=optimized.metadata(Box);before_instance=optimized.metadata(value)
+    replacement={};exec(compile(replacement_file.read_text(),str(replacement_file),'exec'),replacement)
+    # The class binding and function identity stay exactly the same. Only the
+    # function's immutable code object changes, without a type-dictionary write.
+    function.__code__=replacement['replacement'].__code__
+    after_context=identity.type_metadata_context(Box)
+    if type(module_name) is str:
+        assert before_context!=after_context
+        assert before_signature!=identity.graph_signature(values,100000,{})
+    else:assert before_context is None and after_context is None
+    snapshot()
+    after_class=optimized.metadata(Box);after_instance=optimized.metadata(value)
+    for before,after in ((before_class,after_class),(before_instance,after_instance)):
+        assert before[1]['owner_file']==str(original_file)
+        assert after[1]['owner_file']==str(replacement_file)
+        assert before[0]!=after[0]
+        assert after[1]['class_source_hints'][0]['file']==str(replacement_file)
+    for recorder in (optimized,reference):recorder.file.close()
+    def rows(path):return [row for line in path.read_text().splitlines() if (row:=json.loads(line))['event'] in ('object','references')]
+    assert rows(tmp_path/'optimized-method-code.jsonl')==rows(tmp_path/'reference-method-code.jsonl')
+    assert not optimized.gaps and not reference.gaps

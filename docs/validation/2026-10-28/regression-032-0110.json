@@ -1,8 +1,8 @@
 {
   "trace_api_chain": {
     "version": "0.3.2",
-    "passed": 146,
-    "candidate": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/release-candidate-032-0110-reviewed-replay"
+    "passed": 152,
+    "candidate": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/release-candidate-032-0110-final-safety"
   },
   "test_api": {
     "version": "0.1.10",
@@ -12,6 +12,6 @@
     "standalone_without_trace_and_torch": true,
     "git_commit": "e8fb464"
   },
-  "acceptance": "NPU original cases and replay benchmark still in progress; no blanket success claim",
+  "acceptance": "NPU 11 original cases validated; logging node capacity and pooling timeout resource reruns still in progress. Replay strict equality verified.",
   "constraint": "preserve every new entity, relationship and branch; only reuse proven duplicate state or computation"
 }

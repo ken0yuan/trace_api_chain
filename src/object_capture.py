@@ -237,8 +237,9 @@ class Recorder:
         # Exported classes can have __module__ rewritten (e.g. torch.Tensor).
         # Their own Python methods retain the actual defining source path.
         owner_class=value if result['kind']=='class' else cls if result['kind']=='instance' else None
-        class_key=(id(owner_class),owner.get('module'),owner.get('qualname'),extra if result['kind']=='class' else context) if owner_class is not None else None
-        if class_key in self.class_sources:
+        source_context=extra if result['kind']=='class' else context
+        class_key=(id(owner_class),owner.get('module'),owner.get('qualname'),source_context) if owner_class is not None else None
+        if source_context is not None and class_key in self.class_sources:
             result.update(self.class_sources[class_key])
         elif owner_class is not None and owner.get('module')!='builtins':
             candidates=set()
@@ -256,7 +257,7 @@ class Recorder:
             if hints:result['class_source_hints']=hints
             if len(candidates)==1:result['owner_file']=next(iter(candidates))
             elif len(candidates)>1:result['owner_candidates']=sorted(candidates)
-            self.class_sources[class_key]={k:result[k] for k in ('owner_file','owner_candidates','class_source_hints') if k in result}
+            if source_context is not None:self.class_sources[class_key]={k:result[k] for k in ('owner_file','owner_candidates','class_source_hints') if k in result}
         # CPython reuses short-lived builtin-method addresses. Never overwrite
         # a previous fill_ object with append merely because the address matches.
         semantic={k:v for k,v in result.items() if k not in ('id','address','identity')}
@@ -641,7 +642,7 @@ class Recorder:
 
 def label_is_extension(meta):
     module=meta['type'].get('module') or ''
-    return module.startswith(('torch','numpy'))
+    return type(module) is str and module.startswith(('torch','numpy'))
 
 
 from .native import native_identity
