@@ -52,7 +52,7 @@ class ReferencePublisher:
     def publish_grouped_snapshot(self,uid,phase,values,current,groups,notes):
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
         key=(uid,scope);previous,old_groups,old_ids,old_notes=self.views.get(key,(frozenset(),{}, {},None))
-        if current==previous and groups==old_groups:
+        if (current is previous or current==previous) and (groups is old_groups or groups==old_groups):
             if frozenset(notes)!=old_notes:self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=[],removed_groups=[],notes=sorted(notes))
             self.remember_view(key,(current,groups,old_ids,frozenset(notes)));return
         states={};source={None:current,**groups}

@@ -7,7 +7,7 @@ from .native import decode,digest,save
 from .replay import rebuild,canonical
 from .symbols import resolve
 from .compact import decode_paths,rebuild_paths
-from .reference_transport import normalize_events
+from .reference_transport import read_events
 
 def prepare(output,mode=None,symbol_index=None):
     output=Path(output)
@@ -21,13 +21,11 @@ def prepare(output,mode=None,symbol_index=None):
             if digest(evidence/name)!=sha:raise ValueError('frozen_evidence_changed:'+name)
         for name,sha in manifest.get('raw_sha256',{}).items():
             if digest(output/name)!=sha:raise ValueError('raw_evidence_changed:'+name)
-        events=[json.loads(x) for x in (evidence/'python.jsonl').read_text().splitlines()]
-        events=normalize_events(events)
+        events=read_events(evidence/'python.jsonl')
         native=[json.loads(x) for x in (evidence/'native.jsonl').read_text().splitlines()]
         gaps=manifest.get('capture_gaps',[])
     else:
-        events=[json.loads(x) for x in (output/'events.jsonl').read_text().splitlines()]
-        events=normalize_events(events)
+        events=read_events(output/'events.jsonl')
         native=[];gaps=[]
         if mode=='full':
             native,modules,gaps=(decode_paths(output) if storage=='paths' else decode(output));gaps+=sorted(modules.gaps)
