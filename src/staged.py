@@ -9,7 +9,7 @@ from .native import digest
 
 def policy():
     return {name:digest(Path(__file__).with_name(name)) for name in
-            ('staged.py','database.py','pipeline.py','replay.py','compact.py','symbols.py','source_entities.py')}
+            ('staged.py','database.py','pipeline.py','replay.py','compact.py','symbols.py','source_entities.py','reference_codec.py')}
 
 def prepare_file(capture,target,mode=None,roots=None,slot=None):
     from .pipeline import prepare

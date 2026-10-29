@@ -96,7 +96,7 @@ def dwarf_definitions(prepared):
 
 def normalize(prepared,roots=None,definitions=None):
     graph=prepared['graph'];events=prepared['events'];native=prepared['native']
-    source=SourceEntities(roots or prepared['receipt'].get('source_roots',{}))
+    source=SourceEntities(roots or prepared['receipt'].get('source_roots',{}),immutable_sources=True)
     definitions=dwarf_definitions(prepared) if definitions is None and native else (definitions or {})
     calls={str(e['uid']):e for e in events if e['event']=='call'}
     defmap={e['id']:e for e in events if e['event']=='definition'}
@@ -208,6 +208,7 @@ def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
     if graph.get('native_storage')=='paths':
         summary.update(native_storage='paths',native_invocations=graph['native_activations'],
                        native_path_nodes=graph['native_path_nodes'],runtime_event_history_preserved=False)
+    source.verify_sources()
     return {'schema':'callchain_refresh_plan/1','policy':policy,'slot':slot,
             'input_digest':input_digest,'import_digest':import_digest,'summary':summary,
             'entities':source.entities,'aliases':sorted(aliases),'api_entities':api_entities,

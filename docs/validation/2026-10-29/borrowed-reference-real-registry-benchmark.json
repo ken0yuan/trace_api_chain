@@ -1,0 +1,40 @@
+{
+  "full_traversal": {
+    "seconds": 9.455476970004383,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": []
+  },
+  "incremental": {
+    "seconds": 8.663094160001492,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": []
+  },
+  "incremental_second": {
+    "seconds": 8.245762050006306,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": []
+  },
+  "full_traversal_second": {
+    "seconds": 9.201450900000054,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": []
+  },
+  "evidence_after_start_byte_identical": true,
+  "evidence_sha256": "4977da4edb802def655e1113f3488b4ecae2c1c4ae502895da10bc3433cf3501",
+  "speedup": 1.0914664893822135,
+  "reverse_pair_speedup": 1.1159006098160469,
+  "fixture": "real torch/torch_npu/tbe registry graph plus8 new modules; all identities and branches retained",
+  "not_an_npu_test": true
+}

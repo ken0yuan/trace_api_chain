@@ -24,6 +24,7 @@ def pytest_addoption(parser):
     group.addoption('--callchain-api-catalog',help='Shared documentation API ledger; every test uses all resolvable Python entry identities in this ledger')
     group.addoption('--callchain-native-storage',choices=('events','paths'),default='events',help='paths: count repeated native stack paths while preserving window-specific branches')
     group.addoption('--callchain-max-paths',type=int,default=262144)
+    group.addoption('--callchain-reference-storage',choices=('full','delta'),default='delta',help='Lossless shared adjacency states; delta reuses unchanged edges without removing observations')
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -106,7 +107,8 @@ class Worker:
             observers.extend([relation,relation.collector,relation.registry,relation.bridge])
         self.recorder=Recorder(self.output/'events.jsonl',item.nodeid,str(item.path),namespaces=namespaces,
                                max_references=config.getoption('--callchain-max-references'),
-                               run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry,observer_roots=observers)
+                               run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry,observer_roots=observers,
+                               reference_deltas=config.getoption('--callchain-reference-storage')=='delta')
         self.recorder.body_code=code
         self.receipt['selected']=[item.nodeid]
         case=getattr(item,'_testcase',None)

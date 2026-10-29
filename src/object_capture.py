@@ -7,6 +7,7 @@ import collections
 import dis
 import hashlib
 import json
+import struct
 import os
 from pathlib import Path
 import sys
@@ -26,6 +27,7 @@ def _redirect_inherited_recorders():
         if recorder.started and not recorder.closed:recorder.redirect_fork_fragment()
 
 from . import __version__
+from .reference_codec import edge_order
 
 
 def test_body_code(item):
@@ -65,6 +67,16 @@ def class_label(cls):
 
 def class_namespace(cls):
     return type.__dict__['__dict__'].__get__(cls, type(cls))
+
+
+def add_reference(groups,parent,edge):
+    """Borrow frozen adjacency without copying it until an edge really changes."""
+    edges=groups.get(parent)
+    if edges is None:groups[parent]={edge}
+    elif type(edges) is frozenset:
+        if edge not in edges:
+            edges=set(edges);edges.add(edge);groups[parent]=edges
+    else:edges.add(edge)
 
 
 class NativeStorage:
@@ -109,7 +121,7 @@ def instance_fields(value, plans=None, project_storage=False):
 
 
 class Recorder:
-    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=()):
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False):
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
@@ -122,21 +134,29 @@ class Recorder:
         self.code_ids={}; self.object_metadata={}; self.views={}; self.view_keys={}; self.busy=False
         self.class_sources={};self.object_semantics={};self.global_loads={};self.metadata_cache=collections.OrderedDict();self.metadata_cache_limit=max(100000,max_references)
         self.metadata_cache_hits=0;self.metadata_cache_misses=0;self.metadata_cache_evictions=0
+        from .frame_identity import new_type_context_cache
+        self.type_context_cache=new_type_context_cache()
+        self.metadata_templates=collections.OrderedDict();self.metadata_template_limit=100000;self.metadata_template_hits=0
         self.module_sources={};self.read_sites={};self.module_operands={}
         for name,module in list(sys.modules.items()):
             if type(module) is types.ModuleType:self.module_source(vars(module))
         self.started=False; self.closed=False; self.gaps=set(); self.calls=0; self.roots=0
         self.path_contexts={}
         self.reference_groups=collections.OrderedDict();self.reference_group_bytes=0;self.reference_group_costs={};self.next_reference_group=0
+        self.reference_parent_states=collections.OrderedDict();self.reference_parent_costs={};self.reference_parent_bytes=0
+        self.reference_storage={'full_groups':0,'delta_groups':0,'logical_edges':0,'written_edges':0}
         self.grouped_references=getattr(native,"storage",None)=="paths"
-        self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.root_states={}
+        self.reference_delta_storage=bool(reference_deltas and self.grouped_references)
+        self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.root_states={};self.snapshot_cache_roots={}
+        self.flat_incremental_updates=0;self.flat_unchanged_leaves_reused=0
+        self.snapshot_component_limit=8;self.component_cache_promotions=0;self.component_cache_reuses=0;self.snapshot_cache_limit_bytes=128*1024*1024
         self.body_code=None;self.body_depth=0;self.body_entries=0
         self.native=native; self.registry=registry; self.suppressed=0
         self.protected_subscription=None
         # Exact instrumentation-owned objects only. Retain incoming workload
         # references but never recursively observe our growing evidence store.
         self.observer_roots={id(value):value for value in (self,native,registry,_ACTIVE_RECORDERS,*observer_roots) if value is not None}
-        self.emit('start',schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy='shared-adjacency-states/1' if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
+        self.emit('start',schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy=('shared-adjacency-states/2' if self.reference_delta_storage else 'shared-adjacency-states/1') if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
                   python=sys.version,scope_policy='callchain-contract/1',
                   native_window_policy='python-and-c-boundaries/1' if native is not None else 'c-boundaries/1',
                    api_catalog=sorted(registry.catalog) if registry else [],scope='API subtrees on the selected test thread',
@@ -244,12 +264,12 @@ class Recorder:
         from .frame_identity import type_metadata_context
         if labels is None:labels={}
         contexts=labels.setdefault('metadata_contexts',{})
-        if cls not in contexts:contexts[cls]=type_metadata_context(cls)
+        if cls not in contexts:contexts[cls]=type_metadata_context(cls,self.type_context_cache)
         context=contexts[cls]
         extra=None
         if cls is types.FunctionType:extra=(value.__code__,value.__module__)
         elif cls is types.MethodType:extra=(value.__func__.__code__,value.__func__.__module__)
-        elif issubclass(cls,type):extra=type_metadata_context(value)
+        elif issubclass(cls,type):extra=type_metadata_context(value,self.type_context_cache)
         elif cls is types.ModuleType:extra=(vars(value).get('__name__'),vars(value).get('__file__'))
         elif cls in (types.BuiltinFunctionType,types.BuiltinMethodType):extra=(value.__name__,value.__module__)
         cacheable=context is not None and not (issubclass(cls,type) and extra is None)
@@ -258,6 +278,23 @@ class Recorder:
         if cacheable and cached is not None and cached[0]==key:
             self.metadata_cache_hits+=1;self.metadata_cache.move_to_end(identity);return cached[1]
         self.metadata_cache_misses+=1
+        template_key=None
+        if cacheable and self.metadata_template_limit and cls is not types.ModuleType:
+            if cls in (types.FunctionType,types.MethodType):
+                if type(extra[1]) in (str,type(None)):template_key=(id(cls),context,id(extra[0]),extra[1])
+            elif cls in (types.BuiltinFunctionType,types.BuiltinMethodType):
+                if type(extra[0]) is str and type(extra[1]) in (str,type(None)):template_key=(id(cls),context,*extra)
+            else:template_key=(id(cls),context,extra)
+        template=self.metadata_templates.get(template_key) if template_key is not None else None
+        if template is not None:
+            semantic,suffix=template
+            base='object:'+str(id(value))+':'+str(id(cls));token=base+':'+suffix
+            result={'id':token,'address':id(value),'type':semantic['type'],'identity':'observation_address'}
+            result.update((name,item) for name,item in semantic.items() if name!='type')
+            self.object_semantics[base]=(semantic,token)
+            answer=(token,result);self.metadata_template_hits+=1;self.metadata_templates.move_to_end(template_key)
+            self.remember_metadata(identity,key,answer)
+            return answer
         if labels is None:label=class_label(cls)
         else:
             if cls not in labels:labels[cls]=class_label(cls)
@@ -311,15 +348,22 @@ class Recorder:
         if previous and previous[0]==semantic:
             result['id']=previous[1]
         else:
-            result['id']=token+':'+hashlib.sha256(json.dumps(semantic,sort_keys=True).encode()).hexdigest()[:16]
+            suffix=hashlib.sha256(json.dumps(semantic,sort_keys=True).encode()).hexdigest()[:16]
+            result['id']=token+':'+suffix
             self.object_semantics[token]=(semantic,result['id'])
+        if template_key is not None:
+            self.metadata_templates[template_key]=(semantic,result['id'].rsplit(':',1)[1])
+            self.metadata_templates.move_to_end(template_key)
+            while len(self.metadata_templates)>self.metadata_template_limit:self.metadata_templates.popitem(last=False)
         token=result['id']
         answer=(token,result)
-        if cacheable:
-            self.metadata_cache[identity]=(key,answer);self.metadata_cache.move_to_end(identity)
-            while len(self.metadata_cache)>self.metadata_cache_limit:
-                self.metadata_cache.popitem(last=False);self.metadata_cache_evictions+=1
+        if cacheable:self.remember_metadata(identity,key,answer)
         return answer
+
+    def remember_metadata(self,identity,key,answer):
+        self.metadata_cache[identity]=(key,answer);self.metadata_cache.move_to_end(identity)
+        while len(self.metadata_cache)>self.metadata_cache_limit:
+            self.metadata_cache.popitem(last=False);self.metadata_cache_evictions+=1
 
     def snapshot(self, frame, phase, values=None):
         if not self.stack:return
@@ -334,26 +378,17 @@ class Recorder:
             chunk=local.get(identity)
             if chunk is None:
                 flat=flat_sequence_signature(value)
-                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots)
+                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
                 chunk=self.snapshot_cache.get(signature) if signature is not None else None
                 if chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
                     chunk=None  # Earlier first-visit observations own this snapshot's state.
                 if chunk is None:
-                    chunk=self.snapshot_root(value)
+                    chunk=self.incremental_flat_snapshot(value,identity,flat) if flat is not None else None
+                    if chunk is None:chunk=self.snapshot_root(value)
                     if signature is not None and chunk[4] and 'reference_budget_exceeded' not in chunk[2]:
-                        self.snapshot_cache[signature]=chunk
-                        size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
-                        size+=sum(len(edges)*96+128 for edges in chunk[1].values())+len(chunk[3])*40+256
-                        self.snapshot_cache_bytes-=self.snapshot_cache_costs.get(signature,0)
-                        self.snapshot_cache_costs[signature]=size;self.snapshot_cache_bytes+=size
-                        while len(self.snapshot_cache)>4096 or self.snapshot_cache_bytes>128*1024*1024:
-                            previous,_=self.snapshot_cache.popitem(last=False)
-                            self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(previous)
-                            old_identity=previous[0] if type(previous) is tuple else None
-                            if old_identity is not None and self.root_states.get(old_identity)==previous:self.root_states.pop(old_identity,None)
+                        self.remember_snapshot(identity,signature,chunk)
                 else:self.snapshot_cache.move_to_end(signature)
                 if signature is not None and signature in self.snapshot_cache:self.root_states[identity]=signature
-                if len(self.root_states)>4096:self.root_states.clear()
                 local[identity]=chunk
             root,adjacency,unread,nodes,complete=chunk
             self._snapshot_known_nodes.update(nodes)
@@ -369,12 +404,98 @@ class Recorder:
             if 'reference_budget_exceeded' in notes:break
         self.publish_snapshot(self.stack[-1]['uid'],phase,values,frozenset(roots),groups,notes)
 
+    def remember_snapshot(self,identity,signature,chunk):
+        size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
+        size+=sum(len(edges)*96+128 for edges in chunk[1].values())+len(chunk[3])*40+256
+        # An uncacheable giant must not evict every reusable interior first.
+        if size>self.snapshot_cache_limit_bytes:return
+        old_signature=self.root_states.get(identity)
+        if old_signature is not None and old_signature!=signature:
+            self.snapshot_cache.pop(old_signature,None)
+            self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(old_signature,0)
+            self.snapshot_cache_roots.pop(old_signature,None)
+        self.snapshot_cache[signature]=chunk;self.snapshot_cache.move_to_end(signature)
+        self.snapshot_cache_roots[signature]=identity;self.root_states[identity]=signature
+        self.snapshot_cache_bytes-=self.snapshot_cache_costs.get(signature,0)
+        self.snapshot_cache_costs[signature]=size;self.snapshot_cache_bytes+=size
+        while len(self.snapshot_cache)>4096 or self.snapshot_cache_bytes>self.snapshot_cache_limit_bytes:
+            previous,_=self.snapshot_cache.popitem(last=False)
+            self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(previous)
+            old_identity=self.snapshot_cache_roots.pop(previous,None)
+            if old_identity is not None and self.root_states.get(old_identity)==previous:self.root_states.pop(old_identity,None)
+
+    def promote_snapshot_components(self,candidates,groups,nodes,node_notes):
+        # No second Python observation and no new events. Slice the complete
+        # observation only after a second exact validator confirms its state.
+        from .frame_identity import graph_signature,flat_sequence_signature
+        candidates.sort(key=lambda row:len(row[2]) if type(row[2]) is bytes else len(row[2][1][1]))
+        for value,token,signature in candidates:
+            identity=(id(value),id(type(value)))
+            flat=flat_sequence_signature(value)
+            current=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+            if current!=signature:continue
+            pending=[token];observed=set();adjacency={};unread=set();references=0
+            while pending:
+                parent=pending.pop()
+                if parent in observed or parent not in nodes:continue
+                observed.add(parent);unread.update(node_notes.get(parent,()))
+                edges=groups.get(parent)
+                if edges is not None:
+                    adjacency[parent]=edges;references+=len(edges)
+                    pending.extend(edge[2] for edge in edges)
+            if references<32:continue
+            chunk=(token,adjacency,frozenset(unread),frozenset(observed),True)
+            self.remember_snapshot(identity,signature,chunk);self.component_cache_promotions+=1
+
+    def incremental_flat_snapshot(self,value,identity,flat):
+        """Reuse only unchanged immutable-leaf identities; observe every new edge.
+
+        The C validator has inspected every current position and rejected mutable
+        descendants. A changed owner-file context, budget/boundary, or unsupported
+        prior observation takes the original complete traversal.
+        """
+        from .frame_identity import flat_sequence_changes
+        prior_signature=self.root_states.get(identity)
+        if type(prior_signature) is not tuple or prior_signature[0]!=identity:return None
+        previous=prior_signature[1]
+        if type(previous) is not tuple or len(previous)!=2 or previous[0]!=flat[0]:return None
+        prior=self.snapshot_cache.get(prior_signature)
+        if prior is None or prior[2] or not prior[4] or len(value)+1>self.max_references:return None
+        if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:return None
+        root,meta=self.metadata(value)
+        if root!=prior[0] or set(prior[1])!={root}:return None
+        old_edges=prior[1][root];old_count=len(previous[1])//(2*struct.calcsize('P'))
+        if len(old_edges)!=old_count:return None
+        changed=flat_sequence_changes(previous[1],flat[1])
+        # Appending immutable leaves changes only new positions. Rebuilding a
+        # Python role->edge dictionary for every prior item on every append is
+        # quadratic bookkeeping; the exact C identity comparison above has
+        # already proved that all old positions remain unchanged.
+        replaced=any(index<old_count for index in changed)
+        by_role={edge[1]:edge for edge in old_edges} if len(value)<old_count or replaced else {}
+        edges=set(old_edges)
+        for index in range(len(value),old_count):
+            edges.remove(by_role['item:'+str(index)])
+        for index in changed:
+            role='item:'+str(index);old=by_role.get(role)
+            if old is not None:edges.remove(old)
+            token,child_meta=self.metadata(value[index])
+            if self.object_metadata.get(token)!=child_meta:
+                self.object_metadata[token]=child_meta;self.emit('object',**child_meta)
+            edges.add((root,role,token))
+        if self.object_metadata.get(root)!=meta:
+            self.object_metadata[root]=meta;self.emit('object',**meta)
+        self.flat_incremental_updates+=1;self.flat_unchanged_leaves_reused+=min(len(value),old_count)-sum(index<old_count for index in changed)
+        return root,{root:frozenset(edges)},frozenset(),frozenset({root}),True
+
     def snapshot_root(self,value):
         # Cache by reference root, not the whole frame: a changing loop counter
         # must not invalidate an unchanged registry reachable from another local.
+        from .frame_identity import reference_children
         queue=collections.deque([(None,None,value)]);groups={};seen=set();notes=set();count=0
-        metadata={};labels={};plans={};root=None;nodes=set();complete=True
+        metadata={};labels={};plans={};root=None;nodes=set();complete=True;reused_components={}
         shared=getattr(self,'_snapshot_known_nodes',set())
+        promote=not shared and self.snapshot_component_limit>0;candidates=[];node_notes={}
         while queue:
             parent,name,value=queue.popleft();count+=1
             if count>self.max_references:
@@ -382,26 +503,53 @@ class Recorder:
             identity=(id(value),id(type(value)))
             candidate=self.root_states.get(identity) if parent is not None else None
             prior=self.snapshot_cache.get(candidate) if candidate is not None else None
-            if prior is not None and prior[3].isdisjoint(shared) and sum(len(edges) for edges in prior[1].values())>=32:
+            if prior is not None and sum(len(edges) for edges in prior[1].values())>=32:
+                # First-visit ownership already applies below. Honor it before
+                # recursively validating a cached component again for an alias
+                # or cycle. Incoming edges remain; uncached leaves pay no extra
+                # identity/seen lookups for this optimization.
+                previous=metadata.get(identity)
+                if previous is not None and previous[0] in seen:
+                    add_reference(groups,parent,(parent,name,previous[0]));continue
+                reused=reused_components.get(identity)
+                if reused is not None and reused[0] is value:
+                    add_reference(groups,parent,(parent,name,reused[1]));continue
                 from .frame_identity import graph_signature,flat_sequence_signature
                 flat=flat_sequence_signature(value)
-                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots)
-                if signature==candidate and not any(target in groups and groups[target]!=edges for target,edges in prior[1].items()):
+                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                overlap=prior[3].intersection(shared)
+                previous_groups=getattr(self,'_snapshot_current_groups',{})
+                compatible=all(prior[1].get(node,frozenset())==groups.get(node,previous_groups.get(node,frozenset())) for node in overlap)
+                if signature==candidate and compatible and not any(target in groups and groups[target]!=edges for target,edges in prior[1].items()):
+                    self.snapshot_cache.move_to_end(candidate)
                     target,adjacency,unread,observed,complete=prior
-                    groups.setdefault(parent,set()).add((parent,name,target));groups.update((node,set(edges)) for node,edges in adjacency.items())
+                    new_edges=sum(len(edges) for node,edges in adjacency.items() if node not in shared)
+                    add_reference(groups,parent,(parent,name,target));groups.update(adjacency)
                     seen.update(observed);nodes.update(observed);shared.update(observed);notes.update(unread)
-                    count+=sum(len(edges) for edges in adjacency.values())
+                    node_notes.setdefault(target,set()).update(unread);self.component_cache_reuses+=1
+                    reused_components[identity]=(value,target)
+                    count+=new_edges
                     if count>self.max_references:
                         notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
                     continue
             if identity not in metadata:metadata[identity]=self.metadata(value,labels)
             token,meta=metadata[identity]
             if parent is None:root=token
-            else:groups.setdefault(parent,set()).add((parent,name,token))
+            else:add_reference(groups,parent,(parent,name,token))
             if self.object_metadata.get(token)!=meta:
                 self.object_metadata[token]=meta;self.emit('object',**meta)
             if token in seen:continue
             seen.add(token);typ=type(value);children=[]
+            if promote and parent is not None:
+                worthwhile=(typ in (dict,list,tuple,set,frozenset) and len(value)>=64) or (typ is not types.ModuleType and issubclass(typ,types.ModuleType))
+                if worthwhile and not (id(value) in self.observer_roots and self.observer_roots[id(value)] is value):
+                    from .frame_identity import graph_signature,flat_sequence_signature
+                    flat=flat_sequence_signature(value)
+                    component_signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                    if component_signature is not None:
+                        candidates.append((value,token,component_signature))
+                        candidates.sort(key=lambda row:len(row[2]) if type(row[2]) is bytes else len(row[2][1][1]),reverse=True)
+                        del candidates[self.snapshot_component_limit:]
             if typ not in (str,bytes,int,float,complex,bool,type(None),types.CodeType):
                 if token in shared:
                     # Borrow the first observed state of shared descendants from
@@ -415,7 +563,7 @@ class Recorder:
                         borrowed.add(target);nodes.add(target)
                         edges=current.get(target)
                         if edges is not None:
-                            groups[target]=set(edges);count+=len(edges)
+                            groups[target]=edges;count+=len(edges)
                             pending.extend(edge[2] for edge in edges)
                     # Every borrowed descendant was already observed, including
                     # those reachable through another alias queued below. Keep
@@ -428,7 +576,12 @@ class Recorder:
                     continue
                 shared.add(token);nodes.add(token)
             if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:
-                notes.add('observer_state_not_traversed');continue
+                notes.add('observer_state_not_traversed');node_notes.setdefault(token,set()).add('observer_state_not_traversed');continue
+            fast=reference_children(value,token,NativeStorage)
+            if fast is not None:
+                if fast:queue.extend(fast)
+                del fast
+                continue
             if typ in (list,tuple):children=[('item:'+str(i),v) for i,v in enumerate(value)]
             elif typ is dict:
                 for i,(k,v) in enumerate(value.copy().items()):children.extend((('key:'+str(i),k),('value:'+str(i),v)))
@@ -444,16 +597,21 @@ class Recorder:
                 if value.__self__ is not None:children=[('receiver',value.__self__)]
             elif typ not in (str,bytes,int,float,complex,bool,type(None),types.ModuleType,types.CodeType) and not issubclass(type(value),type):
                 children,unread=instance_fields(value,plans,project_storage=True);notes.update(unread)
-                if not children and label_is_extension(meta):notes.add('opaque_storage:'+meta['type'].get('qualname','unknown'))
+                node_notes.setdefault(token,set()).update(unread)
+                if not children and label_is_extension(meta):
+                    opaque='opaque_storage:'+meta['type'].get('qualname','unknown');notes.add(opaque);node_notes.setdefault(token,set()).add(opaque)
             for name,child in children:
                 if type(child) is NativeStorage:
                     count+=1
                     if count>self.max_references:
                         notes.add('reference_budget_exceeded');self.gaps.add('reference_budget_exceeded');break
                     field=self.storage_metadata(token,child)
-                    groups.setdefault(token,set()).add((token,name,field))
+                    add_reference(groups,token,(token,name,field))
                 else:queue.append((token,name,child))
-        return root,{parent:frozenset(edges) for parent,edges in groups.items()},frozenset(notes),frozenset(nodes),complete
+        frozen={parent:frozenset(edges) for parent,edges in groups.items()}
+        if candidates and complete and 'reference_budget_exceeded' not in notes:
+            self.promote_snapshot_components(candidates,frozen,nodes,node_notes)
+        return root,frozen,frozenset(notes),frozenset(nodes),complete
 
     def storage_metadata(self,owner,storage):
         descriptor=storage.descriptor
@@ -495,6 +653,33 @@ class Recorder:
                       removed=sorted(removed,key=lambda r:(r[0] or '',r[1],r[2])),notes=sorted(notes))
         self.remember_view(key,(current,groups))
 
+    def emit_reference_state(self,state,parent,edges):
+        prior=self.reference_parent_states.get(parent)
+        self.reference_storage['logical_edges']+=len(edges)
+        delta=None
+        if self.reference_delta_storage and prior is not None and len(edges)>=16:
+            added=edges-prior[1];removed=prior[1]-edges
+            if (len(added)+len(removed))*2+4<len(edges):delta=(added,removed)
+        if delta is not None:
+            added,removed=delta
+            self.emit('reference_group_delta',id=state,parent=parent,base=prior[0],
+                      added=sorted(added,key=edge_order),removed=sorted(removed,key=edge_order))
+            self.reference_storage['delta_groups']+=1
+            self.reference_storage['written_edges']+=len(added)+len(removed)
+        else:
+            self.emit('reference_group',id=state,parent=parent,edges=sorted(edges,key=edge_order))
+            self.reference_storage['full_groups']+=1;self.reference_storage['written_edges']+=len(edges)
+
+    def remember_reference_state(self,state,parent,edges):
+        if parent in self.reference_parent_states:
+            self.reference_parent_bytes-=self.reference_parent_costs.pop(parent)
+            del self.reference_parent_states[parent]
+        self.reference_parent_states[parent]=(state,edges)
+        size=128+len(edges)*96;self.reference_parent_costs[parent]=size;self.reference_parent_bytes+=size
+        while len(self.reference_parent_states)>100000 or self.reference_parent_bytes>128*1024*1024:
+            previous,_=self.reference_parent_states.popitem(last=False)
+            self.reference_parent_bytes-=self.reference_parent_costs.pop(previous)
+
     def publish_grouped_snapshot(self,uid,phase,values,current,groups,notes):
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
         key=(uid,scope);previous,old_groups,old_ids,old_notes=self.views.get(key,(frozenset(),{}, {},None))
@@ -509,13 +694,14 @@ class Recorder:
             identity=(parent,edges);state=self.reference_groups.get(identity)
             if state is None:
                 self.next_reference_group+=1;state='references:'+str(self.next_reference_group)
-                self.emit('reference_group',id=state,parent=parent,edges=sorted(edges,key=lambda r:(r[0] or '',r[1],r[2])))
+                self.emit_reference_state(state,parent,edges)
                 self.reference_groups[identity]=state
                 size=128+len(edges)*96;self.reference_group_bytes+=size;self.reference_group_costs[identity]=size
                 while len(self.reference_groups)>100000 or self.reference_group_bytes>128*1024*1024:
                     expired,_=self.reference_groups.popitem(last=False)
                     self.reference_group_bytes-=self.reference_group_costs.pop(expired)
             else:self.reference_groups.move_to_end(identity)
+            if self.reference_delta_storage:self.remember_reference_state(state,parent,edges)
             states[parent]=state
         added=sorted(set(states.values())-set(old_ids.values()));removed=sorted(set(old_ids.values())-set(states.values()))
         if added or removed or frozenset(notes)!=old_notes:
@@ -707,12 +893,14 @@ class Recorder:
         if self.stack:self.gaps.add('unclosed_calls')
         if self.body_code is not None and not self.body_entries:self.gaps.add('test_body_not_entered')
         self.closed=True
-        self.emit('end',calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
+        from .frame_identity import type_context_cache_stats
+        self.emit('end',reference_storage=self.reference_storage,type_metadata_reuse=type_context_cache_stats(self.type_context_cache),calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
                   gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
                   source_read_policy='namespace-load/1',
                   metadata_cache={'limit':self.metadata_cache_limit,'entries':len(self.metadata_cache),
                                   'hits':self.metadata_cache_hits,'misses':self.metadata_cache_misses,
-                                  'evictions':self.metadata_cache_evictions})
+                                  'evictions':self.metadata_cache_evictions,'template_hits':self.metadata_template_hits,
+                                  'templates':len(self.metadata_templates)})
         self.file.close()
         self.observer_roots.clear();_ACTIVE_RECORDERS.discard(self)
 

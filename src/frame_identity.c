@@ -49,11 +49,32 @@ static PyObject *flat_sequence_signature(PyObject *self,PyObject *value) {
 /* Exact validation of a previously observed object graph. Unsupported storage
  * falls back to Python observation. Only identities, binding names and mutable
  * namespace versions participate; scalar payloads are outside the contract. */
+/* Compare already validated identity vectors, without touching workload objects. */
+static PyObject *flat_sequence_changes(PyObject *self,PyObject *args) {
+    PyObject *before,*after;
+    if (!PyArg_ParseTuple(args,"O!O!",&PyBytes_Type,&before,&PyBytes_Type,&after)) return NULL;
+    Py_ssize_t stride=2*sizeof(uintptr_t),old_size=PyBytes_GET_SIZE(before),new_size=PyBytes_GET_SIZE(after);
+    if (old_size%stride || new_size%stride) {PyErr_SetString(PyExc_ValueError,"invalid flat identity vector");return NULL;}
+    PyObject *rows=PyList_New(0);if (!rows) return NULL;
+    for (Py_ssize_t i=0;i<new_size/stride;i++) {
+        if (i<old_size/stride && !memcmp(PyBytes_AS_STRING(before)+i*stride,PyBytes_AS_STRING(after)+i*stride,stride)) continue;
+        PyObject *index=PyLong_FromSsize_t(i);
+        if (!index || PyList_Append(rows,index)<0) {Py_XDECREF(index);Py_DECREF(rows);return NULL;}
+        Py_DECREF(index);
+    }
+    return rows;
+}
+
+typedef struct TypeContextCache TypeContextCache;
+static PyObject *cached_type_metadata_context(TypeContextCache *,PyTypeObject *);
+static PyObject *cached_base_namespace(TypeContextCache *,PyTypeObject *);
+
 typedef struct GraphSignature {
     char *bytes;Py_ssize_t size,capacity;
     PyObject **queue;Py_ssize_t used,queued,queue_capacity,budget,references;
     PyObject *seen,*types,*boundaries,*field_plans,*base_namespaces;
     int supported;
+    TypeContextCache *type_cache;
 } GraphSignature;
 static getter standard_dict_getters[4];
 static int standard_dict_getter_count;
@@ -157,6 +178,13 @@ static int signature_base_namespace(GraphSignature *g,PyTypeObject *base) {
     Py_DECREF(key);
     if (seen<0 || signature_number(g,!seen)<0) return -1;
     if (seen) return 0;
+    if (g->type_cache) {
+        PyObject *context=cached_base_namespace(g->type_cache,base);
+        if (!context) return -1;
+        if (context==Py_None) {Py_DECREF(context);g->supported=0;return 0;}
+        int status=signature_write(g,PyBytes_AS_STRING(context),PyBytes_GET_SIZE(context));
+        Py_DECREF(context);return status;
+    }
     if (signature_namespace(g,base->tp_dict)<0) return -1;
     return g->supported ? signature_class_functions(g,base->tp_dict) : 0;
 }
@@ -203,7 +231,7 @@ static PyTypeObject *member_projection_type(PyObject *value,PyMemberDef *member)
     default:return NULL;
     }
 }
-static PyObject *type_metadata_context(PyObject *self,PyObject *value) {
+static PyObject *uncached_type_metadata_context(PyObject *value) {
     if (!PyType_Check(value)) {PyErr_SetString(PyExc_TypeError,"type required");return NULL;}
     GraphSignature g={0};g.supported=1;g.types=PySet_New(NULL);
     PyObject *result=NULL;
@@ -211,6 +239,8 @@ static PyObject *type_metadata_context(PyObject *self,PyObject *value) {
         result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
     Py_XDECREF(g.types);Py_XDECREF(g.base_namespaces);PyMem_Free(g.bytes);return result;
 }
+#include "type_context_cache.h"
+
 static PyObject *member_storage(PyObject *self,PyObject *args) {
     PyObject *value,*descriptor;
     if (!PyArg_ParseTuple(args,"OO",&value,&descriptor)) return NULL;
@@ -383,10 +413,11 @@ static PyObject *configure_dict_getter(PyObject *self,PyObject *descriptor) {
     standard_dict_getters[standard_dict_getter_count++]=function;Py_RETURN_NONE;
 }
 static PyObject *graph_signature(PyObject *self,PyObject *args) {
-    PyObject *roots,*boundaries;Py_ssize_t budget;
-    if (!PyArg_ParseTuple(args,"O!nO!",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries)) return NULL;
+    PyObject *roots,*boundaries,*capsule=Py_None;Py_ssize_t budget;
+    if (!PyArg_ParseTuple(args,"O!nO!|O",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries,&capsule)) return NULL;
     GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.seen=PySet_New(NULL);g.types=PySet_New(NULL);g.field_plans=PyDict_New();
     PyObject *result=NULL;Py_ssize_t pos=0;PyObject *name,*value;
+    if (capsule!=Py_None) {g.type_cache=type_context_cache_pointer(capsule);if (!g.type_cache) goto done;}
     PyObject *metadata_context=leaf_metadata_context();
     if (!metadata_context) goto done;
     if (metadata_context==Py_None) {Py_DECREF(metadata_context);result=Py_NewRef(Py_None);goto done;}
@@ -415,8 +446,14 @@ static PyObject *native_definition(PyObject *self,PyObject *value) {
     Py_RETURN_NONE;
 }
 
+#include "reference_children.h"
+
 static PyMethodDef methods[] = {
-    {"type_metadata_context", type_metadata_context, METH_O, "Validate observed type metadata without traversing instance references."},
+    {"flat_sequence_changes", flat_sequence_changes, METH_VARARGS, "Exact changed positions in validated immutable-leaf identity vectors."},
+    {"reference_children", reference_children, METH_VARARGS, "Enumerate exact builtin references without Python per-edge construction."},
+    {"new_type_context_cache", new_type_context_cache, METH_NOARGS, "Bounded weak exact type metadata reuse."},
+    {"type_context_cache_stats", type_context_cache_stats, METH_O, "Exact type metadata reuse counters."},
+    {"type_metadata_context", type_metadata_context, METH_VARARGS, "Validate observed type metadata without traversing instance references."},
     {"member_storage", member_storage, METH_VARARGS, "Describe unboxed native storage without manufacturing Python values."},
     {"native_definition", native_definition, METH_O, "Exact native method-definition identity, including saved bound methods."},
     {"configure_dict_getter", configure_dict_getter, METH_O, "Recognize CPython builtin instance dictionary storage."},

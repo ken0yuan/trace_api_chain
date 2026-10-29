@@ -70,21 +70,15 @@ def rebuild(events, native, contract):
             node['returned'] = e['time_ns']; stack.pop()
             for scope in reference_scopes.pop(uid,()):
                 live_views.pop((uid,scope),None);live_group_views.pop((uid,scope),None)
-        elif kind == 'reference_group':
-            require(start.get('reference_policy')=='shared-adjacency-states/1','reference_group_policy_missing')
-            require(e['id'] not in reference_groups,'duplicate_reference_group')
-            require(e['parent'] is None or e['parent'] in objects,'unknown_reference_group_parent')
-            observed=set()
-            for parent,role,target in e['edges']:
-                require(parent==e['parent'] and target in objects,'unknown_object_reference')
-                edge=(parent,role,target);require(edge not in observed,'duplicate_reference_group_edge');observed.add(edge)
-            reference_groups[e['id']]=e
+        elif kind in ('reference_group','reference_group_delta'):
+            from .reference_codec import expand_group
+            reference_groups[e['id']]=expand_group(e,reference_groups,objects,require,start.get('reference_policy'))
         elif kind == 'references':
             uid = 'p:'+str(e['uid']); require(uid in nodes, 'references_without_call')
             require(nodes[uid]['returned'] is None, 'references_after_call_return')
             reference_scopes.setdefault(uid,set()).add(e['scope'])
             if 'added_groups' in e:
-                require(start.get('reference_policy')=='shared-adjacency-states/1','reference_group_policy_missing')
+                require(start.get('reference_policy') in ('shared-adjacency-states/1','shared-adjacency-states/2'),'reference_group_policy_missing')
                 view=live_group_views.setdefault((uid,e['scope']),{})
                 added=set(e['added_groups']);removed=set(e['removed_groups'])
                 require(len(added)==len(e['added_groups']) and len(removed)==len(e['removed_groups']),'duplicate_reference_group_update')

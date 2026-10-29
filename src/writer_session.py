@@ -7,6 +7,8 @@ Immediate constraints (and commit-time deferred constraints) preserve that
 invariant for our own transactions. No entities, paths or evidence are filtered.
 """
 from pathlib import Path
+import hashlib
+import json
 import time
 import types
 
@@ -14,8 +16,12 @@ from . import database
 
 
 class WriterSession:
-    def __init__(self, path, cache_mib=4096):
+    def __init__(self, path, cache_mib=4096, preserve_prior_slots=False):
+        if type(preserve_prior_slots) is not bool:
+            raise TypeError('preserve_prior_slots_must_be_bool')
         self.path = Path(path).resolve()
+        self.preserve_prior_slots = preserve_prior_slots
+        self.archived_this_commit = []
         self.cache_mib = cache_mib
         self.connection = database.connect(self.path, cache_mib=cache_mib)
         stat = self.path.stat()
@@ -39,6 +45,7 @@ class WriterSession:
         scope = dict(original.__globals__, connect=self._connect)
         self._import = types.FunctionType(original.__code__, scope,
                                           original.__name__, original.__defaults__)
+        self._importers = {original:self._import}
 
     def _connect(self, path, readonly=False, cache_mib=4096):
         if self.closed or readonly or Path(path).resolve() != self.path or cache_mib != self.cache_mib:
@@ -51,6 +58,7 @@ class WriterSession:
             raise ValueError('writer_session_database_replaced')
         cursor = self.connection.execute(sql, parameters)
         self.active = True
+        self.archived_this_commit = []
         self.cleanup_pending = False
         if self.connection.execute('PRAGMA foreign_keys').fetchone()[0] != 1:
             raise ValueError('writer_session_foreign_keys_disabled')
@@ -94,17 +102,77 @@ class WriterSession:
         self.targeted_cleanup_count += 1
         return cursor
 
-    def commit_plan(self, plan):
+    def commit_plan(self, plan, importer=None):
         if self.closed:
             raise ValueError('writer_session_closed')
         self.cleanup_ids = {row[0] for row in plan.get('paths', [])}
-        return self._import(self.path, plan, cache_mib=self.cache_mib)
+        bound=self._import
+        if importer is not None:
+            if not isinstance(importer,types.FunctionType) or importer.__closure__:
+                raise ValueError('unsupported_frozen_importer')
+            bound=self._importers.get(importer)
+            if bound is None:
+                scope=dict(importer.__globals__,connect=self._connect)
+                bound=types.FunctionType(importer.__code__,scope,importer.__name__,importer.__defaults__)
+                self._importers[importer]=bound
+        report = bound(self.path, plan, cache_mib=self.cache_mib)
+        if self.preserve_prior_slots:
+            report['preserved_previous_slots'] = list(self.archived_this_commit)
+        return report
 
-    def commit_file(self, target):
+    def _preserve_slot(self, slot):
+        """Keep exact prior source support inside the replacement transaction.
+
+        A later execution can take fewer branches. Its current receipt must not
+        erase branches already proven by another complete execution. The old
+        receipt and all seven support tables remain queryable under a stable
+        history slot; shared entities/paths are never copied or filtered.
+        """
+        db = self.connection
+        if not self.active or not db.in_transaction:
+            raise ValueError('slot_preservation_requires_writer_transaction')
+        old = db.execute('SELECT * FROM capture_slots WHERE id=?', (slot,)).fetchone()
+        if old is None:
+            return
+        json.loads(old['summary'])  # Reject an invalid receipt before replacement.
+        suffix = hashlib.sha256(json.dumps(list(old), ensure_ascii=False).encode()).hexdigest()
+        archive = slot + '@history:' + suffix
+        expected = (archive, *tuple(old)[1:])
+        existing = db.execute('SELECT * FROM capture_slots WHERE id=?', (archive,)).fetchone()
+        if existing is not None and tuple(existing) != expected:
+            raise ValueError('preserved_slot_receipt_conflict')
+        if existing is None:
+            db.execute('INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)', expected)
+        tables = ('slot_entities', 'api_alias_support', 'path_support', 'observed_objects',
+                  'object_references', 'source_dependencies', 'pending')
+        counts = {}
+        for table in tables:
+            columns = [row[1] for row in db.execute('PRAGMA table_info(' + table + ')')]
+            if not columns or columns[0] != 'slot_id':
+                raise ValueError('unsupported_preservation_table:' + table)
+            payload = ','.join('"' + name + '"' for name in columns[1:])
+            if existing is None:
+                db.execute('INSERT INTO ' + table + ' SELECT ?,' + payload +
+                           ' FROM ' + table + ' WHERE slot_id=?', (archive, slot))
+            count = db.execute('SELECT count(*) FROM ' + table + ' WHERE slot_id=?', (slot,)).fetchone()[0]
+            if count != db.execute('SELECT count(*) FROM ' + table + ' WHERE slot_id=?', (archive,)).fetchone()[0]:
+                raise ValueError('preserved_slot_row_count_conflict:' + table)
+            for first, second in ((slot, archive), (archive, slot)):
+                difference = db.execute('SELECT ' + payload + ' FROM ' + table +
+                                        ' WHERE slot_id=? EXCEPT SELECT ' + payload + ' FROM ' +
+                                        table + ' WHERE slot_id=? LIMIT 1', (first, second)).fetchone()
+                if difference is not None:
+                    raise ValueError('preserved_slot_content_conflict:' + table)
+            counts[table] = count
+        self.archived_this_commit.append({'source_slot': slot, 'archive_slot': archive,
+                                         'import_digest': old['import_digest'], 'rows': counts})
+
+    def commit_file(self, target, loader=None):
         from .staged import load_file
         from .native import save
-        plan, receipt = load_file(target)
-        report = self.commit_plan(plan)
+        plan, receipt = (loader or load_file)(target)
+        factory=getattr(loader,'importer',None) if loader else None
+        report = self.commit_plan(plan,importer=factory(plan) if factory else None)
         report['writer_validation'] = {
             'policy': 'sqlite-enforced-incremental-foreign-keys/1',
             'baseline_or_external_change_audits': self.audit_count,
@@ -131,6 +199,8 @@ class _Connection:
         if normalized == 'BEGIN IMMEDIATE':
             return self.owner._begin(sql, parameters)
         if normalized == 'DELETE FROM CAPTURE_SLOTS WHERE ID=?':
+            if self.owner.preserve_prior_slots:
+                self.owner._preserve_slot(parameters[0])
             self.owner.cleanup_ids.update(row[0] for row in self.owner.connection.execute(
                 'SELECT path_id FROM path_support WHERE slot_id=?', parameters))
         if normalized.startswith('DELETE FROM PATHS WHERE ROWID IN'):
