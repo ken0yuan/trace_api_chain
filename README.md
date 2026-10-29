@@ -97,3 +97,5 @@ C++ 使用匹配 ELF 的 PC 查找 DWARF 声明文件、行、列，并核对该
 详细对象范围和后端类案例见 `docs/对象采集与源码归一化.md`；SQL 结构见 `docs/SQL数据库说明.md`；代码职责见 `代码树.txt`。
 
 Object-reference depth experiment (opt-in): see [reference-depth2-2026-10-29](docs/experiments/reference-depth2-2026-10-29.md). Add `--callchain-reference-depth 2` to limit reference expansion; actual calls remain unrestricted. Results are explicitly bounded and isolated from formal graph slots. Default `full` keeps the complete existing observer.
+
+Opt-in homogeneous scalar container summary experiment: [design and comparison](docs/experiments/scalar-container-summary-2026-10-29.md). Use `--callchain-scalar-container-summary` separately from `--callchain-reference-depth 2`. Full capture stays the default. Summary results explicitly omit member evidence and are isolated from formal graph slots.

@@ -1,0 +1,16 @@
+{
+  "base": "0e20c333ec140b475b64b745507ea5a96f744db4",
+  "unchanged_actual_call_and_source_read_methods_ast_sha256": {
+    "profile": "f0061cc0f76f190ebe8c24b4e61dd94cc4a4b4cf97139bdafc1d37f894193962",
+    "trace": "73300f7ac11318e6e069aaaf28548ea0ce24457c8cc9c242082eea50749b9dbf",
+    "trace_event": "5d7cb85098d8c5787beb60fcd9b63546428676a7bc7ce7e2e48f2f2a640fd601",
+    "begin": "8860e117fd3a2ea7754aed8041a592f784230ad2f50b7bca92bdc804d449381a",
+    "metadata": "668b1a3476e14bbf00211f44df21acb321476406e92b02cad5bff7c2f1ce26fd",
+    "source_read": "da046e5d18649fe7b6d6eed2da9f332b700b1ebfb2265c948e95836bbb5b8d90"
+  },
+  "unchanged_native_and_contract_files_lf_sha256": {
+    "src/native.py": "b4ec02bef08d8fd9d123a86082fbfa3864232a946a891a464a255b919bd5a163",
+    "src/contract.json": "484bd09bb10ea4364ffb1a85cc74d874dda3ac8c3f1108458810612033388482"
+  },
+  "intentional_changes": "object-reference snapshots and explicit summary receipts only; payload/member observations intentionally reduced under opt-in policy"
+}

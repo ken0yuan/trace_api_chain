@@ -19,18 +19,19 @@ _new_type_cache=None
 _type_cache_stats=None
 _reference_children=None
 _flat_changes=None
+_scalar_summary=None
 _lock=threading.Lock()
 
 
 def adapter():
-    global _function,_flat_signature,_graph_signature,_native_definition,_member_storage,_type_context,_new_type_cache,_type_cache_stats,_reference_children,_flat_changes
+    global _function,_flat_signature,_graph_signature,_native_definition,_member_storage,_type_context,_new_type_cache,_type_cache_stats,_reference_children,_flat_changes,_scalar_summary
     if _function is not None:return _function
     with _lock:
         if _function is not None:return _function
         if sys.implementation.name!='cpython' or sys.version_info[:2]!=(3,11):
             raise RuntimeError('exact API function identity requires CPython 3.11')
         source=Path(__file__).with_suffix('.c')
-        key=hashlib.sha256(source.read_bytes()+source.with_name('type_context_cache.h').read_bytes()+source.with_name('reference_children.h').read_bytes()+str(sysconfig.get_config_var('SOABI')).encode()).hexdigest()
+        key=hashlib.sha256(source.read_bytes()+source.with_name('type_context_cache.h').read_bytes()+source.with_name('reference_children.h').read_bytes()+source.with_name('scalar_container.h').read_bytes()+str(sysconfig.get_config_var('SOABI')).encode()).hexdigest()
         root=Path(tempfile.gettempdir())/('callchain-identity-'+str(os.getuid()))
         root.mkdir(mode=0o700,exist_ok=True)
         if root.is_symlink() or root.stat().st_uid!=os.getuid():
@@ -67,6 +68,7 @@ def adapter():
         _function=module.frame_function
         _flat_signature=module.flat_sequence_signature
         _flat_changes=module.flat_sequence_changes
+        _scalar_summary=module.scalar_container_summary
         return _function
 
 
@@ -80,9 +82,14 @@ def flat_sequence_changes(before,after):
     return _flat_changes(before,after)
 
 
-def graph_signature(values,budget,boundaries,type_cache=None):
+def graph_signature(values,budget,boundaries,type_cache=None,scalar_threshold=0):
     if _graph_signature is None:adapter()
-    return _graph_signature(values,budget,boundaries,type_cache)
+    return _graph_signature(values,budget,boundaries,type_cache,scalar_threshold)
+
+
+def scalar_container_summary(value,threshold=100):
+    if _scalar_summary is None:adapter()
+    return _scalar_summary(value,threshold)
 
 
 def native_definition(value):

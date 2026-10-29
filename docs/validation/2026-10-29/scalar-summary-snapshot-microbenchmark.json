@@ -1,0 +1,32 @@
+{
+  "diagnostic_only_not_npu_test": true,
+  "fixture": "2048 homogeneous strings,600 same-type position updates; same actual Python objects across modes",
+  "payload_history_intentionally_not_recorded_in_summary": true,
+  "results": {
+    "full": {
+      "snapshot_and_flush_seconds": 0.49942641000961885,
+      "raw_bytes": 1342023,
+      "observed_object_identities": 2648,
+      "summary_updates": 0,
+      "summary_containers": 0,
+      "gaps": []
+    },
+    "depth2": {
+      "snapshot_and_flush_seconds": 0.6069960199820343,
+      "raw_bytes": 1342136,
+      "observed_object_identities": 2648,
+      "summary_updates": 0,
+      "summary_containers": 0,
+      "gaps": []
+    },
+    "summary": {
+      "snapshot_and_flush_seconds": 0.017513730010250583,
+      "raw_bytes": 2005,
+      "observed_object_identities": 1,
+      "summary_updates": 1,
+      "summary_containers": 1,
+      "gaps": []
+    }
+  },
+  "not_a_whole_case_speedup": true
+}

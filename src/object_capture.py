@@ -121,10 +121,15 @@ def instance_fields(value, plans=None, project_storage=False):
 
 
 class Recorder:
-    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False, reference_depth_limit=None):
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False, reference_depth_limit=None, scalar_container_threshold=None):
         if reference_depth_limit is not None and (type(reference_depth_limit) is not int or reference_depth_limit!=2):
             raise ValueError('experimental reference depth must be 2 or None')
         self.reference_depth_limit=reference_depth_limit;self.depth_boundary_objects=set()
+        if scalar_container_threshold is not None and (type(scalar_container_threshold) is not int or scalar_container_threshold!=100):
+            raise ValueError('experimental scalar threshold must be 100 or None')
+        if reference_depth_limit is not None and scalar_container_threshold is not None:
+            raise ValueError('compare depth and scalar summary independently; do not combine')
+        self.scalar_container_threshold=scalar_container_threshold;self.scalar_summary_states={};self.scalar_summary_updates=0
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
@@ -160,6 +165,9 @@ class Recorder:
         # references but never recursively observe our growing evidence store.
         self.observer_roots={id(value):value for value in (self,native,registry,_ACTIVE_RECORDERS,*observer_roots) if value is not None}
         depth_scope=({'reference_depth_limit':reference_depth_limit,'object_expansion_policy':'experimental-root-distance/1','object_scope_complete':False} if reference_depth_limit is not None else {})
+        if scalar_container_threshold is not None:
+            depth_scope.update(scalar_container_summary_threshold=scalar_container_threshold,
+                               scalar_summary_policy='experimental-homogeneous-scalars/1',object_scope_complete=False)
         self.emit('start',**depth_scope,schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy=('shared-adjacency-states/2' if self.reference_delta_storage else 'shared-adjacency-states/1') if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
                   python=sys.version,scope_policy='callchain-contract/1',
                   native_window_policy='python-and-c-boundaries/1' if native is not None else 'c-boundaries/1',
@@ -384,8 +392,8 @@ class Recorder:
             identity=(id(value),id(type(value)))
             chunk=local.get(identity)
             if chunk is None:
-                flat=flat_sequence_signature(value)
-                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                flat=flat_sequence_signature(value) if self.scalar_container_threshold is None else self.flat_reference_signature(value)
+                signature=(identity,flat) if flat is not None else (graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache) if self.scalar_container_threshold is None else self.graph_reference_signature(value))
                 chunk=self.snapshot_cache.get(signature) if signature is not None else None
                 if chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
                     chunk=None  # Earlier first-visit observations own this snapshot's state.
@@ -410,6 +418,31 @@ class Recorder:
                     notes.add('snapshot_inconsistent_reference_state');self.gaps.add('snapshot_inconsistent_reference_state')
             if 'reference_budget_exceeded' in notes:break
         self.publish_snapshot(self.stack[-1]['uid'],phase,values,frozenset(roots),groups,notes)
+
+    def flat_reference_signature(self,value):
+        from .frame_identity import flat_sequence_signature,scalar_container_summary
+        if self.scalar_container_threshold is not None and scalar_container_summary(value,self.scalar_container_threshold) is not None:return None
+        return flat_sequence_signature(value)
+
+    def graph_reference_signature(self,value):
+        from .frame_identity import graph_signature
+        if self.scalar_container_threshold is None:
+            return graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+        return graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache,
+                               scalar_threshold=self.scalar_container_threshold or 0)
+
+    def summarize_scalar_container(self,value,token):
+        if self.scalar_container_threshold is None:return False
+        from .frame_identity import scalar_container_summary
+        summary=scalar_container_summary(value,self.scalar_container_threshold)
+        if summary is None:return False
+        if self.scalar_summary_states.get(token)!=summary:
+            kind,count,element,key=summary;self.scalar_summary_states[token]=summary;self.scalar_summary_updates+=1
+            self.emit('data_container_summary',object=token,container_type=kind,element_count=count,
+                      element_type=element,key_type=key,threshold=self.scalar_container_threshold,
+                      uid=self.stack[-1]['uid'],policy='experimental-homogeneous-scalars/1',
+                      payload_and_member_identities_recorded=False)
+        return True
 
     def remember_snapshot(self,identity,signature,chunk):
         size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
@@ -438,8 +471,8 @@ class Recorder:
         candidates.sort(key=lambda row:len(row[2]) if type(row[2]) is bytes else len(row[2][1][1]))
         for value,token,signature in candidates:
             identity=(id(value),id(type(value)))
-            flat=flat_sequence_signature(value)
-            current=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+            flat=flat_sequence_signature(value) if self.scalar_container_threshold is None else self.flat_reference_signature(value)
+            current=(identity,flat) if flat is not None else (graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache) if self.scalar_container_threshold is None else self.graph_reference_signature(value))
             if current!=signature:continue
             pending=[token];observed=set();adjacency={};unread=set();references=0
             while pending:
@@ -522,8 +555,8 @@ class Recorder:
                 if reused is not None and reused[0] is value:
                     add_reference(groups,parent,(parent,name,reused[1]));continue
                 from .frame_identity import graph_signature,flat_sequence_signature
-                flat=flat_sequence_signature(value)
-                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                flat=flat_sequence_signature(value) if self.scalar_container_threshold is None else self.flat_reference_signature(value)
+                signature=(identity,flat) if flat is not None else (graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache) if self.scalar_container_threshold is None else self.graph_reference_signature(value))
                 overlap=prior[3].intersection(shared)
                 previous_groups=getattr(self,'_snapshot_current_groups',{})
                 compatible=all(prior[1].get(node,frozenset())==groups.get(node,previous_groups.get(node,frozenset())) for node in overlap)
@@ -547,12 +580,18 @@ class Recorder:
                 self.object_metadata[token]=meta;self.emit('object',**meta)
             if token in seen:continue
             seen.add(token);typ=type(value);children=[]
+            if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:
+                notes.add('observer_state_not_traversed');node_notes.setdefault(token,set()).add('observer_state_not_traversed');continue
+            if self.scalar_container_threshold is not None and self.summarize_scalar_container(value,token):
+                omission='scalar_container_summary:'+str(self.scalar_container_threshold)
+                notes.add(omission);node_notes.setdefault(token,set()).add(omission)
+                shared.add(token);nodes.add(token);continue
             if promote and parent is not None:
                 worthwhile=(typ in (dict,list,tuple,set,frozenset) and len(value)>=64) or (typ is not types.ModuleType and issubclass(typ,types.ModuleType))
                 if worthwhile and not (id(value) in self.observer_roots and self.observer_roots[id(value)] is value):
                     from .frame_identity import graph_signature,flat_sequence_signature
-                    flat=flat_sequence_signature(value)
-                    component_signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                    flat=flat_sequence_signature(value) if self.scalar_container_threshold is None else self.flat_reference_signature(value)
+                    component_signature=(identity,flat) if flat is not None else (graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache) if self.scalar_container_threshold is None else self.graph_reference_signature(value))
                     if component_signature is not None:
                         candidates.append((value,token,component_signature))
                         candidates.sort(key=lambda row:len(row[2]) if type(row[2]) is bytes else len(row[2][1][1]),reverse=True)
@@ -901,7 +940,10 @@ class Recorder:
         if self.body_code is not None and not self.body_entries:self.gaps.add('test_body_not_entered')
         self.closed=True
         from .frame_identity import type_context_cache_stats
-        self.emit('end',reference_storage=self.reference_storage,type_metadata_reuse=type_context_cache_stats(self.type_context_cache),calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
+        summary_scope=({'scalar_container_summary_threshold':self.scalar_container_threshold,
+                        'summarized_container_identities':len(self.scalar_summary_states),'summary_updates':self.scalar_summary_updates,
+                        'object_scope_complete':False} if self.scalar_container_threshold is not None else {})
+        self.emit('end',**summary_scope,reference_storage=self.reference_storage,type_metadata_reuse=type_context_cache_stats(self.type_context_cache),calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
                   gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
                   source_read_policy='namespace-load/1',
                   metadata_cache={'limit':self.metadata_cache_limit,'entries':len(self.metadata_cache),

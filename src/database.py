@@ -102,6 +102,8 @@ def normalize(prepared,roots=None,definitions=None):
     defmap={e['id']:e for e in events if e['event']=='definition'}
     objects={e['id']:e for e in events if e['event']=='object'}
     mapping={};aliases=set();pending=[];native_map={};live_entry={}
+    for index,row in enumerate(graph.get('data_container_summaries',[])):
+        pending.append(('scalar_container_summary:'+str(index),'experimental_members_not_recorded',json.dumps(row,ensure_ascii=False)))
     for row in native:
         if row['event'] not in ('enter','path'):continue
         i=row['source_identity'];identity=(i.get('path'),i.get('offset'))
@@ -138,6 +140,8 @@ def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
     """Compute one complete contribution without opening any database."""
     if prepared['graph'].get('reference_depth_limit') is not None and not (slot or '').startswith('experiment:reference-depth-2:'):
         raise ValueError('bounded_capture_requires_experiment_slot')
+    if prepared['graph'].get('scalar_container_summary_threshold') is not None and not (slot or '').startswith('experiment:scalar-container-summary:'):
+        raise ValueError('summary_capture_requires_experiment_slot')
     source,mapping,object_map,aliases,pending,calls=normalize(prepared,roots,definitions)
     graph=prepared['graph'];start=next(e for e in prepared['events'] if e['event']=='start')
     test_file=source.path(start['test_file']) if start.get('test_file') else graph['test']
@@ -210,6 +214,9 @@ def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
     if graph.get('reference_depth_limit') is not None:
         summary.update(reference_depth_limit=graph['reference_depth_limit'],object_scope_complete=False,
                        experimental=True,reference_boundary_objects=len(graph.get('reference_boundaries',[])))
+    if graph.get('scalar_container_summary_threshold') is not None:
+        summary.update(scalar_container_summary_threshold=graph['scalar_container_summary_threshold'],object_scope_complete=False,
+                       experimental=True,data_container_summary_updates=len(graph.get('data_container_summaries',[])))
     if graph.get('native_storage')=='paths':
         summary.update(native_storage='paths',native_invocations=graph['native_activations'],
                        native_path_nodes=graph['native_path_nodes'],runtime_event_history_preserved=False)
@@ -231,6 +238,8 @@ def commit_refresh(db_path,plan,cache_mib=4096):
     slot=plan['slot'];summary=plan['summary'];input_digest=plan['input_digest'];import_digest=plan['import_digest']
     if summary.get('reference_depth_limit') is not None and (not slot.startswith('experiment:reference-depth-2:') or not Path(db_path).name.endswith('.depth2.sqlite')):
         raise ValueError('bounded_capture_requires_isolated_experiment_database')
+    if summary.get('scalar_container_summary_threshold') is not None and (not slot.startswith('experiment:scalar-container-summary:') or not Path(db_path).name.endswith('.summary.sqlite')):
+        raise ValueError('summary_capture_requires_isolated_experiment_database')
     entities=plan['entities'];aliases=plan['aliases'];api_entities=plan['api_entities'];api_aliases=plan['api_aliases']
     paths=plan['paths'];supports=plan['supports'];object_links=plan['object_links'];reference_links=plan['reference_links']
     dependency_rows=plan['dependency_rows'];pending=plan['pending']
@@ -241,7 +250,8 @@ def commit_refresh(db_path,plan,cache_mib=4096):
         if existing and existing[0]==import_digest:
             db.rollback();return {**summary,'status':'unchanged','slot':slot}
         db.execute('DELETE FROM capture_slots WHERE id=?',(slot,))
-        db.execute('INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)',(slot,summary['test'],input_digest,import_digest,summary['raw_evidence'],'bounded' if summary.get('reference_depth_limit') is not None else ('partial' if summary['gaps'] else 'current'),json.dumps(summary,ensure_ascii=False)))
+        state='summary' if summary.get('scalar_container_summary_threshold') is not None else ('bounded' if summary.get('reference_depth_limit') is not None else ('partial' if summary['gaps'] else 'current'))
+        db.execute('INSERT INTO capture_slots VALUES(?,?,?,?,?,?,?)',(slot,summary['test'],input_digest,import_digest,summary['raw_evidence'],state,json.dumps(summary,ensure_ascii=False)))
         versions={(e['path'],e['source_sha256']) for e in entities.values() if e['path'] and e['source_sha256']}
         for path,sha in versions:
             db.execute("UPDATE capture_slots SET status='stale' WHERE id<>? AND id IN (SELECT s.slot_id FROM slot_entities s JOIN entities e ON e.id=s.entity_id WHERE e.path=? AND s.source_sha256 IS NOT NULL AND s.source_sha256<>?)",(slot,path,sha))

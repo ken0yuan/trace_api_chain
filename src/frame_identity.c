@@ -4,6 +4,7 @@
 #include <structmember.h>
 #include <descrobject.h>
 #include <internal/pycore_frame.h>
+#include "scalar_container.h"
 
 #if PY_MAJOR_VERSION != 3 || PY_MINOR_VERSION != 11
 #error "The frame identity adapter requires CPython 3.11."
@@ -73,6 +74,7 @@ typedef struct GraphSignature {
     char *bytes;Py_ssize_t size,capacity;
     PyObject **queue;Py_ssize_t used,queued,queue_capacity,budget,references;
     PyObject *seen,*types,*boundaries,*field_plans,*base_namespaces;
+    Py_ssize_t scalar_threshold;
     int supported;
     TypeContextCache *type_cache;
 } GraphSignature;
@@ -363,6 +365,18 @@ static int signature_node(GraphSignature *g,PyObject *value) {
     if (!address) return -1;
     int boundary=PyDict_GetItem(g->boundaries,address)==value;Py_DECREF(address);
     if (boundary) return 0;
+    if (g->scalar_threshold) {
+        PyObject *summary=scalar_container_info(value,g->scalar_threshold);
+        if (!summary) return -1;
+        if (summary!=Py_None) {
+            PyObject *key=PyTuple_GET_ITEM(summary,3);Py_ssize_t size=PyLong_AsSsize_t(PyTuple_GET_ITEM(summary,1));
+            int status=signature_number(g,0x53554d4d)<0 || signature_number(g,size)<0 ||
+                signature_text(g,PyTuple_GET_ITEM(summary,0))<0 || signature_text(g,PyTuple_GET_ITEM(summary,2))<0 ||
+                signature_number(g,key!=Py_None)<0 || (key!=Py_None && signature_text(g,key)<0);
+            Py_DECREF(summary);return status ? -1 : 0;
+        }
+        Py_DECREF(summary);
+    }
     if (type==&PyList_Type || type==&PyTuple_Type) {
         Py_ssize_t count=Py_SIZE(value);
         if (signature_number(g,count)<0) return -1;
@@ -413,9 +427,11 @@ static PyObject *configure_dict_getter(PyObject *self,PyObject *descriptor) {
     standard_dict_getters[standard_dict_getter_count++]=function;Py_RETURN_NONE;
 }
 static PyObject *graph_signature(PyObject *self,PyObject *args) {
-    PyObject *roots,*boundaries,*capsule=Py_None;Py_ssize_t budget;
-    if (!PyArg_ParseTuple(args,"O!nO!|O",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries,&capsule)) return NULL;
+    PyObject *roots,*boundaries,*capsule=Py_None;Py_ssize_t budget,threshold=0;
+    if (!PyArg_ParseTuple(args,"O!nO!|On",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries,&capsule,&threshold)) return NULL;
+    if (threshold<0) {PyErr_SetString(PyExc_ValueError,"negative summary threshold");return NULL;}
     GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.seen=PySet_New(NULL);g.types=PySet_New(NULL);g.field_plans=PyDict_New();
+    g.scalar_threshold=threshold;
     PyObject *result=NULL;Py_ssize_t pos=0;PyObject *name,*value;
     if (capsule!=Py_None) {g.type_cache=type_context_cache_pointer(capsule);if (!g.type_cache) goto done;}
     PyObject *metadata_context=leaf_metadata_context();
@@ -423,6 +439,7 @@ static PyObject *graph_signature(PyObject *self,PyObject *args) {
     if (metadata_context==Py_None) {Py_DECREF(metadata_context);result=Py_NewRef(Py_None);goto done;}
     int context_status=signature_write(&g,PyBytes_AS_STRING(metadata_context),PyBytes_GET_SIZE(metadata_context));
     Py_DECREF(metadata_context);if (context_status<0) goto done;
+    if (threshold && (signature_number(&g,0x53554d4d)<0 || signature_number(&g,threshold)<0)) goto done;
     if (!g.seen || !g.types || !g.field_plans || signature_number(&g,PyDict_Size(roots))<0) goto done;
     while (g.supported && PyDict_Next(roots,&pos,&name,&value))
         if (signature_text(&g,name)<0 || signature_push(&g,value)<0) goto done;
@@ -449,6 +466,7 @@ static PyObject *native_definition(PyObject *self,PyObject *value) {
 #include "reference_children.h"
 
 static PyMethodDef methods[] = {
+    {"scalar_container_summary", scalar_container_summary, METH_VARARGS, "Check every exact builtin member; summarize only homogeneous primitive values."},
     {"flat_sequence_changes", flat_sequence_changes, METH_VARARGS, "Exact changed positions in validated immutable-leaf identity vectors."},
     {"reference_children", reference_children, METH_VARARGS, "Enumerate exact builtin references without Python per-edge construction."},
     {"new_type_context_cache", new_type_context_cache, METH_NOARGS, "Bounded weak exact type metadata reuse."},

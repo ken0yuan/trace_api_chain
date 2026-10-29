@@ -26,6 +26,7 @@ def pytest_addoption(parser):
     group.addoption('--callchain-max-paths',type=int,default=262144)
     group.addoption('--callchain-reference-storage',choices=('full','delta'),default='delta',help='Lossless shared adjacency states; delta reuses unchanged edges without removing observations')
     group.addoption('--callchain-reference-depth',choices=('full','2'),default='full',help='Experimental: roots at depth zero, retain objects through two reference edges; actual calls remain unrestricted')
+    group.addoption('--callchain-scalar-container-summary',action='store_true',help='Experimental: summarize exact builtin containers with more than 100 homogeneous primitive elements; retain all actual calls')
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -40,6 +41,8 @@ def pytest_cmdline_main(config):
         raise pytest.UsageError('--callchain-max-paths must be 1..10000000')
     if config.getoption('--callchain-max-references')<=0 or config.getoption('--callchain-timeout')<=0:
         raise pytest.UsageError('capture budgets and timeout must be positive')
+    if config.getoption('--callchain-scalar-container-summary') and config.getoption('--callchain-reference-depth')!='full':
+        raise pytest.UsageError('compare scalar summary and depth2 independently; do not combine')
     output=Path(target).resolve()
     if output.exists():raise pytest.UsageError('Evidence directory already exists: '+str(output))
     output.mkdir(parents=True)
@@ -64,13 +67,17 @@ def pytest_cmdline_main(config):
         receipt=json.loads(receipt_path.read_text())
         if not receipt.get('started') or not receipt.get('ended'):raise RuntimeError('selected_test_body_not_completed')
         bounded=config.getoption('--callchain-reference-depth')=='2'
-        report={'status':'capture_incomplete' if receipt.get('gaps') else ('captured_bounded' if bounded else 'captured'),
+        summarized=config.getoption('--callchain-scalar-container-summary')
+        report={'status':'capture_incomplete' if receipt.get('gaps') else ('captured_summary' if summarized else ('captured_bounded' if bounded else 'captured')),
                 'stage':'capture_only','mode':mode,'gaps':receipt.get('gaps',[]),
                 'native_storage':config.getoption('--callchain-native-storage'),
                 'pytest_exit_code':process.returncode,'elapsed_seconds':time.monotonic()-started,
                 'replay_performed':False,'database_written':False,'html_generated':False}
         if bounded:report.update(reference_depth_limit=2,object_scope_complete=False,experimental=True,
                                  reference_boundary_objects=receipt.get('reference_boundary_objects',0))
+        if summarized:report.update(scalar_container_summary_threshold=100,object_scope_complete=False,experimental=True,
+                                    summarized_container_identities=receipt.get('summarized_container_identities',0),
+                                    summary_updates=receipt.get('summary_updates',0))
         save(output/'capture-result.json',report)
         print('trace-api-chain: '+report['status']+'; raw evidence: '+str(output),flush=True)
         return process.returncode or (2 if report['gaps'] else 0)
@@ -113,7 +120,8 @@ class Worker:
                                max_references=config.getoption('--callchain-max-references'),
                                run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry,observer_roots=observers,
                                reference_deltas=config.getoption('--callchain-reference-storage')=='delta',
-                               reference_depth_limit=2 if config.getoption('--callchain-reference-depth')=='2' else None)
+                               reference_depth_limit=2 if config.getoption('--callchain-reference-depth')=='2' else None,
+                               scalar_container_threshold=100 if config.getoption('--callchain-scalar-container-summary') else None)
         self.recorder.body_code=code
         self.receipt['selected']=[item.nodeid]
         case=getattr(item,'_testcase',None)
@@ -150,6 +158,10 @@ class Worker:
             self.receipt.update(reference_depth_limit=self.recorder.reference_depth_limit,
                                 reference_boundary_objects=len(self.recorder.depth_boundary_objects),
                                 object_scope_complete=False,experimental=True)
+        if self.recorder and self.recorder.scalar_container_threshold is not None:
+            self.receipt.update(scalar_container_summary_threshold=self.recorder.scalar_container_threshold,
+                                summarized_container_identities=len(self.recorder.scalar_summary_states),
+                                summary_updates=self.recorder.scalar_summary_updates,object_scope_complete=False,experimental=True)
         self.receipt['gaps']=sorted(set((list(self.recorder.gaps) if self.recorder else [])+
                                       (self.bridge.gaps if self.bridge else [])))
         self.receipt['source_roots']={}
