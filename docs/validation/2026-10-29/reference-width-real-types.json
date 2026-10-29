@@ -1,0 +1,247 @@
+[
+  {
+    "object": "object:281473734448000:187650829002272:aba8a7be4c37c617",
+    "witness": {
+      "references": 6668,
+      "call_uid": 12813,
+      "phase": "native_entry",
+      "call": {
+        "name": "dict.get",
+        "module": "builtins",
+        "caller_file": "<frozen importlib._bootstrap>",
+        "caller_line": 1170,
+        "parent": 12812
+      }
+    },
+    "direct_child_types": [
+      {
+        "module": "builtins",
+        "type": "str",
+        "references": 3334
+      },
+      {
+        "module": "builtins",
+        "type": "module",
+        "references": 3306
+      },
+      {
+        "module": "torch.utils._config_module",
+        "type": "install_config_module.<locals>.ConfigModuleInstance",
+        "references": 7
+      },
+      {
+        "module": "typing",
+        "type": "_DeprecatedType",
+        "references": 2
+      },
+      {
+        "module": "torch._ops",
+        "type": "_Ops",
+        "references": 1
+      },
+      {
+        "module": "torch._classes",
+        "type": "_Classes",
+        "references": 1
+      },
+      {
+        "module": "pygments.formatters",
+        "type": "_automodule",
+        "references": 1
+      },
+      {
+        "module": "pygments.lexers",
+        "type": "_automodule",
+        "references": 1
+      },
+      {
+        "module": "torch_npu.npu.aclnn",
+        "type": "AclnnModule",
+        "references": 1
+      },
+      {
+        "module": "torch_npu.dynamo",
+        "type": "_LazyTorchair",
+        "references": 1
+      },
+      {
+        "module": "torch_npu.dynamo",
+        "type": "_LazyNpuGraphEx",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.xnnpack",
+        "type": "XNNPACKEngine",
+        "references": 1
+      },
+      {
+        "module": "torch.utils._config_module",
+        "type": "install_config_module.<locals>.ImplicationConfigModuleInstance",
+        "references": 1
+      },
+      {
+        "module": "torch._VF",
+        "type": "VFModule",
+        "references": 1
+      },
+      {
+        "module": "torch.utils.deterministic",
+        "type": "_Deterministic",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.cudnn.rnn",
+        "type": "CudnnRNNModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.cudnn",
+        "type": "CudnnModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.miopen",
+        "type": "MiopenModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.mkldnn",
+        "type": "MkldnnModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.opt_einsum",
+        "type": "OptEinsumModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.python_native",
+        "type": "PythonNativeModule",
+        "references": 1
+      },
+      {
+        "module": "torch.backends.quantized",
+        "type": "QuantizedEngine",
+        "references": 1
+      },
+      {
+        "module": "torch.backends",
+        "type": "GenericModule",
+        "references": 1
+      }
+    ]
+  },
+  {
+    "object": "object:281473728491008:187650829002272:aba8a7be4c37c617",
+    "witness": {
+      "references": 1204,
+      "call_uid": 513,
+      "phase": "native_entry",
+      "call": {
+        "name": "dict.get",
+        "module": "builtins",
+        "caller_file": "<frozen importlib._bootstrap>",
+        "caller_line": 1170,
+        "parent": 512
+      }
+    },
+    "direct_child_types": [
+      {
+        "module": "builtins",
+        "type": "str",
+        "references": 602
+      },
+      {
+        "module": "builtins",
+        "type": "tuple",
+        "references": 602
+      }
+    ]
+  },
+  {
+    "object": "object:281471826995456:187650829002272:aba8a7be4c37c617",
+    "witness": {
+      "references": 1344,
+      "call_uid": 513,
+      "phase": "native_entry",
+      "call": {
+        "name": "dict.get",
+        "module": "builtins",
+        "caller_file": "<frozen importlib._bootstrap>",
+        "caller_line": 1170,
+        "parent": 512
+      }
+    },
+    "direct_child_types": [
+      {
+        "module": "builtins",
+        "type": "str",
+        "references": 672
+      },
+      {
+        "module": "torch.utils._config_module",
+        "type": "_ConfigEntry",
+        "references": 672
+      }
+    ]
+  },
+  {
+    "object": "object:281473287937216:187650829002272:aba8a7be4c37c617",
+    "witness": {
+      "references": 2008,
+      "call_uid": 513,
+      "phase": "native_entry",
+      "call": {
+        "name": "dict.get",
+        "module": "builtins",
+        "caller_file": "<frozen importlib._bootstrap>",
+        "caller_line": 1170,
+        "parent": 512
+      }
+    },
+    "direct_child_types": [
+      {
+        "module": "builtins",
+        "type": "str",
+        "references": 1006
+      },
+      {
+        "module": "torch._ops",
+        "type": "OpOverloadPacket",
+        "references": 997
+      },
+      {
+        "module": "builtins",
+        "type": "NoneType",
+        "references": 4
+      },
+      {
+        "module": "builtins",
+        "type": "list",
+        "references": 1
+      }
+    ]
+  },
+  {
+    "object": "object:281469668944704:187650828983664:7b9b99db7cf15ea6",
+    "witness": {
+      "references": 1267,
+      "call_uid": 12984,
+      "phase": "locals",
+      "call": {
+        "name": "list_global_func_names",
+        "module": "tvm._ffi.registry",
+        "caller_file": "/usr/local/Ascend/cann-9.2.0/python/site-packages/tbe/tvm/_ffi/registry.py",
+        "caller_line": 301,
+        "parent": 12983
+      }
+    },
+    "direct_child_types": [
+      {
+        "module": "builtins",
+        "type": "str",
+        "references": 1267
+      }
+    ]
+  }
+]

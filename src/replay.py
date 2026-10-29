@@ -20,7 +20,7 @@ def canonical(value):
 
 def rebuild(events, native, contract):
     nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
-    observations = []; references = []; source_reads = []; gaps = set(); exclusions = []
+    observations = []; references = []; source_reads = []; gaps = set(); exclusions = [];reference_boundaries=[]
     start = None; finished = False; live_views = {}; end_summary = None
     python_times = {}; reference_groups = {}; live_group_views = {}; reference_scopes = {}
     excluded = set(contract['api_scope']['excluded_api_ids'])
@@ -30,6 +30,8 @@ def rebuild(events, native, contract):
         require(start is not None or kind == 'start', 'event_before_capture_start')
         if kind == 'start':
             require(start is None, 'multiple_capture_starts'); start = e
+            if e.get('reference_depth_limit') is not None:
+                require(type(e['reference_depth_limit']) is int and e['reference_depth_limit']==2 and e.get('object_expansion_policy')=='experimental-root-distance/1','invalid_reference_depth_declaration')
             if e.get('scope_policy') != contract['version']:
                 gaps.add('collector_scope_policy_unverified')
         elif kind == 'definition':
@@ -101,6 +103,12 @@ def rebuild(events, native, contract):
                 require(removed <= view, 'reference_remove_without_add')
                 view.difference_update(removed); view.update(tuple(r) for r in e['added'])
             references.append({'sequence': seq, 'observation': e})
+        elif kind == 'reference_boundary':
+            require(start.get('object_expansion_policy')=='experimental-root-distance/1' and start.get('reference_depth_limit')==2,'undeclared_reference_depth_boundary')
+            require(e.get('object') in objects and e.get('depth')==e.get('limit')==2,'invalid_reference_depth_boundary')
+            uid='p:'+str(e.get('uid'));require(uid in nodes and nodes[uid]['returned'] is None,'reference_boundary_outside_call')
+            require(stacks[nodes[uid]['thread']][-1]==uid,'reference_boundary_not_active_call')
+            reference_boundaries.append(e)
         elif kind == 'source_read':
             uid='p:'+str(e['uid']);require(uid in nodes,'source_read_without_call')
             node=nodes[uid]
@@ -168,9 +176,11 @@ def rebuild(events, native, contract):
         else:
             raise EvidenceError('unknown_native_event')
     require(all(not s for s in nstacks.values()), 'native_unclosed_stack')
-    return {'schema':'deterministic-callchain/1','contract_version':contract['version'],
+    depth_scope=({'object_expansion_policy':start['object_expansion_policy'],'reference_depth_limit':start['reference_depth_limit'],
+                  'object_scope_complete':False,'reference_boundaries':reference_boundaries} if start.get('reference_depth_limit') is not None else {})
+    return {**depth_scope,'schema':'deterministic-callchain/1','contract_version':contract['version'],
             'run_id':start.get('run_id'),'test':start.get('nodeid'),
-            'status':'evidence_scope_incomplete' if gaps else 'observed_scope_validated',
+            'status':'evidence_scope_incomplete' if gaps else ('bounded_object_scope_validated' if depth_scope else 'observed_scope_validated'),
             'gaps':sorted(gaps),'nodes':nodes,'edges':edges,'definitions':definitions,
             'object_observations':observations,'reference_observations':references,'reference_groups':reference_groups,
             'source_reads':source_reads,'module_sources':end_summary.get('module_sources',{}),

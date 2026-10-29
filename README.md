@@ -95,3 +95,5 @@ C++ 使用匹配 ELF 的 PC 查找 DWARF 声明文件、行、列，并核对该
 预算：`--callchain-max-events` 在 events 模式限制每个 native 分片条数，在 paths 模式限制上下文与路径支持记录数，默认均为 262144；`--callchain-max-paths` 限制原生唯一路径节点数，默认 262144。`--callchain-max-references` 每个 Python 快照默认 100000 次引用访问；`--callchain-timeout` 默认 3600 秒。溢出、钩子替换、错误序号与不配对事件不得伪装完整。测试退出码与采集状态分别记录。
 
 详细对象范围和后端类案例见 `docs/对象采集与源码归一化.md`；SQL 结构见 `docs/SQL数据库说明.md`；代码职责见 `代码树.txt`。
+
+Object-reference depth experiment (opt-in): see [reference-depth2-2026-10-29](docs/experiments/reference-depth2-2026-10-29.md). Add `--callchain-reference-depth 2` to limit reference expansion; actual calls remain unrestricted. Results are explicitly bounded and isolated from formal graph slots. Default `full` keeps the complete existing observer.

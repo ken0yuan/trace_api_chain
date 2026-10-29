@@ -121,7 +121,10 @@ def instance_fields(value, plans=None, project_storage=False):
 
 
 class Recorder:
-    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False):
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False, reference_depth_limit=None):
+        if reference_depth_limit is not None and (type(reference_depth_limit) is not int or reference_depth_limit!=2):
+            raise ValueError('experimental reference depth must be 2 or None')
+        self.reference_depth_limit=reference_depth_limit;self.depth_boundary_objects=set()
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
@@ -156,7 +159,8 @@ class Recorder:
         # Exact instrumentation-owned objects only. Retain incoming workload
         # references but never recursively observe our growing evidence store.
         self.observer_roots={id(value):value for value in (self,native,registry,_ACTIVE_RECORDERS,*observer_roots) if value is not None}
-        self.emit('start',schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy=('shared-adjacency-states/2' if self.reference_delta_storage else 'shared-adjacency-states/1') if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
+        depth_scope=({'reference_depth_limit':reference_depth_limit,'object_expansion_policy':'experimental-root-distance/1','object_scope_complete':False} if reference_depth_limit is not None else {})
+        self.emit('start',**depth_scope,schema='object_callchain/1',collector_version=__version__,identity_policy='exact-function-and-native-receiver/1',storage_policy='unboxed-members-are-storage-projections/1',reference_policy=('shared-adjacency-states/2' if self.reference_delta_storage else 'shared-adjacency-states/1') if self.grouped_references else 'reference-deltas/1',nodeid=nodeid,test_file=self.test_file,namespaces=self.namespaces,pid=os.getpid(),run_id=run_id,
                   python=sys.version,scope_policy='callchain-contract/1',
                   native_window_policy='python-and-c-boundaries/1' if native is not None else 'c-boundaries/1',
                    api_catalog=sorted(registry.catalog) if registry else [],scope='API subtrees on the selected test thread',
@@ -370,6 +374,9 @@ class Recorder:
         if values is None:
             if os.path.realpath(frame.f_code.co_filename)==self.test_file:return
             values=frame.f_locals.copy()
+        if self.reference_depth_limit is not None:
+            from .bounded_capture import snapshot
+            return snapshot(self,frame,phase,values)
         from .frame_identity import graph_signature,flat_sequence_signature
         roots=[];groups={};notes=set();local={};count=len(values)
         self._snapshot_known_nodes=set();self._snapshot_current_groups=groups;self._snapshot_current_notes=notes

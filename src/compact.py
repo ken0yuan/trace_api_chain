@@ -62,6 +62,8 @@ def collapse_python_contexts(graph,events):
     for item in graph['reference_observations']:
         row=dict(item['observation']);row['uid']=int(contexts[str(row['uid'])]);item['observation']=row
     graph['source_reads']=[dict(row,uid=int(contexts[str(row['uid'])])) for row in graph['source_reads']]
+    if 'reference_boundaries' in graph:
+        graph['reference_boundaries']=[dict(row,uid=int(contexts[str(row['uid'])])) for row in graph['reference_boundaries']]
     graph.update(nodes=nodes,edges=edges,python_invocations=len(old),python_path_nodes=len(nodes))
     return contexts
 

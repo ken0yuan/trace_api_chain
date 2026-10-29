@@ -25,6 +25,7 @@ def pytest_addoption(parser):
     group.addoption('--callchain-native-storage',choices=('events','paths'),default='events',help='paths: count repeated native stack paths while preserving window-specific branches')
     group.addoption('--callchain-max-paths',type=int,default=262144)
     group.addoption('--callchain-reference-storage',choices=('full','delta'),default='delta',help='Lossless shared adjacency states; delta reuses unchanged edges without removing observations')
+    group.addoption('--callchain-reference-depth',choices=('full','2'),default='full',help='Experimental: roots at depth zero, retain objects through two reference edges; actual calls remain unrestricted')
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -62,11 +63,14 @@ def pytest_cmdline_main(config):
             raise RuntimeError('capture_worker_exited_before_receipt: exit_code='+str(process.returncode)+'; inspect pytest output for startup/collection failure')
         receipt=json.loads(receipt_path.read_text())
         if not receipt.get('started') or not receipt.get('ended'):raise RuntimeError('selected_test_body_not_completed')
-        report={'status':'capture_incomplete' if receipt.get('gaps') else 'captured',
+        bounded=config.getoption('--callchain-reference-depth')=='2'
+        report={'status':'capture_incomplete' if receipt.get('gaps') else ('captured_bounded' if bounded else 'captured'),
                 'stage':'capture_only','mode':mode,'gaps':receipt.get('gaps',[]),
                 'native_storage':config.getoption('--callchain-native-storage'),
                 'pytest_exit_code':process.returncode,'elapsed_seconds':time.monotonic()-started,
                 'replay_performed':False,'database_written':False,'html_generated':False}
+        if bounded:report.update(reference_depth_limit=2,object_scope_complete=False,experimental=True,
+                                 reference_boundary_objects=receipt.get('reference_boundary_objects',0))
         save(output/'capture-result.json',report)
         print('trace-api-chain: '+report['status']+'; raw evidence: '+str(output),flush=True)
         return process.returncode or (2 if report['gaps'] else 0)
@@ -108,7 +112,8 @@ class Worker:
         self.recorder=Recorder(self.output/'events.jsonl',item.nodeid,str(item.path),namespaces=namespaces,
                                max_references=config.getoption('--callchain-max-references'),
                                run_id='pytest:'+item.nodeid,native=self.bridge,registry=registry,observer_roots=observers,
-                               reference_deltas=config.getoption('--callchain-reference-storage')=='delta')
+                               reference_deltas=config.getoption('--callchain-reference-storage')=='delta',
+                               reference_depth_limit=2 if config.getoption('--callchain-reference-depth')=='2' else None)
         self.recorder.body_code=code
         self.receipt['selected']=[item.nodeid]
         case=getattr(item,'_testcase',None)
@@ -141,6 +146,10 @@ class Worker:
             self.receipt['fork_fragments']=[str(path.parent) for path in sorted((self.output/'fork-fragments').glob('*/fork-fragment.json'))]
             self.receipt['fork_fragments_validated']=False
         self.receipt['pytest_exit_code']=int(exitstatus)
+        if self.recorder and self.recorder.reference_depth_limit is not None:
+            self.receipt.update(reference_depth_limit=self.recorder.reference_depth_limit,
+                                reference_boundary_objects=len(self.recorder.depth_boundary_objects),
+                                object_scope_complete=False,experimental=True)
         self.receipt['gaps']=sorted(set((list(self.recorder.gaps) if self.recorder else [])+
                                       (self.bridge.gaps if self.bridge else [])))
         self.receipt['source_roots']={}
