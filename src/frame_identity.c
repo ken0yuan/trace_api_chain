@@ -69,16 +69,45 @@ typedef struct TypeContextCache TypeContextCache;
 static PyObject *cached_type_metadata_context(TypeContextCache *,PyTypeObject *);
 static PyObject *cached_base_namespace(TypeContextCache *,PyTypeObject *);
 
+/* Membership only; never owns or dereferences workload addresses. The queue
+ * retains the same references as before. No iteration order enters encoding. */
+typedef struct IdentitySet {uintptr_t *items;size_t size,capacity;} IdentitySet;
+static size_t identity_hash(uintptr_t value) {
+    value^=value>>4;value*=((uintptr_t)0x9e3779b97f4a7c15ULL);value^=value>>(sizeof(uintptr_t)*4);return (size_t)value;
+}
+static int identity_seen(IdentitySet *set,uintptr_t value) {
+    if (!set->capacity || set->size>=set->capacity/2) {
+        if (set->capacity>(size_t)PY_SSIZE_T_MAX/(2*sizeof(uintptr_t))) {PyErr_NoMemory();return -1;}
+        size_t capacity=set->capacity ? set->capacity*2 : 128;
+        uintptr_t *items=PyMem_Calloc(capacity,sizeof(uintptr_t));if (!items) {PyErr_NoMemory();return -1;}
+        for (size_t i=0;i<set->capacity;i++) if (set->items[i]) {
+            size_t slot=identity_hash(set->items[i])&(capacity-1);
+            while (items[slot]) slot=(slot+1)&(capacity-1);items[slot]=set->items[i];
+        }
+        PyMem_Free(set->items);set->items=items;set->capacity=capacity;
+    }
+    size_t slot=identity_hash(value)&(set->capacity-1);
+    while (set->items[slot]) {if (set->items[slot]==value) return 1;slot=(slot+1)&(set->capacity-1);}
+    set->items[slot]=value;set->size++;return 0;
+}
+static void identity_clear(IdentitySet *set) {PyMem_Free(set->items);set->items=NULL;set->size=set->capacity=0;}
+
 typedef struct GraphSignature {
     char *bytes;Py_ssize_t size,capacity;
     PyObject **queue;Py_ssize_t used,queued,queue_capacity,budget,references;
-    PyObject *seen,*types,*boundaries,*field_plans,*base_namespaces;
+    IdentitySet seen,types,base_namespaces;
+    PyObject *boundaries,*field_plans;
     int supported;
     TypeContextCache *type_cache;
 } GraphSignature;
 static getter standard_dict_getters[4];
 static int standard_dict_getter_count;
-static int signature_write(GraphSignature *g,const void *data,Py_ssize_t size) {
+#if defined(__GNUC__) || defined(__clang__)
+#define SIGNATURE_INLINE static inline __attribute__((always_inline))
+#else
+#define SIGNATURE_INLINE static inline
+#endif
+SIGNATURE_INLINE int signature_write(GraphSignature *g,const void *data,Py_ssize_t size) {
     if (size<0 || size>PY_SSIZE_T_MAX-g->size) {PyErr_NoMemory();return -1;}
     if (g->size+size>g->capacity) {
         Py_ssize_t capacity=(g->size+size)*2+256;
@@ -88,7 +117,7 @@ static int signature_write(GraphSignature *g,const void *data,Py_ssize_t size) {
     }
     memcpy(g->bytes+g->size,data,size);g->size+=size;return 0;
 }
-static int signature_number(GraphSignature *g,uintptr_t value) {return signature_write(g,&value,sizeof(value));}
+SIGNATURE_INLINE int signature_number(GraphSignature *g,uintptr_t value) {return signature_write(g,&value,sizeof(value));}
 static int signature_text(GraphSignature *g,PyObject *value) {
     if (!value || !PyUnicode_CheckExact(value)) {g->supported=0;return 0;}
     Py_ssize_t length;const char *text=PyUnicode_AsUTF8AndSize(value,&length);
@@ -169,13 +198,8 @@ static int signature_base_namespace(GraphSignature *g,PyTypeObject *base) {
      * identity and a reference after its first complete namespace description.
      * This is per observation only: every later snapshot rereads all versions
      * and function source coordinates, including in-place __code__ changes. */
-    if (!g->base_namespaces) g->base_namespaces=PySet_New(NULL);
-    if (!g->base_namespaces || signature_number(g,(uintptr_t)base)<0) return -1;
-    PyObject *key=PyLong_FromVoidPtr(base);
-    if (!key) return -1;
-    int seen=PySet_Contains(g->base_namespaces,key);
-    if (!seen && PySet_Add(g->base_namespaces,key)<0) seen=-1;
-    Py_DECREF(key);
+    if (signature_number(g,(uintptr_t)base)<0) return -1;
+    int seen=identity_seen(&g->base_namespaces,(uintptr_t)base);
     if (seen<0 || signature_number(g,!seen)<0) return -1;
     if (seen) return 0;
     if (g->type_cache) {
@@ -189,11 +213,8 @@ static int signature_base_namespace(GraphSignature *g,PyTypeObject *base) {
     return g->supported ? signature_class_functions(g,base->tp_dict) : 0;
 }
 static int signature_type(GraphSignature *g,PyTypeObject *type) {
-    PyObject *key=PyLong_FromVoidPtr(type);
-    if (!key) return -1;
-    int seen=PySet_Contains(g->types,key);
-    if (!seen && PySet_Add(g->types,key)<0) seen=-1;
-    Py_DECREF(key);if (seen) return seen<0 ? -1 : 0;
+    int seen=identity_seen(&g->types,(uintptr_t)type);
+    if (seen) return seen<0 ? -1 : 0;
     if (signature_number(g,(uintptr_t)type->tp_mro)<0) return -1;
     if (type->tp_flags & Py_TPFLAGS_HEAPTYPE) {
         if (signature_text(g,((PyHeapTypeObject *)type)->ht_qualname)<0 ||
@@ -233,11 +254,11 @@ static PyTypeObject *member_projection_type(PyObject *value,PyMemberDef *member)
 }
 static PyObject *uncached_type_metadata_context(PyObject *value) {
     if (!PyType_Check(value)) {PyErr_SetString(PyExc_TypeError,"type required");return NULL;}
-    GraphSignature g={0};g.supported=1;g.types=PySet_New(NULL);
+    GraphSignature g={0};g.supported=1;
     PyObject *result=NULL;
-    if (g.types && signature_type(&g,(PyTypeObject *)value)>=0 && signature_owner_file(&g,Py_None)>=0)
+    if (signature_type(&g,(PyTypeObject *)value)>=0 && signature_owner_file(&g,Py_None)>=0)
         result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
-    Py_XDECREF(g.types);Py_XDECREF(g.base_namespaces);PyMem_Free(g.bytes);return result;
+    identity_clear(&g.types);identity_clear(&g.base_namespaces);PyMem_Free(g.bytes);return result;
 }
 #include "type_context_cache.h"
 
@@ -492,7 +513,7 @@ static PyObject *configure_dict_getter(PyObject *self,PyObject *descriptor) {
 static PyObject *graph_signature(PyObject *self,PyObject *args) {
     PyObject *roots,*boundaries,*capsule=Py_None;Py_ssize_t budget;
     if (!PyArg_ParseTuple(args,"O!nO!|O",&PyDict_Type,&roots,&budget,&PyDict_Type,&boundaries,&capsule)) return NULL;
-    GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.seen=PySet_New(NULL);g.types=PySet_New(NULL);g.field_plans=PyDict_New();
+    GraphSignature g={0};g.budget=budget;g.boundaries=boundaries;g.supported=1;g.field_plans=PyDict_New();
     PyObject *result=NULL;Py_ssize_t pos=0;PyObject *name,*value;
     if (capsule!=Py_None) {g.type_cache=type_context_cache_pointer(capsule);if (!g.type_cache) goto done;}
     PyObject *metadata_context=leaf_metadata_context();
@@ -500,20 +521,17 @@ static PyObject *graph_signature(PyObject *self,PyObject *args) {
     if (metadata_context==Py_None) {Py_DECREF(metadata_context);result=Py_NewRef(Py_None);goto done;}
     int context_status=signature_write(&g,PyBytes_AS_STRING(metadata_context),PyBytes_GET_SIZE(metadata_context));
     Py_DECREF(metadata_context);if (context_status<0) goto done;
-    if (!g.seen || !g.types || !g.field_plans || signature_number(&g,PyDict_Size(roots))<0) goto done;
+    if (!g.field_plans || signature_number(&g,PyDict_Size(roots))<0) goto done;
     while (g.supported && PyDict_Next(roots,&pos,&name,&value))
         if (signature_text(&g,name)<0 || signature_push(&g,value)<0) goto done;
     while (g.supported && g.used<g.queued) {
-        value=g.queue[g.used++];PyObject *key=PyLong_FromVoidPtr(value);
-        if (!key) goto done;
-        int seen=PySet_Contains(g.seen,key);
-        if (!seen && PySet_Add(g.seen,key)<0) seen=-1;
-        Py_DECREF(key);if (seen<0 || (!seen && signature_node(&g,value)<0)) goto done;
+        value=g.queue[g.used++];int seen=identity_seen(&g.seen,(uintptr_t)value);
+        if (seen<0 || (!seen && signature_node(&g,value)<0)) goto done;
     }
     result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
 done:
     for (Py_ssize_t i=0;i<g.queued;i++) Py_DECREF(g.queue[i]);
-    PyMem_Free(g.queue);PyMem_Free(g.bytes);Py_XDECREF(g.seen);Py_XDECREF(g.types);Py_XDECREF(g.field_plans);Py_XDECREF(g.base_namespaces);
+    PyMem_Free(g.queue);PyMem_Free(g.bytes);identity_clear(&g.seen);identity_clear(&g.types);Py_XDECREF(g.field_plans);identity_clear(&g.base_namespaces);
     return result;
 }
 static PyObject *native_definition(PyObject *self,PyObject *value) {
