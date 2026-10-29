@@ -17,7 +17,7 @@ def pytest_addoption(parser):
     group=parser.getgroup('trace-api-chain')
     group.addoption('--callchain-out',help='New directory for raw capture only; SQL replay and HTML run separately')
     group.addoption('--callchain-mode',choices=('full','objects'),default='full',help='full: Python + compiler hooks; objects: Python observations')
-    group.addoption('--callchain-timeout',type=int,default=3600)
+    group.addoption('--callchain-timeout',type=int,default=3600,help='Capture wall-clock limit in seconds; 0 disables the limit')
     group.addoption('--callchain-max-events',type=int,default=262144,help='events: records per segment; paths: context/path supports; overflow fails capture')
     group.addoption('--callchain-max-references',type=int,default=100000)
     group.addoption('--callchain-namespaces',default='torch,torch_npu',help='Loaded public module namespaces for the runtime API catalog')
@@ -37,8 +37,8 @@ def pytest_cmdline_main(config):
         raise pytest.UsageError('--callchain-max-events must be 1..10000000')
     if not 0<config.getoption('--callchain-max-paths')<=10000000:
         raise pytest.UsageError('--callchain-max-paths must be 1..10000000')
-    if config.getoption('--callchain-max-references')<=0 or config.getoption('--callchain-timeout')<=0:
-        raise pytest.UsageError('capture budgets and timeout must be positive')
+    if config.getoption('--callchain-max-references')<=0 or config.getoption('--callchain-timeout')<0:
+        raise pytest.UsageError('capture reference budget must be positive and timeout must be nonnegative')
     output=Path(target).resolve()
     if output.exists():raise pytest.UsageError('Evidence directory already exists: '+str(output))
     output.mkdir(parents=True)
@@ -49,6 +49,7 @@ def pytest_cmdline_main(config):
     env['TRACE_API_CHAIN_MAX_PATHS']=str(config.getoption('--callchain-max-paths'))
     mode=config.getoption('--callchain-mode')
     started=time.monotonic()
+    started_at=time.time();timeout=config.getoption('--callchain-timeout') or None
     try:
         if mode=='full':
             if not sys.platform.startswith('linux'):raise RuntimeError('compiler capture requires Linux/glibc')
@@ -56,7 +57,7 @@ def pytest_cmdline_main(config):
             env['LD_PRELOAD']=str(hook)+((':'+env['LD_PRELOAD']) if env.get('LD_PRELOAD') else '')
         command=[sys.executable,'-m','pytest','-p','trace_api_chain.pytest_plugin',*config.invocation_params.args]
         print('trace-api-chain: capturing selected test once; output='+str(output),flush=True)
-        process=subprocess.run(command,cwd=config.invocation_params.dir,env=env,timeout=config.getoption('--callchain-timeout'))
+        process=subprocess.run(command,cwd=config.invocation_params.dir,env=env,timeout=timeout)
         receipt_path=output/'pytest-receipt.json'
         if not receipt_path.exists():
             raise RuntimeError('capture_worker_exited_before_receipt: exit_code='+str(process.returncode)+'; inspect pytest output for startup/collection failure')
@@ -66,13 +67,15 @@ def pytest_cmdline_main(config):
                 'stage':'capture_only','mode':mode,'gaps':receipt.get('gaps',[]),
                 'native_storage':config.getoption('--callchain-native-storage'),
                 'pytest_exit_code':process.returncode,'elapsed_seconds':time.monotonic()-started,
-                'replay_performed':False,'database_written':False,'html_generated':False}
+                'replay_performed':False,'database_written':False,'html_generated':False,
+                'started_at':started_at,'finished_at':time.time(),'timeout_seconds':timeout,'timeout_disabled':timeout is None}
         save(output/'capture-result.json',report)
         print('trace-api-chain: '+report['status']+'; raw evidence: '+str(output),flush=True)
         return process.returncode or (2 if report['gaps'] else 0)
     except Exception as e:
         save(output/'capture-result.json',{'status':'failed','error':str(e),'error_type':type(e).__name__,
-                                         'elapsed_seconds':time.monotonic()-started,'raw_evidence_preserved':True})
+                                         'elapsed_seconds':time.monotonic()-started,'raw_evidence_preserved':True,
+                                         'started_at':started_at,'finished_at':time.time(),'timeout_seconds':timeout,'timeout_disabled':timeout is None})
         print('trace-api-chain: capture failed: '+str(e),file=sys.stderr)
         return 2
 

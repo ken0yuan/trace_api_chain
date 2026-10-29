@@ -15,6 +15,25 @@ import types
 from . import database
 
 
+def merge_entity_detail(previous,current):
+    """Keep exact prior metadata observations and correlated field values."""
+    if previous==current:return current
+    field='observed_metadata_variants'
+    merged=dict(current)
+    for key,value in previous.items():
+        if key!=field and key not in merged:merged[key]=value
+    for key in ('runtime_names','linkage_names'):
+        if key in previous or key in current:
+            merged[key]=sorted(set(previous.get(key,[]))|set(current.get(key,[])))
+    variants={}
+    for value in (previous,current):
+        observations=value.get(field) or [{key:item for key,item in value.items() if key!=field}]
+        for observation in observations:
+            variants[json.dumps(observation,sort_keys=True,ensure_ascii=False)]=observation
+    merged[field]=[variants[key] for key in sorted(variants)]
+    return merged
+
+
 class WriterSession:
     def __init__(self, path, cache_mib=4096, preserve_prior_slots=False):
         if type(preserve_prior_slots) is not bool:
@@ -46,6 +65,7 @@ class WriterSession:
         self._import = types.FunctionType(original.__code__, scope,
                                           original.__name__, original.__defaults__)
         self._importers = {original:self._import}
+        self.old_entity_details={}
 
     def _connect(self, path, readonly=False, cache_mib=4096):
         if self.closed or readonly or Path(path).resolve() != self.path or cache_mib != self.cache_mib:
@@ -60,6 +80,7 @@ class WriterSession:
         self.active = True
         self.archived_this_commit = []
         self.cleanup_pending = False
+        self.old_entity_details={}
         if self.connection.execute('PRAGMA foreign_keys').fetchone()[0] != 1:
             raise ValueError('writer_session_foreign_keys_disabled')
         version = self.connection.execute('PRAGMA data_version').fetchone()[0]
@@ -116,6 +137,7 @@ class WriterSession:
                 bound=types.FunctionType(importer.__code__,scope,importer.__name__,importer.__defaults__)
                 self._importers[importer]=bound
         report = bound(self.path, plan, cache_mib=self.cache_mib)
+        self.old_entity_details={}
         if self.preserve_prior_slots:
             report['preserved_previous_slots'] = list(self.archived_this_commit)
         return report
@@ -196,6 +218,18 @@ class _Connection:
 
     def execute(self, sql, parameters=()):
         normalized = sql.strip().upper()
+        if self.owner.preserve_prior_slots and normalized=='SELECT SOURCE_SHA256 FROM ENTITIES WHERE ID=?':
+            cursor=self.owner.connection.execute('SELECT source_sha256,detail FROM entities WHERE id=?',parameters)
+            return _EntityCursor(self.owner,parameters[0],cursor)
+        if self.owner.preserve_prior_slots and normalized.startswith('INSERT INTO ENTITIES VALUES('):
+            entity=parameters[0]
+            if entity not in self.owner.old_entity_details:
+                old=self.owner.connection.execute('SELECT detail FROM entities WHERE id=?',(entity,)).fetchone()
+                self.owner.old_entity_details[entity]=old[0] if old else None
+            previous=self.owner.old_entity_details[entity]
+            if previous is not None:
+                old=json.loads(previous);new=json.loads(parameters[-1]);merged=merge_entity_detail(old,new)
+                if merged!=new:parameters=(*parameters[:-1],json.dumps(merged,ensure_ascii=False))
         if normalized == 'BEGIN IMMEDIATE':
             return self.owner._begin(sql, parameters)
         if normalized == 'DELETE FROM CAPTURE_SLOTS WHERE ID=?':
@@ -231,3 +265,11 @@ class _Connection:
     def close(self):
         # commit_refresh closes its borrowed handle, not the session owner.
         pass
+
+
+class _EntityCursor:
+    """Reuse the importer's existing entity lookup, rather than query twice."""
+    def __init__(self,owner,entity,cursor):self.owner=owner;self.entity=entity;self.cursor=cursor
+    def fetchone(self):
+        row=self.cursor.fetchone();self.owner.old_entity_details[self.entity]=row[1] if row else None
+        return row

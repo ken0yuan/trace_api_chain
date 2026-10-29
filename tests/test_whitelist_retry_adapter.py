@@ -53,6 +53,21 @@ def test_complete_result_is_never_recollected_without_explicit_retry(tmp_path,mo
     assert d.execute({'id':'one'},'0')==result and not submitted
 
 
+def test_unlimited_mode_disables_both_capture_timeout_layers(tmp_path,monkeypatch):
+    d,submitted=adapter(tmp_path,monkeypatch);monkeypatch.setattr(d,'NO_TIMEOUT',True)
+    item={'id':'no-timeout','file':'test_one.py','nodeid':'test_one.py::test_one'}
+    def run(command,log,environment,timeout):
+        assert timeout is None and command[command.index('--callchain-timeout')+1]=='0'
+        cap=Path(command[command.index('--callchain-out')+1]);relations=Path(command[command.index('--api-relations-out')+1])
+        d.write(cap/'capture-result.json',{'status':'captured','gaps':[],'timeout_disabled':True})
+        d.write(cap/'pytest-receipt.json',{'started':True,'ended':True,'reports':[{'when':'call','outcome':'passed'}]})
+        d.write(relations/'progress.json',{'state':'capture_finished','gaps':0})
+        return {'returncode':0,'elapsed_seconds':2001,'timeout':False,'timeout_disabled':True}
+    monkeypatch.setattr(d,'run',run)
+    result=d.execute(item,'0')
+    assert result['timeout_disabled'] and result['elapsed_seconds']==2001 and len(submitted)==1
+
+
 def test_retry_rejects_escaping_or_unfinished_paths_without_overwriting(tmp_path,monkeypatch):
     d,_=adapter(tmp_path,monkeypatch)
     item={'id':'one'};prior={'retry_pending':{'batch':'../escape','history':'retained'}}

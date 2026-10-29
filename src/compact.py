@@ -66,6 +66,8 @@ def collapse_python_contexts(graph,events):
     return contexts
 
 def rebuild_paths(events,native,contract):
+    from .reference_transport import normalize_events
+    events=normalize_events(events)
     graph=rebuild(events,[],contract)
     collapse_python_contexts(graph,events)
     first=events[0];support={};total=0

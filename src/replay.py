@@ -19,6 +19,8 @@ def canonical(value):
 
 
 def rebuild(events, native, contract):
+    from .reference_transport import normalize_events
+    events=normalize_events(events)
     nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
     observations = []; references = []; source_reads = []; gaps = set(); exclusions = []
     start = None; finished = False; live_views = {}; end_summary = None

@@ -23,6 +23,7 @@ COUNTS = collections.Counter()
 PIPELINE = None
 WRITER_SESSION = None
 START = float(os.environ.get('CALLCHAIN_JOB_STARTED_AT',time.time()))
+NO_TIMEOUT = os.environ.get('CALLCHAIN_NO_TIMEOUT')=='1'
 
 
 def write(path, value):
@@ -71,13 +72,22 @@ def env(devices='7',runtime=None):
 
 
 def run(command, log, environment, timeout):
-    start = time.monotonic()
+    start = time.monotonic();started_at=time.time()
+    timeout=None if NO_TIMEOUT else timeout
     log.parent.mkdir(parents=True, exist_ok=True)
     with log.open('w') as output:
-        output.write(json.dumps({'command':list(map(str,command)), 'devices':environment.get('ASCEND_RT_VISIBLE_DEVICES')})+'\n')
+        output.write(json.dumps({'command':list(map(str,command)), 'devices':environment.get('ASCEND_RT_VISIBLE_DEVICES'),
+                                'started_at':started_at,'timeout_seconds':timeout,'timeout_disabled':timeout is None,
+                                'code_revision':os.environ.get('CALLCHAIN_CODE_REVISION','unspecified')})+'\n')
         output.flush()
         p = subprocess.Popen(list(map(str,command)), cwd=SOURCE, env=environment,
             stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+        timing_path=OUT/'performance'/log.parent.name/(log.stem+'.json')
+        write(timing_path,{'state':'running','pid':p.pid,'started_at':started_at,
+                          'timeout_seconds':timeout,'timeout_disabled':timeout is None,
+                          'code_revision':os.environ.get('CALLCHAIN_CODE_REVISION','unspecified'),
+                          'api_revision':os.environ.get('CALLCHAIN_API_REVISION','unspecified'),
+                          'devices':environment.get('ASCEND_RT_VISIBLE_DEVICES'),'log':str(log)})
         timedout = False
         try:
             rc = p.wait(timeout=timeout)
@@ -92,7 +102,19 @@ def run(command, log, environment, timeout):
             # child left by plugin's own subprocess timeout before returning card.
             try: os.killpg(p.pid, signal.SIGTERM)
             except ProcessLookupError: pass
-    return {'returncode':rc, 'elapsed_seconds':time.monotonic()-start, 'timeout':timedout}
+    result={'returncode':rc,'elapsed_seconds':time.monotonic()-start,'timeout':timedout,
+            'started_at':started_at,'finished_at':time.time(),'timeout_seconds':timeout,
+            'timeout_disabled':timeout is None,'code_revision':os.environ.get('CALLCHAIN_CODE_REVISION','unspecified'),
+            'api_revision':os.environ.get('CALLCHAIN_API_REVISION','unspecified'),
+            'reference_transport':environment.get('CALLCHAIN_DEFER_REFERENCE_STATES','0')}
+    record={**result,'stage':{'logs':'capture','prepare-logs':'prepare','relation-merge-logs':'api_append','collection':'collection'}.get(log.parent.name,log.parent.name),
+            'case_id':log.stem,'log':str(log),'devices':environment.get('ASCEND_RT_VISIBLE_DEVICES')}
+    write(timing_path,{'state':'finished','pid':p.pid,**record})
+    encoded=(json.dumps(record,ensure_ascii=False,separators=(',',':'))+'\n').encode()
+    descriptor=os.open(OUT/'performance-history.jsonl',os.O_WRONLY|os.O_CREAT|os.O_APPEND,0o600)
+    try:os.write(descriptor,encoded);os.fsync(descriptor)
+    finally:os.close(descriptor)
+    return result
 
 
 def collect_file(file):
@@ -226,11 +248,11 @@ def execute(item, devices):
          '--callchain-out',cap,'--callchain-mode','full','--callchain-native-storage','paths',
          '--callchain-api-catalog',LEDGER,'--callchain-max-events','10000000',
          '--callchain-max-paths','4000000','--callchain-max-references','1000000',
-         '--callchain-timeout',str(item.get('capture_timeout_seconds',1800)),'--junitxml',base/'junit'/f'{ident}.xml',
+         '--callchain-timeout',str(0 if NO_TIMEOUT else item.get('capture_timeout_seconds',1800)),'--junitxml',base/'junit'/f'{ident}.xml',
          '--api-relations-out',base/'relations'/ident,'--api-relations-repo',SOURCE,
          '--api-relations-catalog',LEDGER,'--api-relations-import','torch_npu',
          '--api-relations-label','ascend-npu-dual-plugins']
-    run_result=run(cmd,log,env(devices),item.get('capture_timeout_seconds',1800)+120)
+    run_result=run(cmd,log,env(devices),None if NO_TIMEOUT else item.get('capture_timeout_seconds',1800)+120)
     capture=read(cap/'capture-result.json',{})
     receipt=read(cap/'pytest-receipt.json',{})
     relations=read(base/'relations'/ident/'progress.json',{})
@@ -361,6 +383,8 @@ def append_relationships(result):
     except (ValueError,sqlite3.Error):
         command=[PY,'-m','api_test_relations','append','--out',result['relations_dir'],
                  '--database',OUT/'api-test-relations.sqlite','--module',result['file']]
+        if result.get('previous_attempts'):
+            node=result['nodeid'];command+=['--allow-reexecution-of',node if node.startswith('pytorch/') else 'pytorch/'+node]
         merged=run(command,artifact_base(result)/'relation-merge-logs'/f"{result['id']}.log",env(''),600)
         result['relations_merge']=merged
         committed_state(OUT/'api-callchains.sqlite',OUT/'api-test-relations.sqlite',result,digest)
@@ -384,7 +408,7 @@ def commit_organized(path,prepared):
         # Keep its verified connection/cache between contributions; API append
         # remains sequential below, after the graph transaction completes.
         if WRITER_SESSION is None:WRITER_SESSION=WriterSession(OUT/'api-callchains.sqlite',cache_mib=4096,preserve_prior_slots=True)
-        started=time.monotonic()
+        started=time.monotonic();commit_started_at=time.time()
         ready=read(Path(prepared['plan']).with_name(Path(prepared['plan']).name+'.ready.json'))
         loader=None
         if ready['policy']==LEGACY_POLICY:
@@ -394,7 +418,9 @@ def commit_organized(path,prepared):
         report=WRITER_SESSION.commit_file(prepared['plan'],loader=loader)
         report['handoff_reader']='frozen-0.3.4' if loader else 'active-0.3.5'
         committed={'returncode':0,'elapsed_seconds':time.monotonic()-started,'timeout':False,
-                   'writer_validation':report['writer_validation'],'handoff_reader':report['handoff_reader']}
+                   'writer_validation':report['writer_validation'],'handoff_reader':report['handoff_reader'],
+                   'started_at':commit_started_at,'finished_at':time.time(),'timeout_disabled':True,
+                   'code_revision':os.environ.get('CALLCHAIN_CODE_REVISION','unspecified')}
         write(base/'commit-logs'/f"{result['id']}.log",report)
         result['replay']=committed
     if kind=='cleanup_only':

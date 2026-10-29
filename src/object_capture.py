@@ -28,6 +28,7 @@ def _redirect_inherited_recorders():
 
 from . import __version__
 from .reference_codec import edge_order
+from .reference_state import ReferencePublisher
 
 
 def test_body_code(item):
@@ -120,8 +121,8 @@ def instance_fields(value, plans=None, project_storage=False):
     return result,notes
 
 
-class Recorder:
-    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False):
+class Recorder(ReferencePublisher):
+    def __init__(self, path, nodeid, test_file, namespaces=('torch','torch_npu'), max_references=100000, run_id=None, native=None, registry=None, observer_roots=(), reference_deltas=False, defer_reference_states=None):
         if registry is None:
             from .catalog import Registry
             registry=Registry(namespaces)
@@ -147,6 +148,12 @@ class Recorder:
         self.reference_storage={'full_groups':0,'delta_groups':0,'logical_edges':0,'written_edges':0}
         self.grouped_references=getattr(native,"storage",None)=="paths"
         self.reference_delta_storage=bool(reference_deltas and self.grouped_references)
+        if defer_reference_states is None:defer_reference_states=os.environ.get('CALLCHAIN_DEFER_REFERENCE_STATES')=='1'
+        self.reference_transport=None
+        if defer_reference_states:
+            if not self.grouped_references:raise ValueError('deferred reference states require grouped path storage')
+            from .reference_transport import SnapshotTransport
+            self.reference_transport=SnapshotTransport(self.emit)
         self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.snapshot_cache_reference_counts={};self.root_states={};self.snapshot_cache_roots={}
         self.snapshot_root_alias_reuses=0
         self.snapshot_native_root_stubs=0
@@ -165,7 +172,8 @@ class Recorder:
                   boundaries=['native function bodies require native instrumentation',
                               'other threads/processes are not attributed by this collector',
                               'unbound temporaries and opaque extension storage are not enumerated',
-                              'address identity is local to observations; reuse is not lifetime proof'])
+                              'address identity is local to observations; reuse is not lifetime proof'],
+                  **({'reference_transport':'deferred-adjacency/1'} if self.reference_transport is not None else {}))
 
     def redirect_fork_fragment(self):
         """Keep inherited child observations separate; never overwrite parent proof."""
@@ -380,6 +388,7 @@ class Recorder:
         self._snapshot_root_targets={(id(value),id(type(value))) for value in values.values()}
         self._snapshot_root_tokens={}
         self._snapshot_stub_nodes=set()
+        names=list(values)
         for name,value in values.items():
             identity=(id(value),id(type(value)))
             token=self._snapshot_root_tokens.get(identity)
@@ -415,6 +424,15 @@ class Recorder:
                 if signature is not None and signature in self.snapshot_cache:self.root_states[identity]=signature
                 local[identity]=chunk
             root,adjacency,unread,nodes,complete=chunk
+            if (self.reference_transport is not None and name==names[-1] and len(groups)<=1 and complete
+                    and signature is not None and signature in self.snapshot_cache):
+                references=self.snapshot_cache_reference_counts.get(signature)
+                if references is None:references=sum(len(edges) for edges in adjacency.values())
+                shared_edges=sum(len(edges) for parent,edges in groups.items() if parent in adjacency)
+                if count+references-shared_edges<=self.max_references:
+                    self.reference_transport.snapshot(self.stack[-1]['uid'],phase,values,
+                        frozenset([*roots,(None,'root:'+name,root)]),(groups,adjacency),notes|unread)
+                    return
             if len(values)==1 and complete and signature is not None and signature in self.snapshot_cache:
                 # A complete current graph was just validated. A sole root has
                 # no later roots to coordinate or merge, so borrow its immutable
@@ -688,17 +706,11 @@ class Recorder:
         if self.object_metadata.get(token)!=meta:self.object_metadata[token]=meta;self.emit('object',**meta)
         return token
 
-    def remember_view(self,key,state):
-        self.views[key]=state
-        self.view_keys.setdefault(key[0],set()).add(key)
 
-    def retire_views(self,uid):
-        # Retire only the scopes owned by this actual returned frame. Scanning
-        # every other live frame's global/locals views on each c_return is
-        # quadratic during deeply nested imports; their evidence is unchanged.
-        for key in self.view_keys.pop(uid,()):self.views.pop(key,None)
 
     def publish_snapshot(self,uid,phase,values,current,groups,notes):
+        if self.reference_transport is not None:
+            return self.reference_transport.snapshot(uid,phase,values,current,(groups,),notes)
         if self.grouped_references:return self.publish_grouped_snapshot(uid,phase,values,current,groups,notes)
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
         key=(uid,scope)
@@ -717,60 +729,8 @@ class Recorder:
                       removed=sorted(removed,key=lambda r:(r[0] or '',r[1],r[2])),notes=sorted(notes))
         self.remember_view(key,(current,groups))
 
-    def emit_reference_state(self,state,parent,edges):
-        prior=self.reference_parent_states.get(parent)
-        self.reference_storage['logical_edges']+=len(edges)
-        delta=None
-        if self.reference_delta_storage and prior is not None and len(edges)>=16:
-            added=edges-prior[1];removed=prior[1]-edges
-            if (len(added)+len(removed))*2+4<len(edges):delta=(added,removed)
-        if delta is not None:
-            added,removed=delta
-            self.emit('reference_group_delta',id=state,parent=parent,base=prior[0],
-                      added=sorted(added,key=edge_order),removed=sorted(removed,key=edge_order))
-            self.reference_storage['delta_groups']+=1
-            self.reference_storage['written_edges']+=len(added)+len(removed)
-        else:
-            self.emit('reference_group',id=state,parent=parent,edges=sorted(edges,key=edge_order))
-            self.reference_storage['full_groups']+=1;self.reference_storage['written_edges']+=len(edges)
 
-    def remember_reference_state(self,state,parent,edges):
-        if parent in self.reference_parent_states:
-            self.reference_parent_bytes-=self.reference_parent_costs.pop(parent)
-            del self.reference_parent_states[parent]
-        self.reference_parent_states[parent]=(state,edges)
-        size=128+len(edges)*96;self.reference_parent_costs[parent]=size;self.reference_parent_bytes+=size
-        while len(self.reference_parent_states)>100000 or self.reference_parent_bytes>128*1024*1024:
-            previous,_=self.reference_parent_states.popitem(last=False)
-            self.reference_parent_bytes-=self.reference_parent_costs.pop(previous)
 
-    def publish_grouped_snapshot(self,uid,phase,values,current,groups,notes):
-        scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
-        key=(uid,scope);previous,old_groups,old_ids,old_notes=self.views.get(key,(frozenset(),{}, {},None))
-        if current==previous and groups==old_groups:
-            if frozenset(notes)!=old_notes:self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=[],removed_groups=[],notes=sorted(notes))
-            self.remember_view(key,(current,groups,old_ids,frozenset(notes)));return
-        states={};source={None:current,**groups}
-        for parent,edges in source.items():
-            before=previous if parent is None else old_groups.get(parent)
-            if parent in old_ids and (before is edges or (before is not None and before==edges)):
-                states[parent]=old_ids[parent];continue
-            identity=(parent,edges);state=self.reference_groups.get(identity)
-            if state is None:
-                self.next_reference_group+=1;state='references:'+str(self.next_reference_group)
-                self.emit_reference_state(state,parent,edges)
-                self.reference_groups[identity]=state
-                size=128+len(edges)*96;self.reference_group_bytes+=size;self.reference_group_costs[identity]=size
-                while len(self.reference_groups)>100000 or self.reference_group_bytes>128*1024*1024:
-                    expired,_=self.reference_groups.popitem(last=False)
-                    self.reference_group_bytes-=self.reference_group_costs.pop(expired)
-            else:self.reference_groups.move_to_end(identity)
-            if self.reference_delta_storage:self.remember_reference_state(state,parent,edges)
-            states[parent]=state
-        added=sorted(set(states.values())-set(old_ids.values()));removed=sorted(set(old_ids.values())-set(states.values()))
-        if added or removed or frozenset(notes)!=old_notes:
-            self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=added,removed_groups=removed,notes=sorted(notes))
-        self.remember_view(key,(current,groups,states,frozenset(notes)))
 
     def profile(self, frame, event, arg, external_uid=None):
         if self.busy or threading.get_ident()!=self.thread:return

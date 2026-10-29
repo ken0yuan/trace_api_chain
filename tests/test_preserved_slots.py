@@ -1,6 +1,7 @@
 """A replacement cannot erase prior proven branches, even on rollback/retry."""
 import copy
 import sqlite3
+import json
 import pytest
 from trace_api_chain import database
 from trace_api_chain.writer_session import WriterSession
@@ -60,4 +61,21 @@ def test_archive_and_replacement_roll_back_together_on_invalid_new_reference(tmp
         with pytest.raises(sqlite3.IntegrityError):session.commit_plan(bad)
         assert table_contents(session.path)==before
         assert not session.connection.in_transaction
+    finally:session.close()
+
+
+def test_reexecution_keeps_prior_entity_metadata_and_correlated_variants(tmp_path):
+    session=WriterSession(tmp_path/'metadata.sqlite',preserve_prior_slots=True)
+    try:
+        old=contribution(tmp_path);eid=next(iter(old['entities']))
+        old['entities'][eid].update(runtime_names=['old-name'],linkage_names=['old-link'],annotation={'frame':'old'})
+        session.commit_plan(old)
+        fresh=copy.deepcopy(old);fresh['import_digest']+='-new-metadata'
+        fresh['entities'][eid].update(runtime_names=['new-name'],linkage_names=['new-link'],annotation={'frame':'new'})
+        session.commit_plan(fresh)
+        detail=json.loads(session.connection.execute('SELECT detail FROM entities WHERE id=?',(eid,)).fetchone()[0])
+        assert detail['runtime_names']==['new-name','old-name'] and detail['linkage_names']==['new-link','old-link']
+        variants=detail['observed_metadata_variants']
+        assert old['entities'][eid] in variants and fresh['entities'][eid] in variants
+        assert not session.old_entity_details
     finally:session.close()
