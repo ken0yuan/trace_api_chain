@@ -1,0 +1,230 @@
+{
+  "at": 1793280426.4339402,
+  "cases": [
+    {
+      "id": "001229-2f370e1cb610",
+      "card": "0",
+      "elapsed_since_start": 1828.5783004760742,
+      "finished": true,
+      "elapsed_seconds": 1811.5405152000021,
+      "returncode": 2,
+      "test_reports": [],
+      "capture": {
+        "status": "failed",
+        "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'repair_collect_stubborn_field_layout', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/test_modules.py::TestModulePRIVATEUSE1::test_if_train_and_eval_modes_differ_nn_LSTMCell_npu_float32', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/captures/001229-2f370e1cb610', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '4000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/junit/001229-2f370e1cb610.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/relations/001229-2f370e1cb610', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999869700114 seconds",
+        "error_type": "TimeoutExpired",
+        "elapsed_seconds": 1800.5500989099964,
+        "raw_evidence_preserved": true
+      },
+      "keys": [
+        "id",
+        "file",
+        "nodeid",
+        "returncode",
+        "elapsed_seconds",
+        "capture",
+        "test_reports",
+        "capture_dir",
+        "relations_dir",
+        "original_1800_budget_preserved",
+        "full10362_catalog_preserved",
+        "formal_result_not_replaced",
+        "new_unique_cases",
+        "raw_preserved"
+      ],
+      "raw_preserved": true,
+      "dual_load_preserved": true
+    },
+    {
+      "id": "001230-e64750d54b29",
+      "card": "1",
+      "elapsed_since_start": 1828.5735087394714,
+      "finished": true,
+      "elapsed_seconds": 1811.0978744799795,
+      "returncode": 2,
+      "test_reports": [],
+      "capture": {
+        "status": "failed",
+        "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'repair_collect_stubborn_field_layout', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/test_modules.py::TestModulePRIVATEUSE1::test_if_train_and_eval_modes_differ_nn_LSTMCell_npu_float64', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/captures/001230-e64750d54b29', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '4000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/junit/001230-e64750d54b29.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/relations/001230-e64750d54b29', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999887199956 seconds",
+        "error_type": "TimeoutExpired",
+        "elapsed_seconds": 1800.5741864999873,
+        "raw_evidence_preserved": true
+      },
+      "keys": [
+        "id",
+        "file",
+        "nodeid",
+        "returncode",
+        "elapsed_seconds",
+        "capture",
+        "test_reports",
+        "capture_dir",
+        "relations_dir",
+        "original_1800_budget_preserved",
+        "full10362_catalog_preserved",
+        "formal_result_not_replaced",
+        "new_unique_cases",
+        "raw_preserved"
+      ],
+      "raw_preserved": true,
+      "dual_load_preserved": true
+    },
+    {
+      "id": "001461-a975f279d52c",
+      "card": "2",
+      "elapsed_since_start": 1828.5687210559845,
+      "finished": true,
+      "elapsed_seconds": 1812.0758742799808,
+      "returncode": 2,
+      "test_reports": [],
+      "capture": {
+        "status": "failed",
+        "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'repair_collect_stubborn_field_layout', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/test_modules.py::TestModulePRIVATEUSE1::test_multiple_device_transfer_nn_LSTMCell_npu_float32', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/captures/001461-a975f279d52c', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '4000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/junit/001461-a975f279d52c.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/relations/001461-a975f279d52c', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999864099955 seconds",
+        "error_type": "TimeoutExpired",
+        "elapsed_seconds": 1800.5978973699966,
+        "raw_evidence_preserved": true
+      },
+      "keys": [
+        "id",
+        "file",
+        "nodeid",
+        "returncode",
+        "elapsed_seconds",
+        "capture",
+        "test_reports",
+        "capture_dir",
+        "relations_dir",
+        "original_1800_budget_preserved",
+        "full10362_catalog_preserved",
+        "formal_result_not_replaced",
+        "new_unique_cases",
+        "raw_preserved"
+      ],
+      "raw_preserved": true,
+      "dual_load_preserved": true
+    },
+    {
+      "id": "000610-78572d656a5a",
+      "card": "3",
+      "elapsed_since_start": 1828.5643219947815,
+      "finished": true,
+      "elapsed_seconds": 1812.0891097700223,
+      "returncode": 2,
+      "test_reports": [],
+      "capture": {
+        "status": "failed",
+        "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'repair_collect_stubborn_field_layout', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/test_modules.py::TestModulePRIVATEUSE1::test_cpu_gpu_parity_nn_LinearCrossEntropyLoss_npu_float16', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/captures/000610-78572d656a5a', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '4000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/junit/000610-78572d656a5a.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/relations/000610-78572d656a5a', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999872799963 seconds",
+        "error_type": "TimeoutExpired",
+        "elapsed_seconds": 1800.619983880024,
+        "raw_evidence_preserved": true
+      },
+      "keys": [
+        "id",
+        "file",
+        "nodeid",
+        "returncode",
+        "elapsed_seconds",
+        "capture",
+        "test_reports",
+        "capture_dir",
+        "relations_dir",
+        "original_1800_budget_preserved",
+        "full10362_catalog_preserved",
+        "formal_result_not_replaced",
+        "new_unique_cases",
+        "raw_preserved"
+      ],
+      "raw_preserved": true,
+      "dual_load_preserved": true
+    },
+    {
+      "id": "000611-328c552c6714",
+      "card": "4",
+      "elapsed_since_start": 1828.56014585495,
+      "finished": true,
+      "elapsed_seconds": 1812.2351769800007,
+      "returncode": 2,
+      "test_reports": [],
+      "capture": {
+        "status": "failed",
+        "error": "Command '['/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/bin/python', '-m', 'pytest', '-p', 'trace_api_chain.pytest_plugin', '-c', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch/pytest.ini', '--rootdir', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '-p', 'repair_collect_stubborn_field_layout', '-p', 'api_test_relations.pytest_plugin', '-p', 'trace_api_chain.pytest_plugin', 'test/test_modules.py::TestModulePRIVATEUSE1::test_cpu_gpu_parity_nn_LinearCrossEntropyLoss_npu_float32', '-q', '--tb=short', '--callchain-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/captures/000611-328c552c6714', '--callchain-mode', 'full', '--callchain-native-storage', 'paths', '--callchain-api-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--callchain-max-events', '10000000', '--callchain-max-paths', '4000000', '--callchain-max-references', '1000000', '--callchain-timeout', '1800', '--junitxml', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/junit/000611-328c552c6714.xml', '--api-relations-out', '/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/original-stubborn-timeouts-field-layout-v1/relations/000611-328c552c6714', '--api-relations-repo', '/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/pytorch', '--api-relations-catalog', '/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json', '--api-relations-import', 'torch_npu', '--api-relations-label', 'ascend-npu-dual-plugins']' timed out after 1799.9999848699954 seconds",
+        "error_type": "TimeoutExpired",
+        "elapsed_seconds": 1800.6433517599944,
+        "raw_evidence_preserved": true
+      },
+      "keys": [
+        "id",
+        "file",
+        "nodeid",
+        "returncode",
+        "elapsed_seconds",
+        "capture",
+        "test_reports",
+        "capture_dir",
+        "relations_dir",
+        "original_1800_budget_preserved",
+        "full10362_catalog_preserved",
+        "formal_result_not_replaced",
+        "new_unique_cases",
+        "raw_preserved"
+      ],
+      "raw_preserved": true,
+      "dual_load_preserved": true
+    }
+  ],
+  "processes": [],
+  "validation": {
+    "finished_at": 1793280413.0267496,
+    "outcomes": {
+      "001230-e64750d54b29": {
+        "state": "capture_or_test_failed",
+        "returncode": 2,
+        "capture_status": "failed",
+        "error_type": "TimeoutExpired",
+        "seconds": 1811.0978744799795,
+        "raw_preserved": true
+      },
+      "001229-2f370e1cb610": {
+        "state": "capture_or_test_failed",
+        "returncode": 2,
+        "capture_status": "failed",
+        "error_type": "TimeoutExpired",
+        "seconds": 1811.5405152000021,
+        "raw_preserved": true
+      },
+      "001461-a975f279d52c": {
+        "state": "capture_or_test_failed",
+        "returncode": 2,
+        "capture_status": "failed",
+        "error_type": "TimeoutExpired",
+        "seconds": 1812.0758742799808,
+        "raw_preserved": true
+      },
+      "000610-78572d656a5a": {
+        "state": "capture_or_test_failed",
+        "returncode": 2,
+        "capture_status": "failed",
+        "error_type": "TimeoutExpired",
+        "seconds": 1812.0891097700223,
+        "raw_preserved": true
+      },
+      "000611-328c552c6714": {
+        "state": "capture_or_test_failed",
+        "returncode": 2,
+        "capture_status": "failed",
+        "error_type": "TimeoutExpired",
+        "seconds": 1812.2351769800007,
+        "raw_preserved": true
+      }
+    },
+    "all_five_strictly_verified": false,
+    "same1800_budget": true,
+    "same_full10362_catalog": true,
+    "new_formal_unique_cases": 0,
+    "formal_databases_opened_readonly_only": true,
+    "private_sqlite_writer_threads": 1,
+    "prepare_workers": 5,
+    "raw_preserved": true
+  },
+  "formal_data_unchanged": true
+}

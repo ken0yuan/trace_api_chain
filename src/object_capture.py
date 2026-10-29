@@ -147,7 +147,7 @@ class Recorder:
         self.reference_storage={'full_groups':0,'delta_groups':0,'logical_edges':0,'written_edges':0}
         self.grouped_references=getattr(native,"storage",None)=="paths"
         self.reference_delta_storage=bool(reference_deltas and self.grouped_references)
-        self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.root_states={};self.snapshot_cache_roots={}
+        self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.snapshot_cache_reference_counts={};self.root_states={};self.snapshot_cache_roots={}
         self.snapshot_root_alias_reuses=0
         self.snapshot_native_root_stubs=0
         self.flat_incremental_updates=0;self.flat_unchanged_leaves_reused=0
@@ -404,7 +404,7 @@ class Recorder:
                     flat=flat_sequence_signature(value)
                     signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
                     chunk=self.snapshot_cache.get(signature) if signature is not None else None
-                if chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
+                if groups and chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
                     chunk=None  # Earlier first-visit observations own this snapshot's state.
                 if chunk is None:
                     chunk=self.incremental_flat_snapshot(value,identity,flat) if flat is not None else None
@@ -415,6 +415,17 @@ class Recorder:
                 if signature is not None and signature in self.snapshot_cache:self.root_states[identity]=signature
                 local[identity]=chunk
             root,adjacency,unread,nodes,complete=chunk
+            if len(values)==1 and complete and signature is not None and signature in self.snapshot_cache:
+                # A complete current graph was just validated. A sole root has
+                # no later roots to coordinate or merge, so borrow its immutable
+                # adjacency rather than copying every unchanged node and edge.
+                # Preserve the original partial-observation path near the budget.
+                references=self.snapshot_cache_reference_counts.get(signature)
+                if references is None:references=sum(len(edges) for edges in adjacency.values())
+                if 1+references<=self.max_references:
+                    self.publish_snapshot(self.stack[-1]['uid'],phase,values,
+                                          frozenset({(None,'root:'+name,root)}),adjacency,unread)
+                    return
             self._snapshot_known_nodes.update(nodes)
             roots.append((None,'root:'+name,root));notes.update(unread)
             for parent,edges in adjacency.items():
@@ -445,7 +456,8 @@ class Recorder:
 
     def remember_snapshot(self,identity,signature,chunk):
         size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
-        size+=sum(len(edges)*96+128 for edges in chunk[1].values())+len(chunk[3])*40+256
+        references=sum(len(edges) for edges in chunk[1].values())
+        size+=references*96+len(chunk[1])*128+len(chunk[3])*40+256
         # An uncacheable giant must not evict every reusable interior first.
         if size>self.snapshot_cache_limit_bytes:return
         old_signature=self.root_states.get(identity)
@@ -453,13 +465,16 @@ class Recorder:
             self.snapshot_cache.pop(old_signature,None)
             self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(old_signature,0)
             self.snapshot_cache_roots.pop(old_signature,None)
+            self.snapshot_cache_reference_counts.pop(old_signature,None)
         self.snapshot_cache[signature]=chunk;self.snapshot_cache.move_to_end(signature)
         self.snapshot_cache_roots[signature]=identity;self.root_states[identity]=signature
+        self.snapshot_cache_reference_counts[signature]=references
         self.snapshot_cache_bytes-=self.snapshot_cache_costs.get(signature,0)
         self.snapshot_cache_costs[signature]=size;self.snapshot_cache_bytes+=size
         while len(self.snapshot_cache)>4096 or self.snapshot_cache_bytes>self.snapshot_cache_limit_bytes:
             previous,_=self.snapshot_cache.popitem(last=False)
             self.snapshot_cache_bytes-=self.snapshot_cache_costs.pop(previous)
+            self.snapshot_cache_reference_counts.pop(previous,None)
             old_identity=self.snapshot_cache_roots.pop(previous,None)
             if old_identity is not None and self.root_states.get(old_identity)==previous:self.root_states.pop(old_identity,None)
 
@@ -549,7 +564,8 @@ class Recorder:
             identity=(id(value),id(type(value)))
             candidate=self.root_states.get(identity) if parent is not None else None
             prior=self.snapshot_cache.get(candidate) if candidate is not None else None
-            if prior is not None and sum(len(edges) for edges in prior[1].values())>=32:
+            prior_references=self.snapshot_cache_reference_counts.get(candidate) if prior is not None else None
+            if prior is not None and (prior_references if prior_references is not None else sum(len(edges) for edges in prior[1].values()))>=32:
                 # First-visit ownership already applies below. Honor it before
                 # recursively validating a cached component again for an alias
                 # or cycle. Incoming edges remain; uncached leaves pay no extra
