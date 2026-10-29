@@ -52,7 +52,7 @@ static PyObject *flat_sequence_signature(PyObject *self,PyObject *value) {
 typedef struct GraphSignature {
     char *bytes;Py_ssize_t size,capacity;
     PyObject **queue;Py_ssize_t used,queued,queue_capacity,budget,references;
-    PyObject *seen,*types,*boundaries,*field_plans;
+    PyObject *seen,*types,*boundaries,*field_plans,*base_namespaces;
     int supported;
 } GraphSignature;
 static getter standard_dict_getters[4];
@@ -126,14 +126,12 @@ static PyObject *exact_class_function(GraphSignature *g,PyObject *member) {
     return function && Py_IS_TYPE(function,&PyFunction_Type) ? function : NULL;
 }
 static int signature_class_functions(GraphSignature *g,PyObject *namespace) {
-    Py_ssize_t count=0,pos=0;PyObject *name,*member;
-    while (g->supported && PyDict_Next(namespace,&pos,&name,&member))
-        if (exact_class_function(g,member)) count++;
-    if (!g->supported || signature_number(g,count)<0) return PyErr_Occurred() ? -1 : 0;
-    pos=0;
+    uintptr_t count=0;Py_ssize_t pos=0,count_offset=g->size;PyObject *name,*member;
+    if (signature_number(g,0)<0) return -1;
     while (g->supported && PyDict_Next(namespace,&pos,&name,&member)) {
         PyObject *function=exact_class_function(g,member);
         if (!function) continue;
+        count++;
         PyCodeObject *code=(PyCodeObject *)((PyFunctionObject *)function)->func_code;
         /* Replacing function.__code__ leaves the class dictionary version
          * unchanged. Source coordinates also prevent a recycled code address
@@ -142,7 +140,25 @@ static int signature_class_functions(GraphSignature *g,PyObject *namespace) {
             signature_number(g,(uintptr_t)code)<0 || signature_text(g,code->co_filename)<0 ||
             signature_number(g,code->co_firstlineno)<0 || signature_text(g,code->co_qualname)<0) return -1;
     }
+    memcpy(g->bytes+count_offset,&count,sizeof(count));
     return 0;
+}
+static int signature_base_namespace(GraphSignature *g,PyTypeObject *base) {
+    /* Shared MRO bases occur in many concrete types. Encode the exact base
+     * identity and a reference after its first complete namespace description.
+     * This is per observation only: every later snapshot rereads all versions
+     * and function source coordinates, including in-place __code__ changes. */
+    if (!g->base_namespaces) g->base_namespaces=PySet_New(NULL);
+    if (!g->base_namespaces || signature_number(g,(uintptr_t)base)<0) return -1;
+    PyObject *key=PyLong_FromVoidPtr(base);
+    if (!key) return -1;
+    int seen=PySet_Contains(g->base_namespaces,key);
+    if (!seen && PySet_Add(g->base_namespaces,key)<0) seen=-1;
+    Py_DECREF(key);
+    if (seen<0 || signature_number(g,!seen)<0) return -1;
+    if (seen) return 0;
+    if (signature_namespace(g,base->tp_dict)<0) return -1;
+    return g->supported ? signature_class_functions(g,base->tp_dict) : 0;
 }
 static int signature_type(GraphSignature *g,PyTypeObject *type) {
     PyObject *key=PyLong_FromVoidPtr(type);
@@ -158,8 +174,7 @@ static int signature_type(GraphSignature *g,PyTypeObject *type) {
     if (!type->tp_mro || !PyTuple_CheckExact(type->tp_mro)) {g->supported=0;return 0;}
     for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(type->tp_mro);i++) {
         PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(type->tp_mro,i);
-        if (signature_namespace(g,base->tp_dict)<0 ||
-            (g->supported && signature_class_functions(g,base->tp_dict)<0)) return -1;
+        if (signature_base_namespace(g,base)<0) return -1;
         if (!g->supported) return 0;
     }
     if (type->tp_flags & Py_TPFLAGS_HEAPTYPE) {
@@ -194,7 +209,7 @@ static PyObject *type_metadata_context(PyObject *self,PyObject *value) {
     PyObject *result=NULL;
     if (g.types && signature_type(&g,(PyTypeObject *)value)>=0 && signature_owner_file(&g,Py_None)>=0)
         result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
-    Py_XDECREF(g.types);PyMem_Free(g.bytes);return result;
+    Py_XDECREF(g.types);Py_XDECREF(g.base_namespaces);PyMem_Free(g.bytes);return result;
 }
 static PyObject *member_storage(PyObject *self,PyObject *args) {
     PyObject *value,*descriptor;
@@ -390,7 +405,7 @@ static PyObject *graph_signature(PyObject *self,PyObject *args) {
     result=g.supported ? PyBytes_FromStringAndSize(g.bytes,g.size) : Py_NewRef(Py_None);
 done:
     for (Py_ssize_t i=0;i<g.queued;i++) Py_DECREF(g.queue[i]);
-    PyMem_Free(g.queue);PyMem_Free(g.bytes);Py_XDECREF(g.seen);Py_XDECREF(g.types);Py_XDECREF(g.field_plans);
+    PyMem_Free(g.queue);PyMem_Free(g.bytes);Py_XDECREF(g.seen);Py_XDECREF(g.types);Py_XDECREF(g.field_plans);Py_XDECREF(g.base_namespaces);
     return result;
 }
 static PyObject *native_definition(PyObject *self,PyObject *value) {

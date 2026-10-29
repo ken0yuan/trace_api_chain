@@ -1,0 +1,23 @@
+{
+  "all_complete": true,
+  "same_frozen_database_and_plans": true,
+  "reference_seconds": [
+    369.62080756999785,
+    207.97697357001016
+  ],
+  "optimized_seconds": [
+    275.74489977999474,
+    18.4455883600167
+  ],
+  "optimized_validation": {
+    "audit_count": 1,
+    "audit_seconds": 222.29258701001527,
+    "global_cleanup_scans": 1,
+    "targeted_cleanup_passes": 1
+  },
+  "entire_40GB_database_bytes_equal": true,
+  "database_sha256": "ea0978b1b1573b2bfa63154ea12a7b4c91a860214ea8e524a6abc225c76e60ee",
+  "formal_database_untouched": true,
+  "new_entities_or_branches_removed": false,
+  "at": 1793234244.0898652
+}

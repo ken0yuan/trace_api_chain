@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "elapsed_seconds": 295.13529373999336,
+  "id": "001822-83e5af2fafda",
+  "summary": {
+    "test": "test/test_modules.py::TestModulePRIVATEUSE1::test_repr_nn_LinearCrossEntropyLoss_npu_float32",
+    "captured_calls": 34106,
+    "canonical_entities": 1946,
+    "api_definitions": 29,
+    "normalized_paths": 45288,
+    "pending_objects": 165677,
+    "source_dependencies": 1538,
+    "source_read_policy": "namespace-load/1",
+    "gaps": [],
+    "raw_evidence": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/driver034-integration/captures/001822-83e5af2fafda",
+    "graph_digest": "c324b22589924c429eb8c46cf6a831b1708007668b777a72737bdff1c2e05977",
+    "native_storage": "paths",
+    "native_invocations": 15524966,
+    "native_path_nodes": 33871,
+    "runtime_event_history_preserved": false
+  },
+  "relation_checks": [
+    "raw_mapping_and_owner_match",
+    "destination_mapping_and_phases_equal",
+    "prior_positive_subset",
+    "completed_instances_preserved",
+    "foreign_key_check",
+    "integrity_check"
+  ],
+  "writer_metrics": {
+    "policy": "sqlite-enforced-incremental-foreign-keys/1",
+    "baseline_or_external_change_audits": 1,
+    "unchanged_history_scans_reused": 1,
+    "full_audit_seconds": 0.00016088000847958028,
+    "global_cleanup_scans": 1,
+    "changed_path_cleanup_passes": 0
+  },
+  "cleaned": true,
+  "original_raw_preserved": true,
+  "both_plugins": {
+    "relations": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/final-runtime-v6/api_test_relations/pytest_plugin.py",
+    "callchain": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/final-runtime-v6/trace_api_chain/pytest_plugin.py",
+    "torch": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch/__init__.py",
+    "torch_npu": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/torch_npu/__init__.py",
+    "relations_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+    "callchain_catalog": "/home/workspace-ycy/compile-performance/runtime-scenarios-c03-c05/api-ledger-10362.json",
+    "pid": 187308
+  }
+}

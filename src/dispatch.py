@@ -4,9 +4,10 @@ import queue
 import threading
 
 class ParallelReplay:
-    def __init__(self,prepare,commit,on_error,workers=8,ready_limit=16):
+    def __init__(self,prepare,commit,on_error,workers=8,ready_limit=16,on_writer_close=None):
         if workers<1 or ready_limit<workers:raise ValueError('invalid_parallel_stage_limits')
         self.prepare=prepare;self.commit=commit;self.on_error=on_error
+        self.on_writer_close=on_writer_close
         self.condition=threading.Condition();self.pending=0;self.closed=False;self.errors=[]
         self.admission=threading.Semaphore(ready_limit);self.ready=queue.Queue()
         self.pool=ThreadPoolExecutor(max_workers=workers,thread_name_prefix='offline-prepare')
@@ -30,7 +31,9 @@ class ParallelReplay:
     def _write(self):
         while True:
             entry=self.ready.get()
-            if entry is None:return
+            if entry is None:
+                if self.on_writer_close:self.on_writer_close()
+                return
             item,future=entry
             try:self.commit(item,future.result())
             except BaseException as error:

@@ -7,9 +7,38 @@ from pathlib import Path
 import struct
 import subprocess
 import sys
+import threading
+
+_identity_api=None
+_identity_api_lock=threading.Lock()
 
 
-def save(path,value):path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+def _reset_identity_lock_after_fork():
+    global _identity_api_lock
+    _identity_api_lock=threading.Lock()
+
+
+if hasattr(os,'register_at_fork'):
+    os.register_at_fork(after_in_child=_reset_identity_lock_after_fork)
+
+
+def _native_identity_api():
+    global _identity_api
+    if _identity_api is None:
+        with _identity_api_lock:
+            if _identity_api is None:
+                get=ctypes.pythonapi.PyCFunction_GetFunction
+                get.argtypes=[ctypes.py_object];get.restype=ctypes.c_void_p
+                lib=ctypes.CDLL(None)
+                lib.dladdr1.argtypes=[ctypes.c_void_p,ctypes.POINTER(DlInfo),ctypes.POINTER(ctypes.c_void_p),ctypes.c_int]
+                lib.dladdr1.restype=ctypes.c_int
+                _identity_api=(get,lib)
+    return _identity_api
+
+
+def save(path,value,compact=False):
+    options={'separators':(',',':')} if compact else {'indent':2}
+    path.write_text(json.dumps(value,ensure_ascii=False,**options)+'\n',encoding='utf-8')
 def digest(path):
     with open(path,'rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 
@@ -20,12 +49,11 @@ class LinkMap(ctypes.Structure):
 
 def native_identity(callable):
     try:
-        get=ctypes.pythonapi.PyCFunction_GetFunction;get.argtypes=[ctypes.py_object];get.restype=ctypes.c_void_p
+        get,lib=_native_identity_api()
         identity=sys.modules.get('_relation_identity')
         original=getattr(identity,'original_native_function',None)
         pc=original(callable) if original else get(callable)
-        lib=ctypes.CDLL(None);info=DlInfo();link=ctypes.c_void_p()
-        lib.dladdr1.argtypes=[ctypes.c_void_p,ctypes.POINTER(DlInfo),ctypes.POINTER(ctypes.c_void_p),ctypes.c_int]
+        info=DlInfo();link=ctypes.c_void_p()
         if not lib.dladdr1(pc,ctypes.byref(info),ctypes.byref(link),2):return {'status':'native_address_unresolved'}
         path=os.fsdecode(info.filename);bias=ctypes.cast(link,ctypes.POINTER(LinkMap)).contents.bias or 0
         stat=os.stat(path)
@@ -44,6 +72,7 @@ def build_hook(output):
 class Bridge:
     def __init__(self,output,storage='events'):
         self.output=Path(output);self.stack=[];self.active=None;self.segments=[];self.gaps=[]
+        self.path_receipts={};self.window_activations=0
         self.storage=storage
         self.path_failed=False
         self.contexts={}
@@ -73,6 +102,11 @@ class Bridge:
                 status=self.hook.trace_index_stop()
                 self.active['events']=self.hook.trace_index_event_count()
             self.active['stop_status']=status
+            if self.storage=='paths':
+                receipt=self.path_receipts[self.active['context']]
+                receipt['events']+=self.active['events']
+                receipt['activations']+=1
+                receipt['stop_status']|=status
             if status:
                 if self.storage=='paths':self.record_path_failure()
                 else:self.gaps.append('overflow_or_write_failure:'+str(self.active['file'] or self.active['ordinal']))
@@ -91,7 +125,15 @@ class Bridge:
             if result:
                 if self.storage=='paths':self.record_path_failure();return
                 raise RuntimeError('native_window_open_failed')
-            self.active=segment;self.segments.append(segment)
+            self.active=segment
+            if self.storage=='paths':
+                context=segment['context']
+                if context not in self.path_receipts:
+                    receipt={'uid':segment['uid'],'file':None,'ordinal':len(self.segments),
+                             'context':context,'events':0,'stop_status':0,'activations':0}
+                    self.path_receipts[context]=receipt;self.segments.append(receipt)
+                self.window_activations+=1
+            else:self.segments.append(segment)
 
     def begin(self,uid,identity,context=None):
         self.contexts[uid]=context if context is not None else uid
@@ -101,7 +143,7 @@ class Bridge:
         self.pause()
         if not self.stack or self.stack[-1]!=uid:
             self.gaps.append('window_return_mismatch');return
-        self.stack.pop();self.resume_current()
+        self.stack.pop();self.contexts.pop(uid,None);self.resume_current()
 
     def redirect_fork_fragment(self,output):
         previous=self.output;output=Path(output)
@@ -142,8 +184,13 @@ class Bridge:
                     stat=os.stat(parts[5]);stamps[parts[5]]=[stat.st_size,stat.st_mtime_ns,stat.st_ino]
                 except OSError:pass
         summary={'segments':self.segments,'gaps':self.gaps,'module_stamps':stamps,'native_storage':self.storage}
-        if self.storage=='paths':summary['exit_callsite_variations']=self.hook.trace_paths_exit_callsite_variations()
-        save(self.output/'windows.json',summary)
+        if self.storage=='paths':
+            summary['exit_callsite_variations']=self.hook.trace_paths_exit_callsite_variations()
+            summary['window_receipt_storage']='context-totals/1'
+            summary['window_activations']=self.window_activations
+            if sum(row['activations'] for row in self.segments)!=self.window_activations:
+                self.gaps.append('native_window_receipt_count_mismatch')
+        save(self.output/'windows.json',summary,compact=self.storage=='paths')
 
 class Modules:
     def __init__(self,maps,stamps):

@@ -1,0 +1,23 @@
+{
+  "state": "tbe_import_fixed_in_actual_task_environment",
+  "at": 1793231629.1520534,
+  "pth": "/home/workspace-ycy/compile-performance/cases/instrumented-r9-lld22-exclude-std/venv311/lib/python3.11/site-packages/callchain_cann_runtime.pth",
+  "pth_content": "/usr/local/Ascend/cann-9.2.0/python/site-packages\n/usr/local/Ascend/cann-9.2.0/opp/built-in/op_impl/ai_core/tbe\n",
+  "added_venv_distributions": [
+    "attrs-26.1.0.dist-info",
+    "decorator-5.3.1.dist-info"
+  ],
+  "probe": {
+    "tbe": "/usr/local/Ascend/cann-9.2.0/python/site-packages/tbe/__init__.py",
+    "te": "/usr/local/Ascend/cann-9.2.0/python/site-packages/te/__init__.py",
+    "platform": "/usr/local/Ascend/cann-9.2.0/python/site-packages/tbe/common/platform/__init__.py",
+    "decorator": "5.3.1",
+    "attrs": "26.1.0",
+    "torch": "2.16.0a0+git26650ac",
+    "torch_npu": "2.16.0a0+gitfc51851"
+  },
+  "pytest_rerun_yet": false,
+  "task_environment_PYTHONPATH_reproduced": true,
+  "torch_and_torch_npu_not_reinstalled": true,
+  "source": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/cann-offline-candidate.json"
+}

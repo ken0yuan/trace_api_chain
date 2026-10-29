@@ -119,8 +119,9 @@ class Recorder:
         self.nodeid=nodeid; self.test_file=os.path.realpath(test_file)
         self.namespaces=tuple(namespaces); self.max_references=max_references
         self.thread=threading.get_ident(); self.stack=[]; self.next_uid=0
-        self.code_ids={}; self.object_metadata={}; self.views={}; self.busy=False
-        self.class_sources={};self.object_semantics={};self.global_loads={};self.metadata_cache={}
+        self.code_ids={}; self.object_metadata={}; self.views={}; self.view_keys={}; self.busy=False
+        self.class_sources={};self.object_semantics={};self.global_loads={};self.metadata_cache=collections.OrderedDict();self.metadata_cache_limit=max(100000,max_references)
+        self.metadata_cache_hits=0;self.metadata_cache_misses=0;self.metadata_cache_evictions=0
         self.module_sources={};self.read_sites={};self.module_operands={}
         for name,module in list(sys.modules.items()):
             if type(module) is types.ModuleType:self.module_source(vars(module))
@@ -254,7 +255,9 @@ class Recorder:
         cacheable=context is not None and not (issubclass(cls,type) and extra is None)
         identity=(id(value),id(cls));key=(context,extra)
         cached=self.metadata_cache.get(identity)
-        if cacheable and cached is not None and cached[0]==key:return cached[1]
+        if cacheable and cached is not None and cached[0]==key:
+            self.metadata_cache_hits+=1;self.metadata_cache.move_to_end(identity);return cached[1]
+        self.metadata_cache_misses+=1
         if labels is None:label=class_label(cls)
         else:
             if cls not in labels:labels[cls]=class_label(cls)
@@ -313,8 +316,9 @@ class Recorder:
         token=result['id']
         answer=(token,result)
         if cacheable:
-            if len(self.metadata_cache)>=100000:self.metadata_cache.clear()
-            self.metadata_cache[identity]=(key,answer)
+            self.metadata_cache[identity]=(key,answer);self.metadata_cache.move_to_end(identity)
+            while len(self.metadata_cache)>self.metadata_cache_limit:
+                self.metadata_cache.popitem(last=False);self.metadata_cache_evictions+=1
         return answer
 
     def snapshot(self, frame, phase, values=None):
@@ -462,6 +466,16 @@ class Recorder:
         if self.object_metadata.get(token)!=meta:self.object_metadata[token]=meta;self.emit('object',**meta)
         return token
 
+    def remember_view(self,key,state):
+        self.views[key]=state
+        self.view_keys.setdefault(key[0],set()).add(key)
+
+    def retire_views(self,uid):
+        # Retire only the scopes owned by this actual returned frame. Scanning
+        # every other live frame's global/locals views on each c_return is
+        # quadratic during deeply nested imports; their evidence is unchanged.
+        for key in self.view_keys.pop(uid,()):self.views.pop(key,None)
+
     def publish_snapshot(self,uid,phase,values,current,groups,notes):
         if self.grouped_references:return self.publish_grouped_snapshot(uid,phase,values,current,groups,notes)
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
@@ -479,14 +493,14 @@ class Recorder:
             self.emit('references',uid=uid,phase=phase,scope=scope,
                       added=sorted(added,key=lambda r:(r[0] or '',r[1],r[2])),
                       removed=sorted(removed,key=lambda r:(r[0] or '',r[1],r[2])),notes=sorted(notes))
-        self.views[key]=(current,groups)
+        self.remember_view(key,(current,groups))
 
     def publish_grouped_snapshot(self,uid,phase,values,current,groups,notes):
         scope=('global:'+','.join(values)) if phase=='global_read' else 'return' if phase=='return' else 'native' if phase=='native_entry' else 'frame'
         key=(uid,scope);previous,old_groups,old_ids,old_notes=self.views.get(key,(frozenset(),{}, {},None))
         if current==previous and groups==old_groups:
             if frozenset(notes)!=old_notes:self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=[],removed_groups=[],notes=sorted(notes))
-            self.views[key]=(current,groups,old_ids,frozenset(notes));return
+            self.remember_view(key,(current,groups,old_ids,frozenset(notes)));return
         states={};source={None:current,**groups}
         for parent,edges in source.items():
             before=previous if parent is None else old_groups.get(parent)
@@ -506,7 +520,7 @@ class Recorder:
         added=sorted(set(states.values())-set(old_ids.values()));removed=sorted(set(old_ids.values())-set(states.values()))
         if added or removed or frozenset(notes)!=old_notes:
             self.emit('references',uid=uid,phase=phase,scope=scope,added_groups=added,removed_groups=removed,notes=sorted(notes))
-        self.views[key]=(current,groups,states,frozenset(notes))
+        self.remember_view(key,(current,groups,states,frozenset(notes)))
 
     def profile(self, frame, event, arg, external_uid=None):
         if self.busy or threading.get_ident()!=self.thread:return
@@ -594,7 +608,7 @@ class Recorder:
                     self.stack.pop()
                     self.read_sites.pop(top['uid'],None)
                     self.module_operands.pop(top['uid'],None)
-                    for key in [k for k in self.views if k[0]==top['uid']]:self.views.pop(key)
+                    self.retire_views(top['uid'])
                 if not self.stack:self.file.flush()  # Preserve each completed API window, not each object event.
         except Exception as exc:
             self.collector_error(exc,'profile_'+event)
@@ -695,7 +709,10 @@ class Recorder:
         self.closed=True
         self.emit('end',calls=self.calls,roots=self.roots,objects=len(self.object_metadata),
                   gaps=sorted(self.gaps),all_objects_complete=False,module_sources=self.module_sources,
-                  source_read_policy='namespace-load/1')
+                  source_read_policy='namespace-load/1',
+                  metadata_cache={'limit':self.metadata_cache_limit,'entries':len(self.metadata_cache),
+                                  'hits':self.metadata_cache_hits,'misses':self.metadata_cache_misses,
+                                  'evictions':self.metadata_cache_evictions})
         self.file.close()
         self.observer_roots.clear();_ACTIVE_RECORDERS.discard(self)
 
