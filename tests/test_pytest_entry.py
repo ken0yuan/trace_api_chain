@@ -116,7 +116,9 @@ def test_first_replay_reuses_the_validated_graph_and_frozen_inputs_stay_checked(
     result=launch(tmp_path,PRELUDE+'def test_one():\n m.api(1)\n','--callchain-out='+str(out),'--callchain-mode=objects','--callchain-namespaces=fixture_api')
     assert result.returncode==0,result.stdout+result.stderr
     original=pipeline.rebuild;calls=[]
-    def observed(*args):calls.append(1);return original(*args)
+    def observed(*args,**kwargs):
+        assert kwargs=={'reuse_reference_batches':True}
+        calls.append(1);return original(*args,**kwargs)
     monkeypatch.setattr(pipeline,'rebuild',observed)
     first=pipeline.prepare(out,'objects')['graph']
     assert len(calls)==1

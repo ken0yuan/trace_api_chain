@@ -44,7 +44,7 @@ def prepare(output,mode=None,symbol_index=None):
                 boundaries=[row for row in events if row['event']=='call' and row.get('kind')=='native_boundary']
                 if any(not interpreter_boundary(row) for row in boundaries):
                     raise ValueError('no_compiler_events: instrumented target library required')
-        graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+        graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()),reuse_reference_batches=True)
         evidence.mkdir(exist_ok=True);shutil.copyfile(output/'events.jsonl',evidence/'python.jsonl')
         with (evidence/'native.jsonl').open('wb') as f:
             for row in native:f.write(canonical(row))
@@ -56,7 +56,7 @@ def prepare(output,mode=None,symbol_index=None):
         manifest={'sha256':{name:digest(evidence/name) for name in ('python.jsonl','native.jsonl')},
                   'raw_sha256':{p.relative_to(output).as_posix():digest(p) for p in raw},'capture_gaps':gaps,'mode':mode,'native_storage':storage}
         save(manifest_path,manifest)
-    if graph is None:graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()))
+    if graph is None:graph=reconstruct(events,native,json.loads(Path(__file__).with_name('contract.json').read_text()),reuse_reference_batches=True)
     graph['gaps']=sorted(set(graph['gaps']+gaps))
     if graph['gaps']:graph['status']='evidence_scope_incomplete'
     variations=(json.loads((output/'windows.json').read_text()).get('exit_callsite_variations',0) if storage=='paths'

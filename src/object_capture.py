@@ -56,6 +56,58 @@ def test_body_code(item):
     return codes.pop()
 
 
+def metadata_text(value):
+    return str.__str__(value) if isinstance(value,str) else None
+
+
+def metadata_json_snapshot(value,active=None):
+    """Freeze previously JSON-compatible literal metadata without user hooks."""
+    if active is None:active=set()
+    typ=type(value)
+    if value is None or typ in (str,int,float,bool):return value
+    if isinstance(value,str):return metadata_text(value)
+    if isinstance(value,int):return int.__int__(value)
+    if isinstance(value,float):return float.__float__(value)
+    if typ not in (list,tuple,dict) or id(value) in active:raise TypeError('metadata is a runtime reference')
+    active.add(id(value))
+    try:
+        if typ in (list,tuple):return [metadata_json_snapshot(item,active) for item in value]
+        if any(not isinstance(key,str) and type(key) not in (int,float,bool,type(None)) for key in value):raise TypeError('runtime metadata key')
+        return {metadata_text(key) if isinstance(key,str) else key:metadata_json_snapshot(item,active) for key,item in value.items()}
+    finally:active.remove(id(value))
+
+
+def metadata_reference(value):
+    cls=type(value)
+    try:qualname=type.__dict__['__qualname__'].__get__(cls,type(cls))
+    except Exception:qualname=None
+    result={'address':id(value),'type_address':id(cls),'identity':'observation_address',
+            'type_qualname':metadata_text(qualname)}
+    if cls is types.ModuleType:
+        result.update(module_name=metadata_text(vars(value).get('__name__')),
+                      module_file=metadata_text(vars(value).get('__file__')))
+    try:result['json_snapshot']=json.dumps(metadata_json_snapshot(value),ensure_ascii=False,separators=(',',':'))
+    except (TypeError,ValueError,RecursionError):
+        if cls is int:result['integer_hex']=format(value,'x')
+    return result
+
+
+def metadata_module(value):
+    if type(value) is str or value is None:return value,None
+    if isinstance(value,str):return metadata_text(value),metadata_reference(value)
+    if isinstance(value,(int,float)):
+        reference=metadata_reference(value)
+        return json.loads(reference['json_snapshot']) if 'json_snapshot' in reference else None,reference
+    name=vars(value).get('__name__') if type(value) is types.ModuleType else None
+    return metadata_text(name),metadata_reference(value)
+
+
+def metadata_module_context(value):
+    if type(value) is str or value is None:return value
+    marker=metadata_reference(value)
+    return tuple(sorted(marker.items()))
+
+
 def class_label(cls):
     # Use type's own descriptors, not user-defined attribute access.
     def field(name):
@@ -63,7 +115,25 @@ def class_label(cls):
             return type.__dict__[name].__get__(cls, type(cls))
         except Exception:
             return None
-    return {'module': field('__module__'), 'qualname': field('__qualname__')}
+    module,reference=metadata_module(field('__module__'))
+    label={'module':module,'qualname':field('__qualname__')}
+    if reference is not None:label['module_reference']=reference
+    return label
+
+
+def metadata_children(value,meta=None):
+    cls=type(value);fields=[]
+    if cls in (types.FunctionType,types.BuiltinFunctionType,types.BuiltinMethodType):fields=[('module',value.__module__)]
+    elif cls is types.MethodType:fields=[('module',value.__func__.__module__)]
+    elif cls is types.ModuleType:fields=[('module_name',vars(value).get('__name__')),('module_file',vars(value).get('__file__'))]
+    else:
+        owner=value if issubclass(cls,type) else cls
+        try:fields=[('type_module',type.__dict__['__module__'].__get__(owner,type(owner)))]
+        except Exception:pass
+    if meta and 'owner_file_reference' in meta:
+        owner=(meta.get('static_owner') or {}).get('module');module=sys.modules.get(owner)
+        if type(module) is types.ModuleType:fields.append(('owner_file',vars(module).get('__file__')))
+    return [('metadata:'+name,child) for name,child in fields if child is not None and type(child) is not str]
 
 
 def class_namespace(cls):
@@ -264,9 +334,11 @@ class Recorder(ReferencePublisher):
             try:
                 stat=os.stat(filename); stamp=[stat.st_size,stat.st_mtime_ns]
             except OSError: stamp=None
+            module,reference=metadata_module(module)
             self.emit('definition',id=token,kind='function',module=module,
                       qualname=getattr(code,'co_qualname',code.co_name),file=filename,
-                      first_line=code.co_firstlineno,source_stamp=stamp)
+                      first_line=code.co_firstlineno,source_stamp=stamp,
+                      **({'module_reference':reference} if reference is not None else {}))
         return self.code_ids[key][1]
 
     def metadata(self, value, labels=None):
@@ -277,11 +349,11 @@ class Recorder(ReferencePublisher):
         if cls not in contexts:contexts[cls]=type_metadata_context(cls,self.type_context_cache)
         context=contexts[cls]
         extra=None
-        if cls is types.FunctionType:extra=(value.__code__,value.__module__)
-        elif cls is types.MethodType:extra=(value.__func__.__code__,value.__func__.__module__)
+        if cls is types.FunctionType:extra=(value.__code__,metadata_module_context(value.__module__))
+        elif cls is types.MethodType:extra=(value.__func__.__code__,metadata_module_context(value.__func__.__module__))
         elif issubclass(cls,type):extra=type_metadata_context(value,self.type_context_cache)
-        elif cls is types.ModuleType:extra=(vars(value).get('__name__'),vars(value).get('__file__'))
-        elif cls in (types.BuiltinFunctionType,types.BuiltinMethodType):extra=(value.__name__,value.__module__)
+        elif cls is types.ModuleType:extra=(metadata_module_context(vars(value).get('__name__')),metadata_module_context(vars(value).get('__file__')))
+        elif cls in (types.BuiltinFunctionType,types.BuiltinMethodType):extra=(value.__name__,metadata_module_context(value.__module__))
         cacheable=context is not None and not (issubclass(cls,type) and extra is None)
         identity=(id(value),id(cls));key=(context,extra)
         cached=self.metadata_cache.get(identity)
@@ -313,20 +385,30 @@ class Recorder(ReferencePublisher):
         result={'id':token,'address':id(value),'type':label,'identity':'observation_address'}
         if type(value) is types.FunctionType:
             result.update(kind='function',definition=self.code(value.__code__,value.__module__))
+            if value.__module__ is not None and type(value.__module__) is not str:result['module_reference']=metadata_reference(value.__module__)
         elif type(value) is types.MethodType:
             result.update(kind='bound_method',definition=self.code(value.__func__.__code__,value.__func__.__module__))
+            if value.__func__.__module__ is not None and type(value.__func__.__module__) is not str:result['module_reference']=metadata_reference(value.__func__.__module__)
         elif issubclass(type(value),type):
             result.update(kind='class',static_owner=class_label(value))
         elif type(value) is types.ModuleType:
-            result.update(kind='module',static_owner={'module':vars(value).get('__name__'),'qualname':None})
+            module,reference=metadata_module(vars(value).get('__name__'));owner={'module':module,'qualname':None}
+            if reference is not None:owner['module_reference']=reference
+            result.update(kind='module',static_owner=owner)
+            file=vars(value).get('__file__')
+            if file is not None and type(file) is not str:result['module_file_reference']=metadata_reference(file)
         elif type(value) in (types.BuiltinFunctionType,types.BuiltinMethodType):
-            result.update(kind='native_callable',name=value.__name__,module=value.__module__)
+            module,reference=metadata_module(value.__module__)
+            result.update(kind='native_callable',name=value.__name__,module=module)
+            if reference is not None:result['module_reference']=reference
         else:
             result.update(kind='instance',static_owner=label)
         owner=result.get('static_owner') or {}
-        module=sys.modules.get(owner.get('module'))
+        module=sys.modules.get(owner.get('module')) if type(owner.get('module')) is str else None
         if type(module) is types.ModuleType:
-            result['owner_file']=vars(module).get('__file__')
+            file=vars(module).get('__file__')
+            if file is None or isinstance(file,str):result['owner_file']=metadata_text(file)
+            else:result['owner_file_reference']=metadata_reference(file)
         # Exported classes can have __module__ rewritten (e.g. torch.Tensor).
         # Their own Python methods retain the actual defining source path.
         owner_class=value if result['kind']=='class' else cls if result['kind']=='instance' else None
@@ -570,6 +652,7 @@ class Recorder(ReferencePublisher):
         from .frame_identity import reference_children
         queue=collections.deque([(None,None,value)]);groups={};seen=set();notes=set();count=0
         metadata={};labels={};plans={};root=None;nodes=set();complete=True;reused_components={}
+        metadata_modules=set();expanded_metadata_modules=set()
         shared=getattr(self,'_snapshot_known_nodes',set())
         # A coordinated builtin root contributes only its receiver edge and no
         # opaque/property notes. It must not disable interior cache promotion
@@ -620,6 +703,8 @@ class Recorder(ReferencePublisher):
             else:add_reference(groups,parent,(parent,name,token))
             if self.object_metadata.get(token)!=meta:
                 self.object_metadata[token]=meta;self.emit('object',**meta)
+            if type(value) is types.ModuleType and id(value) in metadata_modules and id(value) not in expanded_metadata_modules:
+                expanded_metadata_modules.add(id(value));queue.append((token,'metadata:module_namespace',vars(value)))
             if token in seen:continue
             seen.add(token);typ=type(value);children=[]
             if promote and parent is not None:
@@ -659,6 +744,10 @@ class Recorder(ReferencePublisher):
                 shared.add(token);nodes.add(token)
             if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:
                 notes.add('observer_state_not_traversed');node_notes.setdefault(token,set()).add('observer_state_not_traversed');continue
+            if any(key in meta for key in ('module_reference','owner_file_reference','module_file_reference')) or 'module_reference' in meta['type'] or 'module_reference' in (meta.get('static_owner') or {}):
+                for role,child in metadata_children(value,meta):
+                    if type(child) is types.ModuleType:metadata_modules.add(id(child))
+                    queue.append((token,role,child))
             fast=reference_children(value,token,NativeStorage)
             if fast is not None:
                 if fast:queue.extend(fast)

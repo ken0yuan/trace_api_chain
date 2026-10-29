@@ -65,10 +65,10 @@ def collapse_python_contexts(graph,events):
     graph.update(nodes=nodes,edges=edges,python_invocations=len(old),python_path_nodes=len(nodes))
     return contexts
 
-def rebuild_paths(events,native,contract):
+def rebuild_paths(events,native,contract,*,reuse_reference_batches=False):
     from .reference_transport import normalize_events
     events=normalize_events(events)
-    graph=rebuild(events,[],contract)
+    graph=rebuild(events,[],contract,reuse_reference_batches=reuse_reference_batches)
     collapse_python_contexts(graph,events)
     first=events[0];support={};total=0
     for index,row in enumerate(native):

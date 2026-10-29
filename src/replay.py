@@ -1,5 +1,6 @@
 """Deterministic evidence -> observed topology. No name-based topology inference."""
 import argparse
+import collections
 import hashlib
 import json
 from pathlib import Path
@@ -18,13 +19,14 @@ def canonical(value):
     return (json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))+'\n').encode()
 
 
-def rebuild(events, native, contract):
+def rebuild(events, native, contract, *, reuse_reference_batches=False):
     from .reference_transport import normalize_events
     events=normalize_events(events)
     nodes = {}; edges = []; stacks = {}; definitions = {}; objects = {}
     observations = []; references = []; source_reads = []; gaps = set(); exclusions = []
     start = None; finished = False; live_views = {}; end_summary = None
     python_times = {}; reference_groups = {}; live_group_views = {}; reference_scopes = {}
+    initial_batches=collections.OrderedDict();initial_batch_bytes=0
     excluded = set(contract['api_scope']['excluded_api_ids'])
     for seq, e in enumerate(events):
         kind = e['event']
@@ -82,19 +84,32 @@ def rebuild(events, native, contract):
             if 'added_groups' in e:
                 require(start.get('reference_policy') in ('shared-adjacency-states/1','shared-adjacency-states/2'),'reference_group_policy_missing')
                 view=live_group_views.setdefault((uid,e['scope']),{})
-                added=set(e['added_groups']);removed=set(e['removed_groups'])
-                require(len(added)==len(e['added_groups']) and len(removed)==len(e['removed_groups']),'duplicate_reference_group_update')
-                require(added|removed <= reference_groups.keys(),'unknown_reference_group')
-                for state in removed:
-                    require(view.get(reference_groups[state]['parent'])==state,'reference_remove_without_add')
-                new_parents=set()
-                for state in added:
-                    parent=reference_groups[state]['parent'];previous=view.get(parent)
-                    require(previous!=state or state in removed,'reference_group_already_active')
-                    require(parent not in new_parents and (previous is None or previous in removed),'multiple_reference_states_for_parent')
-                    new_parents.add(parent)
-                for state in removed:view.pop(reference_groups[state]['parent'])
-                for state in added:view[reference_groups[state]['parent']]=state
+                # Only the pipeline's privately decoded immutable evidence opts
+                # in. Public mutable in-memory callers retain every old check.
+                batch=(tuple(e['added_groups']) if reuse_reference_batches and not view and not e['removed_groups'] and len(e['added_groups'])>=32 else None)
+                cached=initial_batches.get(batch) if batch is not None else None
+                if cached is not None:
+                    view.update(cached[0]);initial_batches.move_to_end(batch)
+                else:
+                    added=set(e['added_groups']);removed=set(e['removed_groups'])
+                    require(len(added)==len(e['added_groups']) and len(removed)==len(e['removed_groups']),'duplicate_reference_group_update')
+                    require(added|removed <= reference_groups.keys(),'unknown_reference_group')
+                    for state in removed:
+                        require(view.get(reference_groups[state]['parent'])==state,'reference_remove_without_add')
+                    new_parents=set()
+                    for state in added:
+                        parent=reference_groups[state]['parent'];previous=view.get(parent)
+                        require(previous!=state or state in removed,'reference_group_already_active')
+                        require(parent not in new_parents and (previous is None or previous in removed),'multiple_reference_states_for_parent')
+                        new_parents.add(parent)
+                    for state in removed:view.pop(reference_groups[state]['parent'])
+                    for state in added:view[reference_groups[state]['parent']]=state
+                    if batch is not None:
+                        cost=512+160*len(batch)
+                        if cost<=64*1024*1024:
+                            initial_batches[batch]=(view.copy(),cost);initial_batch_bytes+=cost
+                            while initial_batch_bytes>64*1024*1024 or len(initial_batches)>256:
+                                _,old=initial_batches.popitem(last=False);initial_batch_bytes-=old[1]
             else:
                 view = live_views.setdefault((uid, e['scope']), set())
                 for parent, role, target in e['added'] + e['removed']:
