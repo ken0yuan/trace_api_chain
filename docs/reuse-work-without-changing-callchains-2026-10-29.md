@@ -32,6 +32,14 @@ python -c 'from trace_api_chain.cli import main; raise SystemExit(main())' prepa
 
 证明文件见 `reuse-work-evidence/`。服务器维护根目录为 `/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29`，真实验证目录为 `offline-reuse-real-validation-v1`，对象微基准为 `offline-reuse-microbench-v2`、`offline-reuse-append-repeat-v1`。
 
-尚未宣布完整慢例超时已解决。正式采集仍暂停，候选未覆盖正式有效图；上线和恢复采集仍需完成实际慢例、新采集图和部署版本核验。
+## 精确签名版本的真实慢例验收
+
+代码提交 `9dea3c4aa812f85add51a274ba674f948c874a8c` 已 GPG 签名并备份；API 源码为签名 `59ef43b2a34f3023b8f4a020a270d62e710c1053`。从精确 Git archive 重建后再次通过 trace 260、API 121/9 跳过回归。安装源码与签名 archive 逐字节一致；相对早期工作区候选仅 API `__init__.py` 有 CRLF→LF 差异，已逐项记录。
+
+原始慢例 `001822-83e5af2fafda`，`test_repr_nn_LinearCrossEntropyLoss_npu_float32`，在卡0独立重测，原1800秒预算不变。完整双插件及10362项台账实际加载核验通过。测试通过，采集报告 gaps=[]，整组采集约564.933秒（插件内部采集553.951秒）。此前隔离v6成功记录598.774秒并非严格冷暖缓存对照，不据此承诺统一提速比例。
+
+新图 SHA256 为 `c26d6c06c4e7965a74feadd97efe1a17b249ff2e7af0daee53306066521ed83a`，gaps=[]，与独立图数据库 current 槽位一致。新一次运行的地址和时序可以不同，不能拿它与旧一次图字节强求相同；优化的语义等价由上面的同一冻结输入对照证明。新图加入后，另外逐行核验旧七类支持完全一致，并验证全部旧 entities、aliases、apis、api_aliases、paths 完整行仍在，而非只比较数量。独立 API 库六项检查及调用链/测试/采集来源严格绑定也通过。验收脚本曾遗漏空 API 库初始化，修正后直接继续使用已落盘采集和图，没有重跑测试。
+
+实际证明见 `reuse-work-evidence/offline-reuse-signed-live-original-001822-v1.json` 与签名字节证明。正式采集仍暂停，正式2148条结果和两库未覆盖，正式64个超时的统计未改写。此为一个旧ID的完整候选验收，不是新增唯一用例，也不代表其他超时均已解决。原始 trace 及 API 证据副本保留，验证范围仍为所选调用线程宿主图。
 
 Assisted-by: OpenAI Codex
