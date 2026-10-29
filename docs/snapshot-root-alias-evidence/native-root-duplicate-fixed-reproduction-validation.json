@@ -1,0 +1,26 @@
+{
+  "current_runtime": "/home/workspace-ycy/compile-performance/capture-repair-2026-10-28/repair-root-alias-v3-20261029/runtime/trace_api_chain",
+  "read_only_formal": true,
+  "same_snapshot_receiver_is_already_reachable_from_callable": true,
+  "observations": [
+    {
+      "stage": "fresh",
+      "recursive_signature_validations": [
+        "receiver"
+      ]
+    },
+    {
+      "stage": "unchanged",
+      "recursive_signature_validations": [
+        "receiver"
+      ]
+    },
+    {
+      "stage": "new_branch",
+      "recursive_signature_validations": [
+        "receiver"
+      ]
+    }
+  ],
+  "gaps": []
+}

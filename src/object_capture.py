@@ -148,6 +148,8 @@ class Recorder:
         self.grouped_references=getattr(native,"storage",None)=="paths"
         self.reference_delta_storage=bool(reference_deltas and self.grouped_references)
         self.snapshot_cache=collections.OrderedDict();self.snapshot_cache_bytes=0;self.snapshot_cache_costs={};self.root_states={};self.snapshot_cache_roots={}
+        self.snapshot_root_alias_reuses=0
+        self.snapshot_native_root_stubs=0
         self.flat_incremental_updates=0;self.flat_unchanged_leaves_reused=0
         self.snapshot_component_limit=8;self.component_cache_promotions=0;self.component_cache_reuses=0;self.snapshot_cache_limit_bytes=128*1024*1024
         self.body_code=None;self.body_depth=0;self.body_entries=0
@@ -373,13 +375,35 @@ class Recorder:
         from .frame_identity import graph_signature,flat_sequence_signature
         roots=[];groups={};notes=set();local={};count=len(values)
         self._snapshot_known_nodes=set();self._snapshot_current_groups=groups;self._snapshot_current_notes=notes
+        # Future roots are already held alive by values. Store only their
+        # identities/tokens; never retain workload objects across observations.
+        self._snapshot_root_targets={(id(value),id(type(value))) for value in values.values()}
+        self._snapshot_root_tokens={}
+        self._snapshot_stub_nodes=set()
         for name,value in values.items():
             identity=(id(value),id(type(value)))
+            token=self._snapshot_root_tokens.get(identity)
+            if token is None:
+                # A validated cached first root can already contain this root
+                # without running snapshot_root. Reuse its exact observed token,
+                # only when that token is present in this snapshot's node set.
+                base='object:'+str(identity[0])+':'+str(identity[1])
+                semantic=self.object_semantics.get(base)
+                if semantic is not None and semantic[1] in self._snapshot_known_nodes:token=semantic[1]
+            if token is not None:
+                roots.append((None,'root:'+name,token));self.snapshot_root_alias_reuses+=1
+                continue
             chunk=local.get(identity)
             if chunk is None:
-                flat=flat_sequence_signature(value)
-                signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
-                chunk=self.snapshot_cache.get(signature) if signature is not None else None
+                # Exact builtin callables have only their receiver reference.
+                # If that receiver is an explicit root, record this edge now
+                # and let its own root do the one complete subtree validation.
+                chunk=self.snapshot_native_root(value)
+                flat=None;signature=None
+                if chunk is None:
+                    flat=flat_sequence_signature(value)
+                    signature=(identity,flat) if flat is not None else graph_signature({'value':value},self.max_references,self.observer_roots,self.type_context_cache)
+                    chunk=self.snapshot_cache.get(signature) if signature is not None else None
                 if chunk is not None and any(parent in groups and groups[parent]!=edges for parent,edges in chunk[1].items()):
                     chunk=None  # Earlier first-visit observations own this snapshot's state.
                 if chunk is None:
@@ -387,7 +411,7 @@ class Recorder:
                     if chunk is None:chunk=self.snapshot_root(value)
                     if signature is not None and chunk[4] and 'reference_budget_exceeded' not in chunk[2]:
                         self.remember_snapshot(identity,signature,chunk)
-                else:self.snapshot_cache.move_to_end(signature)
+                elif signature is not None:self.snapshot_cache.move_to_end(signature)
                 if signature is not None and signature in self.snapshot_cache:self.root_states[identity]=signature
                 local[identity]=chunk
             root,adjacency,unread,nodes,complete=chunk
@@ -403,6 +427,21 @@ class Recorder:
                     notes.add('snapshot_inconsistent_reference_state');self.gaps.add('snapshot_inconsistent_reference_state')
             if 'reference_budget_exceeded' in notes:break
         self.publish_snapshot(self.stack[-1]['uid'],phase,values,frozenset(roots),groups,notes)
+
+    def snapshot_native_root(self,value):
+        if type(value) not in (types.BuiltinFunctionType,types.BuiltinMethodType):return None
+        receiver=value.__self__
+        if receiver is None or (id(receiver),id(type(receiver))) not in self._snapshot_root_targets:return None
+        if id(value) in self.observer_roots and self.observer_roots[id(value)] is value:return None
+        labels={};token,meta=self.metadata(value,labels);target,target_meta=self.metadata(receiver,labels)
+        for key,row in ((token,meta),(target,target_meta)):
+            if self.object_metadata.get(key)!=row:self.object_metadata[key]=row;self.emit('object',**row)
+        self.snapshot_native_root_stubs+=1
+        self._snapshot_stub_nodes.add(token)
+        # Do not mark the receiver expanded and never cache this incomplete
+        # subtree as a complete standalone observation. Its explicit root is
+        # still pending, or has already contributed its complete adjacency.
+        return token,{token:frozenset({(token,'receiver',target)})},frozenset(),frozenset({token}),False
 
     def remember_snapshot(self,identity,signature,chunk):
         size=len(signature) if type(signature) is bytes else len(signature[1][0])+len(signature[1][1])+64
@@ -495,7 +534,10 @@ class Recorder:
         queue=collections.deque([(None,None,value)]);groups={};seen=set();notes=set();count=0
         metadata={};labels={};plans={};root=None;nodes=set();complete=True;reused_components={}
         shared=getattr(self,'_snapshot_known_nodes',set())
-        promote=not shared and self.snapshot_component_limit>0;candidates=[];node_notes={}
+        # A coordinated builtin root contributes only its receiver edge and no
+        # opaque/property notes. It must not disable interior cache promotion
+        # for the complete receiver root that follows it.
+        promote=(not shared or shared.issubset(getattr(self,'_snapshot_stub_nodes',set()))) and self.snapshot_component_limit>0;candidates=[];node_notes={}
         while queue:
             parent,name,value=queue.popleft();count+=1
             if count>self.max_references:
@@ -523,6 +565,7 @@ class Recorder:
                 if signature==candidate and compatible and not any(target in groups and groups[target]!=edges for target,edges in prior[1].items()):
                     self.snapshot_cache.move_to_end(candidate)
                     target,adjacency,unread,observed,complete=prior
+                    if identity in getattr(self,'_snapshot_root_targets',()):self._snapshot_root_tokens[identity]=target
                     new_edges=sum(len(edges) for node,edges in adjacency.items() if node not in shared)
                     add_reference(groups,parent,(parent,name,target));groups.update(adjacency)
                     seen.update(observed);nodes.update(observed);shared.update(observed);notes.update(unread)
@@ -534,6 +577,7 @@ class Recorder:
                     continue
             if identity not in metadata:metadata[identity]=self.metadata(value,labels)
             token,meta=metadata[identity]
+            if identity in getattr(self,'_snapshot_root_targets',()):self._snapshot_root_tokens[identity]=token
             if parent is None:root=token
             else:add_reference(groups,parent,(parent,name,token))
             if self.object_metadata.get(token)!=meta:

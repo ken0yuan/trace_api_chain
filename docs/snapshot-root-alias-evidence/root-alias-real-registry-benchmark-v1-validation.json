@@ -1,0 +1,48 @@
+{
+  "full_traversal": {
+    "seconds": 7.501399369997671,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": [],
+    "native_root_stubs": 0,
+    "root_alias_reuses": 0
+  },
+  "incremental": {
+    "seconds": 6.221651229978306,
+    "metadata_hits": 50827,
+    "metadata_misses": 69524,
+    "component_promotions": 20,
+    "component_reuses": 44,
+    "gaps": [],
+    "native_root_stubs": 8,
+    "root_alias_reuses": 0
+  },
+  "incremental_second": {
+    "seconds": 6.083502419991419,
+    "metadata_hits": 50827,
+    "metadata_misses": 69524,
+    "component_promotions": 20,
+    "component_reuses": 44,
+    "gaps": [],
+    "native_root_stubs": 8,
+    "root_alias_reuses": 0
+  },
+  "full_traversal_second": {
+    "seconds": 7.6054849899956025,
+    "metadata_hits": 51232,
+    "metadata_misses": 69524,
+    "component_promotions": 28,
+    "component_reuses": 43,
+    "gaps": [],
+    "native_root_stubs": 0,
+    "root_alias_reuses": 0
+  },
+  "evidence_after_start_byte_identical": true,
+  "evidence_sha256": "fbc6a671b6ed9cc7cfda73a5722875a80b2dd7666198605c18d1c461dd4b7c63",
+  "speedup": 1.2056926839378341,
+  "reverse_pair_speedup": 1.2501819617927152,
+  "fixture": "real torch/torch_npu/tbe registry graph plus8 new modules; all identities and branches retained",
+  "not_an_npu_test": true
+}

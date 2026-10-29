@@ -1,0 +1,66 @@
+{
+  "same_hash_verified_frozen_handoff": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/prepare-stage-profile-v2/refresh-plan.json",
+  "graph_sha256": "c324b22589924c429eb8c46cf6a831b1708007668b777a72737bdff1c2e05977",
+  "all_14_tables_bytewise_row_hash_equal": {
+    "aliases": {
+      "rows": 177,
+      "sha256": "ec4b94fb7dc943312ab6c2674475eac2f394b598c13f4055028fe987713465b4"
+    },
+    "api_alias_support": {
+      "rows": 36,
+      "sha256": "9af83c5acc3aa604fdfe4bb8a4568ea1cb1fa15adcebd79bbdce11a56a6bc64a"
+    },
+    "api_aliases": {
+      "rows": 36,
+      "sha256": "70f761b21be76ffd5b87e85b683009fe1be4fc3c0994be1d9b06e0fb51c2832d"
+    },
+    "apis": {
+      "rows": 29,
+      "sha256": "f7558916a1be3083c1ade8909cb29a65189d045871d6fc5463d96eb262b190b1"
+    },
+    "capture_slots": {
+      "rows": 1,
+      "sha256": "14000b76b3ecbcc6916ec1b46de9a5f7f5a723d537c39bc66958d5b42eb7ed87"
+    },
+    "entities": {
+      "rows": 1946,
+      "sha256": "d9fb7158f07d80806bb3a4b5e4187199238573536640bd7c25df86624f5d8705"
+    },
+    "object_references": {
+      "rows": 553,
+      "sha256": "8ab2975a2bac803de2c761035233593b656559c17f17cc108455eba6121c269c"
+    },
+    "observed_objects": {
+      "rows": 548,
+      "sha256": "d9f461a67c6ce1e2cc3ff50c7b63d415f2e0e9dce5bc0202f0fcf4f17be966be"
+    },
+    "path_support": {
+      "rows": 45288,
+      "sha256": "4a74d08b701804fea65af582a93c466579c7078dc6232ce80d9c63efa9976d32"
+    },
+    "paths": {
+      "rows": 45288,
+      "sha256": "c6be42f4a48f8a22afa95b267634e8c18d5c2c5b69873702ccd322161a03fced"
+    },
+    "pending": {
+      "rows": 165677,
+      "sha256": "c2d783a3fe3b910c8dc2567ba59c34b00ba69cb11da54f7bf22c23767a5e81e3"
+    },
+    "schema_info": {
+      "rows": 1,
+      "sha256": "acc07b62f23f458923737c4cd4a66bd05d1e71eb4f384003baaf2dcc760d6349"
+    },
+    "slot_entities": {
+      "rows": 1946,
+      "sha256": "4258203a437b43d7eaa6ba953f63f5709f69382472b924931a5a304c18d930eb"
+    },
+    "source_dependencies": {
+      "rows": 1538,
+      "sha256": "7a0df0d50b1d036111f5c846ef8a2e493a468f6c30ebb5d835920532671390df"
+    }
+  },
+  "ignored_fields": [],
+  "original_capture_unmodified": true,
+  "formal_databases_not_opened": true,
+  "collector_event_equivalence_is_separately_validated": "/home/workspace-ycy/compile-performance/timeout-tbe-writer-repair-2026-10-29/root-alias-real-registry-benchmark-v1/validation.json"
+}
