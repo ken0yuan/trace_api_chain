@@ -65,7 +65,66 @@ def snapshot(frame, files):
                         for i in range(max(0, line-4), min(len(lines), line+3))]}
 
 
-def resolve(identities, cache_dir, timeout=600):
+def read_symbol_cache(path):
+    """Read a complete hash-checked derived cache; corrupt caches are misses."""
+    try:
+        saved=json.loads(Path(path).read_text())
+        payload=saved.get('payload',{})
+        if not isinstance(payload,dict):return {}
+        expected=hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
+        return payload if saved.get('sha256')==expected else {}
+    except (OSError,ValueError,TypeError):return {}
+
+
+def publish_symbol_index(cache_dirs,destination):
+    """Publish a new immutable seed, never updating an index used by workers."""
+    destination=Path(destination)
+    destination.mkdir(parents=True,exist_ok=False)
+    entries={}
+    for directory in cache_dirs:
+        for path in sorted(Path(directory).glob('*.json')):
+            if re.fullmatch(r'[0-9a-f]{64}',path.stem) is None:continue
+            payload=read_symbol_cache(path)
+            if not payload:continue
+            if path.stem in entries:
+                previous=read_symbol_cache(destination/path.name)
+                if any(offset in previous and previous[offset]!=frames for offset,frames in payload.items()):
+                    raise ValueError('symbol_index_conflicting_entries:'+path.stem)
+                payload={**previous,**payload}
+            # Publish the validated spelling, not bytes that could change
+            # between validation and copying from a private producer cache.
+            data=json.dumps({'payload':payload,'sha256':hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()}).encode()
+            (destination/path.name).write_bytes(data)
+            entries[path.stem]={'file':path.name,'sha256':hashlib.sha256(data).hexdigest()}
+    tool=shutil.which('eu-addr2line')
+    if not tool:raise RuntimeError('eu-addr2line is required')
+    manifest={'schema':'readonly-symbol-index/1','parser_sha256':sha(__file__),
+              'tool_version':subprocess.check_output([tool,'--version'],text=True).splitlines()[0],
+              'entries':entries}
+    # A missing manifest is an incomplete publication and is never consumed.
+    from .cache_io import atomic_json
+    atomic_json(destination/'manifest.json',manifest)
+    return manifest
+
+
+def indexed_symbols(index_dir,key,parser,version):
+    if index_dir is None:return {}
+    try:
+        root=Path(index_dir);manifest=json.loads((root/'manifest.json').read_text())
+        if (manifest.get('schema')!='readonly-symbol-index/1' or
+            manifest.get('parser_sha256')!=parser or manifest.get('tool_version')!=version):return {}
+        entry=manifest.get('entries',{}).get(key)
+        if not entry or entry.get('file')!=key+'.json':return {}
+        path=root/entry['file'];data=path.read_bytes()
+        if hashlib.sha256(data).hexdigest()!=entry.get('sha256'):return {}
+        saved=json.loads(data);payload=saved.get('payload',{})
+        if not isinstance(payload,dict):return {}
+        expected=hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
+        return payload if saved.get('sha256')==expected else {}
+    except (OSError,ValueError,TypeError,KeyError):return {}
+
+
+def resolve(identities, cache_dir, timeout=600, index_dir=None):
     tool = shutil.which('eu-addr2line')
     if not tool:
         raise RuntimeError('Install elfutils: eu-addr2line is required')
@@ -85,13 +144,11 @@ def resolve(identities, cache_dir, timeout=600):
             before = os.stat(path)
             key = hashlib.sha256((digest+version+parser).encode()).hexdigest()
             cache_path = cache_dir/(key+'.json')
-            cache = {}
-            if cache_path.exists():
-                saved = json.loads(cache_path.read_text())
-                payload = saved.get('payload', {})
-                payload_sha = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
-                if saved.get('sha256') == payload_sha:
-                    cache = payload
+            cache = indexed_symbols(index_dir,key,parser,version)
+            private=read_symbol_cache(cache_path)
+            if any(offset in cache and cache[offset]!=frames for offset,frames in private.items()):
+                cache={}  # Conflicting derived evidence requires fresh resolution.
+            else:cache.update(private)
             todo = []
             for offset, observations in addresses.items():
                 if not all(i.get('sha256') == digest for i in observations):

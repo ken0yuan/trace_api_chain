@@ -303,6 +303,14 @@ def preparation_runtime(cap,target):
     raise ValueError('unknown_capture_reference_policy')
 
 
+def offline_symbol_index_args(runtime):
+    value=os.environ.get('CALLCHAIN_READONLY_SYMBOL_INDEX')
+    if not value or Path(runtime)!=OUT/'plugin-runtime-035-private':return []
+    path=Path(value)
+    if not path.is_absolute():raise ValueError('readonly_symbol_index_must_be_absolute')
+    return ['--symbol-index',str(path)]
+
+
 def organize(path):
     result=read(path);cap=Path(result['capture_dir']);base=artifact_base(result)
     if result.get('finalization',{}).get('state')=='cleaned':return {'kind':'cleaned'}
@@ -314,6 +322,7 @@ def organize(path):
              '--out',target,'--slot',result['id'],'--source-root','pytorch='+str(SOURCE),
              '--source-root','torch_npu='+str(V/'torch-npu')]
     runtime=preparation_runtime(cap,target)
+    command+=offline_symbol_index_args(runtime)
     prepared=run(command,base/'prepare-logs'/f"{result['id']}.log",env('',runtime=runtime),7200)
     result['preparation']=prepared;result['preparation'].update(plan=str(target),runtime=str(runtime))
     if prepared['returncode']:

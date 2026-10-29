@@ -1,0 +1,20 @@
+{
+  "complete_events_byte_equal": true,
+  "complete_event_sha256": "08877382e955693830251962409882f3d39c64df8479f0c385997c111a57f968",
+  "append_fixture_initial_members": 2000,
+  "updates": 600,
+  "seconds_with_final_mixed_mutations": {
+    "old": 0.4133550699916668,
+    "new": 0.3819356400053948,
+    "new_reverse": 0.5054606600024272,
+    "old_reverse": 0.39647902999422513
+  },
+  "dependency_rows_byte_equal": true,
+  "dependency_rows": 12000,
+  "distinct_evidence_values": 25,
+  "evidence_seconds": {
+    "old": 1.133664349996252,
+    "new": 0.2474200800061226
+  },
+  "not_a_whole_npu_performance_result": true
+}

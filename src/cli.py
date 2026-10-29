@@ -8,6 +8,7 @@ def main():
     replay=sub.add_parser('replay',help='Refresh one shared SQL database from raw captures; does not render HTML')
     replay.add_argument('captures',nargs='+');replay.add_argument('--db',required=True)
     replay.add_argument('--mode',choices=('full','objects'))
+    replay.add_argument('--symbol-index',help='Read-only hash-bound symbol index; all new offsets resolve privately')
     replay.add_argument('--source-root',action='append',default=[],metavar='LABEL=PATH')
     replay.add_argument('--slot',help='Explicit latest-evidence slot, only for a single input')
     replay.add_argument('--db-cache-mib',type=int,default=4096,help='SQLite writer page-cache budget in MiB (1..16384; default: 4096)')
@@ -15,6 +16,9 @@ def main():
     organize.add_argument('capture');organize.add_argument('--out',required=True)
     organize.add_argument('--mode',choices=('full','objects'));organize.add_argument('--source-root',action='append',default=[])
     organize.add_argument('--slot')
+    organize.add_argument('--symbol-index',help='Read-only hash-bound symbol index; never updated by a test')
+    index=sub.add_parser('symbol-index',help='Publish a new read-only symbol seed from completed private caches')
+    index.add_argument('caches',nargs='+');index.add_argument('--out',required=True)
     commit=sub.add_parser('commit',help='Verify and atomically commit a prepared contribution; single writer')
     commit.add_argument('plan');commit.add_argument('--db',required=True)
     commit.add_argument('--db-cache-mib',type=int,default=4096)
@@ -22,6 +26,10 @@ def main():
     query=sub.add_parser('query',help='Read an API graph from SQL');query.add_argument('--db',required=True);query.add_argument('--api',required=True);query.add_argument('--out')
     render=sub.add_parser('html',help='Generate C03 solely from SQL');render.add_argument('--db',required=True);render.add_argument('--api',required=True);render.add_argument('--out',required=True)
     args=parser.parse_args()
+    if args.command=='symbol-index':
+        from .symbols import publish_symbol_index
+        report=publish_symbol_index(args.caches,args.out)
+        print(json.dumps(report,ensure_ascii=False,indent=2));return 0
     if args.command in ('replay','commit') and not 1<=args.db_cache_mib<=16384:
         parser.error('--db-cache-mib must be between 1 and 16384')
     from .database import refresh,list_apis,query as query_api,render_api
@@ -30,7 +38,7 @@ def main():
     if args.command in ('prepare','commit'):
         from .staged import prepare_file,commit_file
         if args.command=='prepare':
-            report=prepare_file(args.capture,args.out,args.mode,dict(p.split('=',1) for p in args.source_root) or None,args.slot)
+            report=prepare_file(args.capture,args.out,args.mode,dict(p.split('=',1) for p in args.source_root) or None,args.slot,symbol_index=args.symbol_index)
         else:report=commit_file(args.db,args.plan,args.db_cache_mib)
         print(json.dumps(report,ensure_ascii=False,indent=2));return 0
     if args.command=='replay':
@@ -39,7 +47,7 @@ def main():
         roots=dict(p.split('=',1) for p in args.source_root) or None
         results=[]
         for capture in args.captures:
-            data=prepare(capture,args.mode)
+            data=prepare(capture,args.mode,symbol_index=args.symbol_index)
             report=refresh(args.db,data,roots=roots,slot=args.slot,cache_mib=args.db_cache_mib)
             save(Path(capture)/'replay-result.json',report);results.append(report)
         print(json.dumps(results,ensure_ascii=False,indent=2));return 0

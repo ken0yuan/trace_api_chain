@@ -11,7 +11,7 @@ def policy():
     return {name:digest(Path(__file__).with_name(name)) for name in
             ('staged.py','database.py','pipeline.py','replay.py','compact.py','symbols.py','source_entities.py','reference_codec.py')}
 
-def prepare_file(capture,target,mode=None,roots=None,slot=None):
+def prepare_file(capture,target,mode=None,roots=None,slot=None,symbol_index=None):
     from .pipeline import prepare
     from .database import prepare_refresh
     capture=Path(capture).resolve();target=Path(target).resolve();target.parent.mkdir(parents=True,exist_ok=True)
@@ -38,7 +38,7 @@ def prepare_file(capture,target,mode=None,roots=None,slot=None):
                     os.link(resolved,out)
                 else:os.link(entry,out)
     link_inputs(capture,workspace)
-    data=prepare(workspace,mode);plan=prepare_refresh(data,roots,slot)
+    data=prepare(workspace,mode,symbol_index=symbol_index);plan=prepare_refresh(data,roots,slot)
     plan['summary']['raw_evidence']=str(capture)
     payload=json.dumps(plan,ensure_ascii=False,separators=(',',':')).encode('utf-8')
     checksum=hashlib.sha256(payload).hexdigest()

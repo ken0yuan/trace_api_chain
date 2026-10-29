@@ -134,6 +134,24 @@ def normalize(prepared,roots=None,definitions=None):
     return source,mapping,object_map,aliases,pending,calls
 
 
+def encode_dependency_rows(dependencies):
+    """Serialize each distinct evidence value once, preserving exact JSON bytes.
+
+    One observation may support many paths. Sharing its immutable encoded
+    spelling avoids repeated decode/encode work without merging path support.
+    The cache is private to this contribution and never retains runtime objects.
+    """
+    encoded={};rows=[]
+    for identity,values in sorted(dependencies.items()):
+        members=[]
+        for value in sorted(values):
+            if value not in encoded:
+                encoded[value]=json.dumps(json.loads(value),ensure_ascii=False)
+            members.append(encoded[value])
+        rows.append((*identity,'['+', '.join(members)+']'))
+    return rows
+
+
 def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
     """Compute one complete contribution without opening any database."""
     source,mapping,object_map,aliases,pending,calls=normalize(prepared,roots,definitions)
@@ -197,7 +215,7 @@ def prepare_refresh(prepared,roots=None,slot=None,definitions=None):
         for origin in source.import_origins(record,name,graph.get('module_sources',{})):
             dependency(uid,origin,'static_import_origin',{'via_binding':eid,**evidence})
             for owner in source.containers(origin):dependency(uid,owner,'static_import_container',{'via_binding':eid,'origin':origin})
-    dependency_rows=[(*k,json.dumps([json.loads(v) for v in sorted(values)],ensure_ascii=False)) for k,values in sorted(dependencies.items())]
+    dependency_rows=encode_dependency_rows(dependencies)
     input_digest=key(prepared['manifest']['sha256'])
     policy=[digest(Path(__file__)),digest(Path(__file__).with_name('source_entities.py')),digest(Path(__file__).with_name('changed_objects.py'))]
     import_digest=key([input_digest,policy,source.entities,mapping,sorted(paths),sorted(object_links),dependency_rows])

@@ -512,20 +512,24 @@ class Recorder:
         # already proved that all old positions remain unchanged.
         replaced=any(index<old_count for index in changed)
         by_role={edge[1]:edge for edge in old_edges} if len(value)<old_count or replaced else {}
-        edges=set(old_edges)
+        removed=set();added=set()
         for index in range(len(value),old_count):
-            edges.remove(by_role['item:'+str(index)])
+            removed.add(by_role['item:'+str(index)])
         for index in changed:
             role='item:'+str(index);old=by_role.get(role)
-            if old is not None:edges.remove(old)
+            if old is not None:removed.add(old)
             token,child_meta=self.metadata(value[index])
             if self.object_metadata.get(token)!=child_meta:
                 self.object_metadata[token]=child_meta;self.emit('object',**child_meta)
-            edges.add((root,role,token))
+            added.add((root,role,token))
+        # Keep the validated old adjacency immutable. In the common append
+        # case a frozenset union builds the next state once, instead of copying
+        # every old edge into a mutable set and then copying it back again.
+        edges=old_edges.difference(removed).union(added) if removed else old_edges.union(added)
         if self.object_metadata.get(root)!=meta:
             self.object_metadata[root]=meta;self.emit('object',**meta)
         self.flat_incremental_updates+=1;self.flat_unchanged_leaves_reused+=min(len(value),old_count)-sum(index<old_count for index in changed)
-        return root,{root:frozenset(edges)},frozenset(),frozenset({root}),True
+        return root,{root:edges},frozenset(),frozenset({root}),True
 
     def snapshot_root(self,value):
         # Cache by reference root, not the whole frame: a changing loop counter

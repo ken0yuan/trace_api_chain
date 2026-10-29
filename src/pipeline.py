@@ -8,7 +8,7 @@ from .replay import rebuild,canonical
 from .symbols import resolve
 from .compact import decode_paths,rebuild_paths
 
-def prepare(output,mode=None):
+def prepare(output,mode=None,symbol_index=None):
     output=Path(output)
     mode=mode or json.loads((output/'capture-result.json').read_text()).get('mode','full')
     storage=json.loads((output/'windows.json').read_text()).get('native_storage','events') if mode=='full' else 'events'
@@ -70,7 +70,7 @@ def prepare(output,mode=None):
             identity=row[field]
             if identity.get('path') and isinstance(identity.get('offset'),int):identities[identity['path'],identity['offset']]=identity
     print('trace-api-chain replay: resolving addresses offline',flush=True)
-    try:resolved=resolve(identities.values(),output/'symbol-cache') if identities else {}
+    try:resolved=resolve(identities.values(),output/'symbol-cache',index_dir=symbol_index) if identities else {}
     except RuntimeError:resolved={}
     receipt=json.loads((output/'pytest-receipt.json').read_text())
     return {'output':output,'events':events,'native':native,'graph':graph,'resolved':resolved,

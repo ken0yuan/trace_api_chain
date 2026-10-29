@@ -82,3 +82,16 @@ def test_existing_handoff_keeps_exact_frozen_reader_and_unknown_is_rejected(tmp_
     assert d.preparation_runtime(cap,target)==d.LEGACY_RUNTIME
     receipt.write_text(json.dumps({'policy':{'unrecognized':'must-not-ignore'}}))
     with pytest.raises(ValueError,match='unknown_frozen_handoff_policy'):d.preparation_runtime(cap,target)
+
+
+def test_readonly_index_only_applies_to_current_offline_preparer(tmp_path,monkeypatch):
+    d,_=adapter(tmp_path,monkeypatch)
+    current=tmp_path/'plugin-runtime-035-private'
+    monkeypatch.delenv('CALLCHAIN_READONLY_SYMBOL_INDEX',raising=False)
+    assert d.offline_symbol_index_args(current)==[]
+    index=tmp_path/'readonly-library-index'
+    monkeypatch.setenv('CALLCHAIN_READONLY_SYMBOL_INDEX',str(index))
+    assert d.offline_symbol_index_args(current)==['--symbol-index',str(index)]
+    assert d.offline_symbol_index_args(d.LEGACY_RUNTIME)==[]
+    monkeypatch.setenv('CALLCHAIN_READONLY_SYMBOL_INDEX','relative/index')
+    with pytest.raises(ValueError,match='must_be_absolute'):d.offline_symbol_index_args(current)
