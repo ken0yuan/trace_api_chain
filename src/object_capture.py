@@ -173,7 +173,7 @@ class Recorder(ReferencePublisher):
                               'other threads/processes are not attributed by this collector',
                               'unbound temporaries and opaque extension storage are not enumerated',
                               'address identity is local to observations; reuse is not lifetime proof'],
-                  **({'reference_transport':'deferred-adjacency/1'} if self.reference_transport is not None else {}))
+                  **({'reference_transport':'deferred-adjacency/2'} if self.reference_transport is not None else {}))
 
     def redirect_fork_fragment(self):
         """Keep inherited child observations separate; never overwrite parent proof."""
