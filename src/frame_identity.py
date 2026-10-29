@@ -19,11 +19,12 @@ _new_type_cache=None
 _type_cache_stats=None
 _reference_children=None
 _flat_changes=None
+_field_plan_stats=None
 _lock=threading.Lock()
 
 
 def adapter():
-    global _function,_flat_signature,_graph_signature,_native_definition,_member_storage,_type_context,_new_type_cache,_type_cache_stats,_reference_children,_flat_changes
+    global _function,_flat_signature,_graph_signature,_native_definition,_member_storage,_type_context,_new_type_cache,_type_cache_stats,_reference_children,_flat_changes,_field_plan_stats
     if _function is not None:return _function
     with _lock:
         if _function is not None:return _function
@@ -63,11 +64,17 @@ def adapter():
         _type_context=module.type_metadata_context
         _new_type_cache=module.new_type_context_cache
         _type_cache_stats=module.type_context_cache_stats
+        _field_plan_stats=module.field_plan_cache_stats
         _reference_children=module.reference_children
         _function=module.frame_function
         _flat_signature=module.flat_sequence_signature
         _flat_changes=module.flat_sequence_changes
         return _function
+
+
+def field_plan_cache_stats(cache):
+    adapter()
+    return _field_plan_stats(cache)
 
 
 def flat_sequence_signature(value):

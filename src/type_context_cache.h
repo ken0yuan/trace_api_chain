@@ -1,11 +1,14 @@
 /* Exact reusable type descriptions. Weak guards never retain workload classes,
  * functions, code objects or instances. Every hit rechecks namespace versions,
  * MRO identity, code-object identity, names and module source ownership. */
-struct TypeContextCache {PyObject *entries;uint64_t hits,misses,invalidations;};
-#define TYPE_CONTEXT_CAPSULE "callchain.exact_type_context/1"
+struct TypeContextCache {
+    PyObject *entries,*field_entries;
+    uint64_t hits,misses,invalidations,field_hits,field_misses,field_invalidations,field_scans;
+};
+#define TYPE_CONTEXT_CAPSULE "callchain.exact_type_context/2"
 static void type_context_cache_destroy(PyObject *capsule) {
     TypeContextCache *cache=PyCapsule_GetPointer(capsule,TYPE_CONTEXT_CAPSULE);
-    if (cache) {Py_DECREF(cache->entries);PyMem_Free(cache);}
+    if (cache) {Py_DECREF(cache->entries);Py_DECREF(cache->field_entries);PyMem_Free(cache);}
 }
 static TypeContextCache *type_context_cache_pointer(PyObject *value) {
     return PyCapsule_GetPointer(value,TYPE_CONTEXT_CAPSULE);
@@ -13,10 +16,10 @@ static TypeContextCache *type_context_cache_pointer(PyObject *value) {
 static PyObject *new_type_context_cache(PyObject *self,PyObject *ignored) {
     TypeContextCache *cache=PyMem_Calloc(1,sizeof(*cache));
     if (!cache) return PyErr_NoMemory();
-    cache->entries=PyDict_New();
-    if (!cache->entries) {PyMem_Free(cache);return NULL;}
+    cache->entries=PyDict_New();cache->field_entries=PyDict_New();
+    if (!cache->entries || !cache->field_entries) {Py_XDECREF(cache->entries);Py_XDECREF(cache->field_entries);PyMem_Free(cache);return NULL;}
     PyObject *result=PyCapsule_New(cache,TYPE_CONTEXT_CAPSULE,type_context_cache_destroy);
-    if (!result) {Py_DECREF(cache->entries);PyMem_Free(cache);}
+    if (!result) {Py_DECREF(cache->entries);Py_DECREF(cache->field_entries);PyMem_Free(cache);}
     return result;
 }
 static PyObject *type_context_cache_stats(PyObject *self,PyObject *value) {
@@ -24,6 +27,12 @@ static PyObject *type_context_cache_stats(PyObject *self,PyObject *value) {
     if (!cache) return NULL;
     return Py_BuildValue("{s:K,s:K,s:K,s:n,s:i}","hits",cache->hits,"misses",cache->misses,
         "invalidations",cache->invalidations,"entries",PyDict_Size(cache->entries),"limit",4096);
+}
+static PyObject *field_plan_cache_stats(PyObject *self,PyObject *value) {
+    TypeContextCache *cache=type_context_cache_pointer(value);if (!cache) return NULL;
+    return Py_BuildValue("{s:K,s:K,s:K,s:K,s:n,s:i}","hits",cache->field_hits,
+        "misses",cache->field_misses,"invalidations",cache->field_invalidations,
+        "namespace_scans",cache->field_scans,"entries",PyDict_Size(cache->field_entries),"limit",4096);
 }
 static PyObject *type_owner_state(PyTypeObject *type) {
     GraphSignature g={0};g.supported=1;PyObject *name=NULL,*result=NULL;

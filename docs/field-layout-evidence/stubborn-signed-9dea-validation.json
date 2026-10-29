@@ -1,0 +1,53 @@
+{
+  "finished_at": 1793277103.544592,
+  "outcomes": {
+    "001229-2f370e1cb610": {
+      "state": "capture_or_test_failed",
+      "returncode": 2,
+      "capture_status": "failed",
+      "error_type": "TimeoutExpired",
+      "seconds": 1808.9638094399997,
+      "raw_preserved": true
+    },
+    "001461-a975f279d52c": {
+      "state": "capture_or_test_failed",
+      "returncode": 2,
+      "capture_status": "failed",
+      "error_type": "TimeoutExpired",
+      "seconds": 1809.731138209987,
+      "raw_preserved": true
+    },
+    "001230-e64750d54b29": {
+      "state": "capture_or_test_failed",
+      "returncode": 2,
+      "capture_status": "failed",
+      "error_type": "TimeoutExpired",
+      "seconds": 1811.2494677200157,
+      "raw_preserved": true
+    },
+    "000610-78572d656a5a": {
+      "state": "capture_or_test_failed",
+      "returncode": 2,
+      "capture_status": "failed",
+      "error_type": "TimeoutExpired",
+      "seconds": 1811.9409712600172,
+      "raw_preserved": true
+    },
+    "000611-328c552c6714": {
+      "state": "capture_or_test_failed",
+      "returncode": 2,
+      "capture_status": "failed",
+      "error_type": "TimeoutExpired",
+      "seconds": 1811.4157560099848,
+      "raw_preserved": true
+    }
+  },
+  "all_five_strictly_verified": false,
+  "same1800_budget": true,
+  "same_full10362_catalog": true,
+  "new_formal_unique_cases": 0,
+  "formal_databases_opened_readonly_only": true,
+  "private_sqlite_writer_threads": 1,
+  "prepare_workers": 5,
+  "raw_preserved": true
+}

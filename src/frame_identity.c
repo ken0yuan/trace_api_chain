@@ -261,14 +261,74 @@ static int signature_field_plan_valid(PyObject *entry,PyTypeObject *type) {
     }
     return 1;
 }
+/* Persistent plans store only names, indices and weak guards. Descriptors and
+ * MRO tuples would retain workload classes, so bind current descriptors only
+ * inside the current signature call, after validating every namespace. */
+static int weak_field_plan_valid(PyObject *entry,PyTypeObject *type) {
+    if (PyWeakref_GetObject(PyTuple_GET_ITEM(entry,0))!=(PyObject *)type ||
+        (uintptr_t)type->tp_mro!=PyLong_AsUnsignedLongLong(PyTuple_GET_ITEM(entry,1))) return 0;
+    PyObject *bases=PyTuple_GET_ITEM(entry,2);
+    if (!type->tp_mro || !PyTuple_CheckExact(type->tp_mro) || PyTuple_GET_SIZE(type->tp_mro)!=PyTuple_GET_SIZE(bases)) return 0;
+    for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(bases);i++) {
+        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(type->tp_mro,i);PyObject *row=PyTuple_GET_ITEM(bases,i);
+        if (PyWeakref_GetObject(PyTuple_GET_ITEM(row,0))!=(PyObject *)base || !PyDict_CheckExact(base->tp_dict) ||
+            ((PyDictObject *)base->tp_dict)->ma_version_tag!=PyLong_AsUnsignedLongLong(PyTuple_GET_ITEM(row,1))) return 0;
+    }
+    return 1;
+}
+static PyObject *weak_field_plan_entry(PyTypeObject *type,PyObject *mro,PyObject *versions,PyObject *specs) {
+    PyObject *weak=PyWeakref_NewRef((PyObject *)type,NULL),*bases=NULL,*result=NULL;
+    if (!weak) return NULL;
+    bases=PyTuple_New(PyTuple_GET_SIZE(mro));if (!bases) goto done;
+    for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(mro);i++) {
+        PyObject *base=PyTuple_GET_ITEM(mro,i),*ref=PyWeakref_NewRef(base,NULL),*row=NULL;
+        if (ref) row=PyTuple_Pack(2,ref,PyTuple_GET_ITEM(versions,i));
+        Py_XDECREF(ref);if (!row) goto done;PyTuple_SET_ITEM(bases,i,row);
+    }
+    result=Py_BuildValue("(OKOO)",weak,(unsigned long long)(uintptr_t)mro,bases,specs);
+done:Py_DECREF(weak);Py_XDECREF(bases);return result;
+}
+static PyObject *bind_weak_field_plan(PyObject *entry,PyTypeObject *type) {
+    PyObject *specs=PyTuple_GET_ITEM(entry,3),*result=PyTuple_New(PyList_GET_SIZE(specs));if (!result) return NULL;
+    for (Py_ssize_t i=0;i<PyList_GET_SIZE(specs);i++) {
+        PyObject *spec=PyList_GET_ITEM(specs,i),*name=PyTuple_GET_ITEM(spec,1);
+        Py_ssize_t index=PyLong_AsSsize_t(PyTuple_GET_ITEM(spec,0));
+        if (index<0 || !type->tp_mro || index>=PyTuple_GET_SIZE(type->tp_mro)) {Py_DECREF(result);return NULL;}
+        PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(type->tp_mro,index);
+        PyObject *descriptor=PyDict_GetItemWithError(base->tp_dict,name),*member=NULL;
+        if (descriptor) member=PyTuple_Pack(2,name,descriptor);
+        if (!member) {Py_DECREF(result);return NULL;}PyTuple_SET_ITEM(result,i,member);
+    }
+    return result;
+}
 static PyObject *signature_field_plan(GraphSignature *g,PyTypeObject *type) {
     /* A plan belongs only to this graph_signature call. It stores descriptors,
      * never instance values: all real dict/slot references are still read for
      * every instance below. Integer keys avoid metaclass __hash__ callbacks. */
-    PyObject *key=PyLong_FromVoidPtr(type),*names=NULL,*members=NULL,*plan=NULL,*mro=NULL,*versions=NULL,*entry=NULL;
+    PyObject *key=PyLong_FromVoidPtr(type),*names=NULL,*members=NULL,*plan=NULL,*mro=NULL,*versions=NULL,*entry=NULL,*specs=NULL;
     if (!key) return NULL;
     PyObject *cached=PyDict_GetItem(g->field_plans,key);
     if (cached && signature_field_plan_valid(cached,type)) {Py_DECREF(key);return Py_NewRef(PyTuple_GET_ITEM(cached,2));}
+    if (g->type_cache) {
+        PyObject *persistent=PyDict_GetItem(g->type_cache->field_entries,key);
+        if (persistent && weak_field_plan_valid(persistent,type)) {
+            /* Keep the entry alive while allocations may trigger finalizers. */
+            Py_INCREF(persistent);plan=bind_weak_field_plan(persistent,type);
+            if (!plan) {Py_DECREF(persistent);if (!PyErr_Occurred()) g->supported=0;goto done;}
+            if (!weak_field_plan_valid(persistent,type)) {Py_DECREF(persistent);g->supported=0;Py_CLEAR(plan);goto done;}
+            mro=Py_NewRef(type->tp_mro);versions=PyTuple_New(PyTuple_GET_SIZE(mro));
+            if (!versions) {Py_DECREF(persistent);Py_CLEAR(plan);goto done;}
+            PyObject *bases=PyTuple_GET_ITEM(persistent,2);
+            for (Py_ssize_t i=0;i<PyTuple_GET_SIZE(mro);i++) PyTuple_SET_ITEM(versions,i,Py_NewRef(PyTuple_GET_ITEM(PyTuple_GET_ITEM(bases,i),1)));
+            entry=PyTuple_Pack(3,mro,versions,plan);
+            if (!entry || PyDict_SetItem(g->field_plans,key,entry)<0) {Py_DECREF(persistent);Py_CLEAR(plan);goto done;}
+            if (!weak_field_plan_valid(persistent,type) || !signature_field_plan_valid(entry,type)) {g->supported=0;Py_CLEAR(plan);}
+            else g->type_cache->field_hits++;
+            Py_DECREF(persistent);goto done;
+        }
+        if (persistent) g->type_cache->field_invalidations++;
+        g->type_cache->field_misses++;g->type_cache->field_scans++;
+    }
     if (!type->tp_mro || !PyTuple_CheckExact(type->tp_mro)) {g->supported=0;goto done;}
     mro=Py_NewRef(type->tp_mro);versions=PyTuple_New(PyTuple_GET_SIZE(mro));
     if (!versions) goto done;
@@ -279,8 +339,8 @@ static PyObject *signature_field_plan(GraphSignature *g,PyTypeObject *type) {
         if (!version) goto done;
         PyTuple_SET_ITEM(versions,i,version);
     }
-    names=PySet_New(NULL);members=PyList_New(0);
-    if (!names || !members) goto done;
+    names=PySet_New(NULL);members=PyList_New(0);specs=PyList_New(0);
+    if (!names || !members || !specs) goto done;
     for (Py_ssize_t i=0;g->supported && i<PyTuple_GET_SIZE(mro);i++) {
         PyTypeObject *base=(PyTypeObject *)PyTuple_GET_ITEM(mro,i);
         Py_ssize_t pos=0;PyObject *name,*descriptor;
@@ -305,7 +365,10 @@ static PyObject *signature_field_plan(GraphSignature *g,PyTypeObject *type) {
             if (selected) {
                 PyObject *member=PyTuple_Pack(2,name,descriptor);
                 if (!member) goto done;
-                int status=PyList_Append(members,member);Py_DECREF(member);
+                PyObject *spec=Py_BuildValue("(nO)",i,name);
+                int status=spec ? PyList_Append(members,member) : -1;
+                if (!status) status=PyList_Append(specs,spec);
+                Py_XDECREF(spec);Py_DECREF(member);
                 if (status<0) goto done;
             }
         }
@@ -315,9 +378,23 @@ static PyObject *signature_field_plan(GraphSignature *g,PyTypeObject *type) {
         if (plan) entry=PyTuple_Pack(3,mro,versions,plan);
         if (!entry || PyDict_SetItem(g->field_plans,key,entry)<0) Py_CLEAR(plan);
         else if (!signature_field_plan_valid(entry,type)) {g->supported=0;Py_CLEAR(plan);}
+        else if (g->type_cache) {
+            PyObject *persistent=weak_field_plan_entry(type,mro,versions,specs);
+            if (!persistent) Py_CLEAR(plan);
+            else {
+                if (weak_field_plan_valid(persistent,type)) {
+                    if (PyDict_SetItem(g->type_cache->field_entries,key,persistent)<0) Py_CLEAR(plan);
+                    if (PyDict_Size(g->type_cache->field_entries)>4096) {
+                        Py_ssize_t p=0;PyObject *old,*row;
+                        if (PyDict_Next(g->type_cache->field_entries,&p,&old,&row) && PyDict_DelItem(g->type_cache->field_entries,old)<0) Py_CLEAR(plan);
+                    }
+                } else {g->supported=0;Py_CLEAR(plan);}
+                Py_DECREF(persistent);
+            }
+        }
     }
 done:
-    Py_DECREF(key);Py_XDECREF(names);Py_XDECREF(members);Py_XDECREF(mro);Py_XDECREF(versions);Py_XDECREF(entry);return plan;
+    Py_DECREF(key);Py_XDECREF(names);Py_XDECREF(members);Py_XDECREF(mro);Py_XDECREF(versions);Py_XDECREF(entry);Py_XDECREF(specs);return plan;
 }
 static int signature_fields(GraphSignature *g,PyObject *value) {
     PyTypeObject *type=Py_TYPE(value);PyObject *plan=signature_field_plan(g,type);
@@ -452,6 +529,7 @@ static PyMethodDef methods[] = {
     {"flat_sequence_changes", flat_sequence_changes, METH_VARARGS, "Exact changed positions in validated immutable-leaf identity vectors."},
     {"reference_children", reference_children, METH_VARARGS, "Enumerate exact builtin references without Python per-edge construction."},
     {"new_type_context_cache", new_type_context_cache, METH_NOARGS, "Bounded weak exact type metadata reuse."},
+    {"field_plan_cache_stats", field_plan_cache_stats, METH_O, "Weak exact field layout reuse counters; no instance values cached."},
     {"type_context_cache_stats", type_context_cache_stats, METH_O, "Exact type metadata reuse counters."},
     {"type_metadata_context", type_metadata_context, METH_VARARGS, "Validate observed type metadata without traversing instance references."},
     {"member_storage", member_storage, METH_VARARGS, "Describe unboxed native storage without manufacturing Python values."},

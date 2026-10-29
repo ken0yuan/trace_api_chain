@@ -1,0 +1,73 @@
+{
+  "complete_object_event_bytes_equal": true,
+  "object_event_sha256": "a25798e8fcb01d742b70efd4e65c5062856f7769f3be5ab4954a1a03314a3577",
+  "mutations_included": [
+    "new_deep_reference",
+    "new_tensor_instance_reference",
+    "MRO_change",
+    "reference_removal"
+  ],
+  "full_frozen_graph_sha256": "c26d6c06c4e7965a74feadd97efe1a17b249ff2e7af0daee53306066521ed83a",
+  "complete_plan_equal": true,
+  "all_14_tables_bytewise_row_hash_equal": {
+    "aliases": {
+      "rows": 177,
+      "sha256": "ec4b94fb7dc943312ab6c2674475eac2f394b598c13f4055028fe987713465b4"
+    },
+    "api_alias_support": {
+      "rows": 36,
+      "sha256": "84d383068b35dc789043c7334aab9c99b9d934bb73055e31a1e40c525acb10dd"
+    },
+    "api_aliases": {
+      "rows": 36,
+      "sha256": "70f761b21be76ffd5b87e85b683009fe1be4fc3c0994be1d9b06e0fb51c2832d"
+    },
+    "apis": {
+      "rows": 29,
+      "sha256": "f7558916a1be3083c1ade8909cb29a65189d045871d6fc5463d96eb262b190b1"
+    },
+    "capture_slots": {
+      "rows": 1,
+      "sha256": "8c8fde05ab0a21b001bc0f6a568f256136bdc892c6f8b6eacade21ef7506df00"
+    },
+    "entities": {
+      "rows": 1946,
+      "sha256": "d9fb7158f07d80806bb3a4b5e4187199238573536640bd7c25df86624f5d8705"
+    },
+    "object_references": {
+      "rows": 553,
+      "sha256": "7c6aca110fbe603499aa3446d393f6f18f379dcde9ff0fddf2e03d6aeb95a0ac"
+    },
+    "observed_objects": {
+      "rows": 548,
+      "sha256": "ab9ec50cdbb57632b572e9a1cc62a5f810fcafe4fb99f786857adbb1fe68dfd9"
+    },
+    "path_support": {
+      "rows": 45294,
+      "sha256": "f2847cfc0c769d2676b96d62fadb06e0fcd8e2cb6bd9d291480e688635a10743"
+    },
+    "paths": {
+      "rows": 45294,
+      "sha256": "e9158e1db50930d3dd1d6b3401b2399817042c5f4784875dcddf1bc30529032a"
+    },
+    "pending": {
+      "rows": 147326,
+      "sha256": "6dc3b28ea2391f447ad4eef057aeb42d1d9a2b5e3cc9d7604102639e38a9529b"
+    },
+    "schema_info": {
+      "rows": 1,
+      "sha256": "acc07b62f23f458923737c4cd4a66bd05d1e71eb4f384003baaf2dcc760d6349"
+    },
+    "slot_entities": {
+      "rows": 1946,
+      "sha256": "1d2c0aaf94538fceaa7ca98df829bd4c79057c37d7ab59ac7fc4a15021558c41"
+    },
+    "source_dependencies": {
+      "rows": 1538,
+      "sha256": "fd40efe967ae9a88cfba1a0cf2308ebb04b9de01a3477358ecf29c8952c1da17"
+    }
+  },
+  "ignored_fields": [],
+  "raw_evidence_and_formal_databases_unmodified": true,
+  "not_a_whole_NPU_acceptance": true
+}

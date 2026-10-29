@@ -1,0 +1,88 @@
+{
+  "tensor": {
+    "same_actual_objects": true,
+    "signature_bytes_equal": true,
+    "signature_supported": true,
+    "cpu_seconds_per1500": {
+      "old": [
+        0.06387988,
+        0.06400234000000005
+      ],
+      "new": [
+        0.009960660000000843,
+        0.009822480000000411
+      ]
+    },
+    "new_field_plan_stats": {
+      "hits": 3000,
+      "misses": 1,
+      "invalidations": 0,
+      "namespace_scans": 1,
+      "entries": 1,
+      "limit": 4096
+    },
+    "root_types": {
+      "actual": "torch.Tensor",
+      "expected": "torch.Tensor"
+    }
+  },
+  "real_comparison_locals": {
+    "same_actual_objects": true,
+    "signature_bytes_equal": true,
+    "signature_supported": true,
+    "cpu_seconds_per1500": {
+      "old": [
+        0.08333571000000006,
+        0.08426744000000141
+      ],
+      "new": [
+        0.020575450000000828,
+        0.020349469999999314
+      ]
+    },
+    "new_field_plan_stats": {
+      "hits": 6000,
+      "misses": 2,
+      "invalidations": 0,
+      "namespace_scans": 2,
+      "entries": 2,
+      "limit": 4096
+    },
+    "root_types": {
+      "self": "torch.testing._comparison.TensorLikePair",
+      "actual": "torch.Tensor",
+      "expected": "torch.Tensor",
+      "rtol": "builtins.float",
+      "atol": "builtins.float",
+      "equal_nan": "builtins.bool",
+      "identifier": "builtins.NoneType",
+      "matches": "torch.Tensor"
+    }
+  },
+  "wide_class": {
+    "same_actual_objects": true,
+    "signature_bytes_equal": true,
+    "signature_supported": true,
+    "cpu_seconds_per1500": {
+      "old": [
+        0.13324708999999935,
+        0.13267517000000062
+      ],
+      "new": [
+        0.00546369999999996,
+        0.005455519999999936
+      ]
+    },
+    "new_field_plan_stats": {
+      "hits": 3000,
+      "misses": 1,
+      "invalidations": 0,
+      "namespace_scans": 1,
+      "entries": 1,
+      "limit": 4096
+    },
+    "root_types": {
+      "value": "__main__.Wide"
+    }
+  }
+}
