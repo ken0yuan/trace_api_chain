@@ -32,7 +32,7 @@ API/test插件先核验提交数据及来源，成功后删除采集目录；调
 3. 核验完整性和原始结果两库绑定后，删除可丢弃副本；不删除独有失败证据、未验证分支或唯一来源档案。
 4. 不同实验之间优先复用只读输入，不为计时再复制输入、正式数据库或已生成大图。
 
-本轮已逐字节核验后删除两份重复大图，共36,571,854,516字节，约34.06GiB。原始完整图及两库结果保留。旧写库对照的三个40GB数据库原已证明逐字节相同；正在重新核验当前副本未被使用、SHA一致后保留一份并清掉另外两份。不能在清理回执完成前把计划释放容量当作已释放。
+本轮已逐字节核验后删除两份重复大图，共36,571,854,516字节，约34.06GiB。原始完整图及两库结果保留。旧写库对照的三个40GB数据库已重新确认未被使用且完整SHA均为ea0978b1…60ee，保留reference.sqlite，删除另外两份，共79,882,567,680字节。两项合计删除约108.46GiB逻辑副本；文件系统可能共享物理块，不能将这个数冒充实际物理空间释放量。最终实测磁盘余量1752.19GiB，所有独有正式数据、失败证据、来源归档保留。
 
 清理脚本曾因调用可能不明确的库核验辅助函数被自动审批拒绝；已改成SQLite URI mode=ro、query_only加SELECT的明确只读核验后获准。清理只作用于明确列出的诊断副本。
 
@@ -48,7 +48,7 @@ API/test插件先核验提交数据及来源，成功后删除采集目录；调
 
 - `latest-minimal-storage-checkpoint.json`
 - `stream-canonical-lean-pair-v1/validation.json`
-- `verified-writer-duplicate-cleanup-v1/validation.json`（真实完成后读取）
+- `verified-writer-duplicate-cleanup-v1/validation.json`（state=cleaned）
 - `disk-capacity-guard-v1/{authorization,process,state,recipe}.json`
 - `metadata-original-lstm-fbcccb4-v2/{capture-validation,state,validation}.json`
 - `stream-reader-full-original-000610-resume-v3/validation.json`
