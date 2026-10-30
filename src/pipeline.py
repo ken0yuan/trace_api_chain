@@ -8,6 +8,7 @@ from .replay import rebuild,canonical
 from .symbols import resolve
 from .compact import decode_paths,rebuild_paths
 from .reference_transport import read_events
+from .canonical_io import write_canonical
 
 def prepare(output,mode=None,symbol_index=None):
     output=Path(output)
@@ -64,7 +65,7 @@ def prepare(output,mode=None,symbol_index=None):
     if variations:
         graph['native_exit_callsite_variations']=variations
         graph['declared_boundaries']=list(graph['declared_boundaries'])+['Entry call sites label native paths. Optimized code reported '+str(variations)+' differing exit call sites; function and window matched the top of the calling-thread stack.']
-    (output/'graph.json').write_bytes(canonical(graph))
+    write_canonical(output/'graph.json',graph)
     identities={}
     for row in native:
         for field in ('source_identity','caller_identity'):
